@@ -145,6 +145,8 @@ public class Level : MonoBehaviour
 
   Item        _itemSelected;
   Item        _itemHovered;
+  Item        _itemTileSelected;
+  GridTile    _tileSelected;  
   Animal      _animalHovered;
   List<Item>  _items = new List<Item>();
   List<Item>  _items2 = new List<Item>();
@@ -687,7 +689,7 @@ public class Level : MonoBehaviour
       var item = tid.GetClosestCollider(_inputRad, Item.layerMask)?.GetComponent<Item>();
       if(item)
       {
-        if(Time.timeAsDouble - tapTime < 1.0f)
+        if(Time.timeAsDouble - tapTime < 0.5f)
         {
           if(item.id.IsSpecial)
           {
@@ -715,9 +717,66 @@ public class Level : MonoBehaviour
           } 
         }
         else
+        {
           tapTime = Time.timeAsDouble;
+          if(_itemTileSelected == null)
+          {
+            SelectTile(item);
+          }
+          else
+          {
+            if(_itemTileSelected == item)
+              DeselectTile();
+            else
+            {
+              if(Item.Mergeable(_itemTileSelected, item))
+              {
+                var newItem = Item.Merge(_itemTileSelected, item, _items);
+                if(newItem)
+                {
+                  _grid.set(_itemTileSelected.vgrid, 0);
+                  _splitMachine.RemoveFromSplitSlot(_itemTileSelected);
+                  onItemCleared?.Invoke(_itemTileSelected);
+                  newItem.Show();
+                  GameState.Progress.Items.ItemAppears(newItem.id);
+                  SpawnItem(_itemTileSelected.vgrid);
+                  CacheLoc();
+                  DeselectTile();
+                }
+                else
+                {
+                  DeselectTile();
+                  SelectTile(item);  
+                }
+              }
+              else
+              {
+                DeselectTile();
+                SelectTile(item);
+              }
+            }
+          }
+        }
+      }
+      else
+      {
+        DeselectTile();
       }
     }
+  }
+  void SelectTile(Item item)
+  {
+    _itemTileSelected = item;
+    _tileSelected = _grid.getTile(_itemTileSelected.vgrid);    
+    _tileSelected.Hover(true);
+  }
+  void DeselectTile()
+  {
+    if(_tileSelected)
+      _tileSelected.Hover(false);
+    _tileSelected = null;
+    _itemTileSelected = null;
+    
   }
   bool IsItemHit(TouchInputData tid)
   {
