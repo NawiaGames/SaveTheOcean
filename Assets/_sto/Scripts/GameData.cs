@@ -67,6 +67,26 @@ public class GameData : ScriptableObject
   }
 
   [System.Serializable]
+  public struct Sublocation
+  {
+    [SerializeField] Level       _levelPrefab;
+    [SerializeField] Vector2Int  _dim;
+
+    public Level      levelPrefab => _levelPrefab;
+    public Vector2Int dim => _dim;
+  }
+  [System.Serializable]
+  public struct LevelDesc
+  {
+    [SerializeField] Animal.Type   _animalType;
+    [SerializeField] Sublocation[] _sublocations;
+
+    public Animal.Type animalType => _animalType;
+    public int         sublocationsCnt => _sublocations.Length;
+    public Sublocation sublocation(int idx) => _sublocations[idx];
+  }
+
+  [System.Serializable]
   struct Items
   {
     [SerializeField] Item.Kind _kind;
@@ -105,7 +125,8 @@ public class GameData : ScriptableObject
   [SerializeField] Location _locationPrefab;
   //[SerializeField] Earth    _earthPrefab;
   //[Header("Levels")]
-  [SerializeField] List<Level> _listLevels;
+  //[SerializeField] List<Level> _listLevels;
+  [SerializeField] LevelDesc[] _levelsDesc;
   [SerializeField] Level       _levelFeeding;
   [SerializeField] Level       _levelClearing;
   [Header("--Econo--")]
@@ -205,14 +226,21 @@ public class GameData : ScriptableObject
   }
   public static class Levels
   {
-    static public Level GetPrefab(int idx) => get()._listLevels[idx];
-    static public Level CreateLevel(int idx, Transform levelsContainer) => Instantiate(get()._listLevels[idx], levelsContainer);
-    static public Level CreateFeedingLevel(Transform levelsContainer) => Instantiate(get()._levelFeeding, levelsContainer);
-    static public Level CreateClearingLevel(Transform levelsContainer) => Instantiate(get()._levelClearing, levelsContainer);
-    static public int   levelsCnt => get()._listLevels.Count;
+    //static public Level       GetPrefab(int idx) => get()._listLevels[idx];
+    //static public Level       CreateLevel(int idx, Transform levelsContainer) => Instantiate(get()._listLevels[idx], levelsContainer);
+    static public Level       CreateLevel(int idx, Transform levelsContainer)
+    {
+      int sub_idx = GameState.Progress.Locations.GetSublocationPassed(idx);
+      return Instantiate(GetSublocation(idx, sub_idx).levelPrefab, levelsContainer);
+    }
+    static public Level       CreateFeedingLevel(Transform levelsContainer) => Instantiate(get()._levelFeeding, levelsContainer);
+    static public Level       CreateClearingLevel(Transform levelsContainer) => Instantiate(get()._levelClearing, levelsContainer);
+    //static public int         levelsCnt => get()._listLevels.Count;
     //static public Vector2Int feedingDim => get()._feedingBoardDim;
-    static public int   GetFeedingAvailLoc() => get()._feedingAvailLoc;
-    static public int   GetClearingAvailLoc() => get()._clearingAvailLoc;
+    static public int         GetFeedingAvailLoc() => get()._feedingAvailLoc;
+    static public int         GetClearingAvailLoc() => get()._clearingAvailLoc;
+    static public LevelDesc   GetLocationDesc(int level_idx) => get()._levelsDesc[level_idx];
+    static public Sublocation GetSublocation(int level_idx, int sub_idx) => GetLocationDesc(level_idx).sublocation(sub_idx);
   }
   public static class Locations
   {

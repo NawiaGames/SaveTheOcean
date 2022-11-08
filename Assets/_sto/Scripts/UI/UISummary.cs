@@ -12,7 +12,7 @@ public class UISummary : MonoBehaviour
   bool _moveToNextLoc = false;
   public void Show(Level level)
   {
-    _moveToNextLoc = level.isRegular;
+    _moveToNextLoc = level.isRegular && GameState.Progress.Locations.IsLocationFinished(level.locationIdx);
     onShow?.Invoke();
     GetComponent<UIPanel>().ActivatePanel();
   }

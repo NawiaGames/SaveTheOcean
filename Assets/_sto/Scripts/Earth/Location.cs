@@ -6,6 +6,7 @@ public class Location : MonoBehaviour
   [SerializeField] Marker[]     _stateModels;
   [SerializeField] GameObject   _selectionModel;
   [SerializeField] Level.State  _state = Level.State.Locked;
+  [SerializeField] GameObject[] _garbages;
 
   [Header("IngameLevel")]
   [SerializeField] int _level = -1;
@@ -51,6 +52,16 @@ public class Location : MonoBehaviour
     var posyz = Vector3.ProjectOnPlane(transform.localPosition, Vector3.right);
     //posyz.x = 0;
     _localDstRoto = Quaternion.AngleAxis(Mathf.Clamp(Vector3.SignedAngle(posyz, -Vector3.forward, Vector3.right), -vert_roto_range, vert_roto_range), Vector3.right) * _localDstRoto;
+
+    int subloc_cnt = GameData.Levels.GetLocationDesc(_idx).sublocationsCnt;
+    for(int q = 0; q < _garbages.Length; ++q)
+    {
+      if(q < subloc_cnt)
+        _garbages[q].SetActive(true);
+      else
+        _garbages[q].SetActive(false);
+    }
+
     Select(false);
   }
   public Level.State state 
@@ -66,7 +77,18 @@ public class Location : MonoBehaviour
   {
     _selectionModel.SetActive(sel);
   }
-
+  void UpdateGarbages()
+  {
+    // int subloc_cnt = GameData.Levels.GetLocationDesc(_idx).sublocationsCnt;
+    // int subloc_passed = GameState.Progress.Locations.GetSublocationPassed(_idx);
+    // for(int q = 0; q < _garbages.Length; ++q)
+    // {
+    //   if(q < subloc_passed)
+    //     _garbages[q].SetActive(false);
+    //   else
+    //     _garbages[q].SetActive(true);
+    // }
+  }
   int  State2MI(Level.State state) => (int)state;
   void SetStateModel(Level.State state)
   {
@@ -77,5 +99,6 @@ public class Location : MonoBehaviour
         _stateModels[q].mdl?.SetActive(false);
     }
     _stateModels[mi].mdl.SetActive(true);
+    UpdateGarbages();
   }
 }

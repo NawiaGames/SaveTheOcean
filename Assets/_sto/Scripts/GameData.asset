@@ -80,27 +80,35 @@ MonoBehaviour:
     - {fileID: 6445466529311080229, guid: 8d75cefea946e3b44896139ecec61750, type: 3}
   _gridTile: {fileID: 8178171026830446907, guid: 764369db777a63a4d9a3efac1f67b645, type: 3}
   _locationPrefab: {fileID: 4694188858287188799, guid: 7e2dc7caea333c54a97c83e5d2ddcc26, type: 3}
-  _listLevels:
-  - {fileID: 2229698086017596401, guid: c01b6befe631c5b44bf560095e70ab39, type: 3}
-  - {fileID: 2229698086017596401, guid: 26112caae72b86d46a016484bf618140, type: 3}
-  - {fileID: 2229698086017596401, guid: 1bf49517c8dd6314d95996effc4bc308, type: 3}
-  - {fileID: 2229698086017596401, guid: 7432c63a0628fd14f907e9254a41adec, type: 3}
-  - {fileID: 2229698086017596401, guid: 7322aef1aa9c32142a22ff13e741b3c1, type: 3}
-  - {fileID: 2229698086017596401, guid: 811c48e92ae1aa14c8cdd1dd8b5f0af3, type: 3}
-  - {fileID: 2229698086017596401, guid: 5f8bb59eafcbd2441988563f499dad1d, type: 3}
-  - {fileID: 2229698086017596401, guid: 81780a08b29113348bae450c6b29a035, type: 3}
-  - {fileID: 2229698086017596401, guid: 5381667f569f14d4ebeb6f40effc92b7, type: 3}
-  - {fileID: 2229698086017596401, guid: 25bba3ea73a01f944b46dde8cf00b959, type: 3}
-  - {fileID: 2229698086017596401, guid: 31f9252d15bd1b341a81581f435d9650, type: 3}
-  - {fileID: 2229698086017596401, guid: 93525a29511690a429c79db24d386ae3, type: 3}
-  - {fileID: 2229698086017596401, guid: 1cb798866eea0174c9574667ac1f9aa9, type: 3}
-  - {fileID: 2229698086017596401, guid: 9ce70ebf71e65f4478f202d782476aa5, type: 3}
-  - {fileID: 2229698086017596401, guid: 132d4dbf4c2b88a4387f054aa15af498, type: 3}
-  - {fileID: 2229698086017596401, guid: 335d328e3903a3848a5a3c0ee4cfd8c1, type: 3}
-  - {fileID: 2229698086017596401, guid: dc4816ada3f504a43905231f30149c64, type: 3}
-  - {fileID: 2229698086017596401, guid: f2618bd89a910c14bbed0af3ce1092d0, type: 3}
-  - {fileID: 2229698086017596401, guid: 7c81cf4f92629cf4aa3d5a624c8c90a3, type: 3}
-  - {fileID: 2229698086017596401, guid: f64285a45f2a7724f9186acadf801e65, type: 3}
+  _levelsDesc:
+  - _animalType: 1
+    _sublocations:
+    - _levelPrefab: {fileID: 2229698086017596401, guid: c01b6befe631c5b44bf560095e70ab39, type: 3}
+      _dim: {x: 0, y: 0}
+  - _animalType: 2
+    _sublocations:
+    - _levelPrefab: {fileID: 2229698086017596401, guid: 26112caae72b86d46a016484bf618140, type: 3}
+      _dim: {x: 0, y: 0}
+    - _levelPrefab: {fileID: 2229698086017596401, guid: 1bf49517c8dd6314d95996effc4bc308, type: 3}
+      _dim: {x: 0, y: 0}
+  - _animalType: 3
+    _sublocations:
+    - _levelPrefab: {fileID: 2229698086017596401, guid: 7432c63a0628fd14f907e9254a41adec, type: 3}
+      _dim: {x: 0, y: 0}
+    - _levelPrefab: {fileID: 2229698086017596401, guid: 7322aef1aa9c32142a22ff13e741b3c1, type: 3}
+      _dim: {x: 0, y: 0}
+    - _levelPrefab: {fileID: 2229698086017596401, guid: 811c48e92ae1aa14c8cdd1dd8b5f0af3, type: 3}
+      _dim: {x: 0, y: 0}
+  - _animalType: 4
+    _sublocations:
+    - _levelPrefab: {fileID: 2229698086017596401, guid: 5f8bb59eafcbd2441988563f499dad1d, type: 3}
+      _dim: {x: 0, y: 0}
+    - _levelPrefab: {fileID: 2229698086017596401, guid: 81780a08b29113348bae450c6b29a035, type: 3}
+      _dim: {x: 0, y: 0}
+    - _levelPrefab: {fileID: 2229698086017596401, guid: 5381667f569f14d4ebeb6f40effc92b7, type: 3}
+      _dim: {x: 0, y: 0}
+    - _levelPrefab: {fileID: 2229698086017596401, guid: 25bba3ea73a01f944b46dde8cf00b959, type: 3}
+      _dim: {x: 0, y: 0}
   _levelFeeding: {fileID: 2229698086017596401, guid: 0f8f314baaff79f4aa4d3cf15bcda573, type: 3}
   _levelClearing: {fileID: 2229698086017596401, guid: 8974ce46b8281204fac9988f26433c68, type: 3}
   _staminaMax: 50
@@ -111,6 +119,7 @@ MonoBehaviour:
   _staminaRefillTime: 900
   _coinFeedCost: 1
   _coinsMax: 999
+  _gemsStaminaRefillCost: 10
   _gemsMax: 999
   _resouceItemsAmountFactor: 2
   _foodsDesc:

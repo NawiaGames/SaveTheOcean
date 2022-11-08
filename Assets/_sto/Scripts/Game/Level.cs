@@ -913,8 +913,9 @@ public class Level : MonoBehaviour
     onFinished?.Invoke(this);
     if(!isFeedingMode)
     {
-      GameState.Progress.Locations.SetLocationFinished();
-      if(!isCleanupMode)
+      //GameState.Progress.Locations.SetLocationFinished();
+      bool passedLoc = GameState.Progress.Locations.SetSublocationPassed(GameState.Progress.locationIdx);
+      if(!isCleanupMode && passedLoc)
         GameState.Progress.Locations.UnlockNextLocation();
     }
     yield return new WaitForSeconds(0.5f);
