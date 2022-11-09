@@ -67,7 +67,7 @@ public class GameData : ScriptableObject
   }
 
   [System.Serializable]
-  public struct Sublocation
+  public class Sublocation
   {
     [SerializeField] Level       _levelPrefab;
     [SerializeField] Vector2Int  _dim;
@@ -76,7 +76,7 @@ public class GameData : ScriptableObject
     public Vector2Int dim => _dim;
   }
   [System.Serializable]
-  public struct LevelDesc
+  public class LevelDesc
   {
     [SerializeField] Animal.Type   _animalType;
     [SerializeField] Sublocation[] _sublocations;
@@ -239,8 +239,8 @@ public class GameData : ScriptableObject
     //static public Vector2Int feedingDim => get()._feedingBoardDim;
     static public int         GetFeedingAvailLoc() => get()._feedingAvailLoc;
     static public int         GetClearingAvailLoc() => get()._clearingAvailLoc;
-    static public LevelDesc   GetLocationDesc(int level_idx) => get()._levelsDesc[level_idx];
-    static public Sublocation GetSublocation(int level_idx, int sub_idx) => GetLocationDesc(level_idx).sublocation(sub_idx);
+    static public LevelDesc   GetLocationDesc(int level_idx) => (level_idx < get()._levelsDesc.Length)? get()._levelsDesc[level_idx] : null;
+    static public Sublocation GetSublocation(int level_idx, int sub_idx) => GetLocationDesc(level_idx)?.sublocation(sub_idx) ?? null;
   }
   public static class Locations
   {

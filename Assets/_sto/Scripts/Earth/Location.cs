@@ -6,6 +6,7 @@ public class Location : MonoBehaviour
   [SerializeField] Marker[]     _stateModels;
   [SerializeField] GameObject   _selectionModel;
   [SerializeField] Level.State  _state = Level.State.Locked;
+  [SerializeField] GameObject   _smog;
   [SerializeField] GameObject[] _garbages;
 
   [Header("IngameLevel")]
@@ -53,7 +54,7 @@ public class Location : MonoBehaviour
     //posyz.x = 0;
     _localDstRoto = Quaternion.AngleAxis(Mathf.Clamp(Vector3.SignedAngle(posyz, -Vector3.forward, Vector3.right), -vert_roto_range, vert_roto_range), Vector3.right) * _localDstRoto;
 
-    int subloc_cnt = GameData.Levels.GetLocationDesc(_idx).sublocationsCnt;
+    int subloc_cnt = GameData.Levels.GetLocationDesc(_idx)?.sublocationsCnt ?? 0;
     for(int q = 0; q < _garbages.Length; ++q)
     {
       if(q < subloc_cnt)
@@ -62,6 +63,7 @@ public class Location : MonoBehaviour
         _garbages[q].SetActive(false);
     }
 
+    gameObject.SetActive(GameData.Levels.GetLocationDesc(_idx) != null);
     Select(false);
   }
   public Level.State state 
@@ -79,15 +81,19 @@ public class Location : MonoBehaviour
   }
   void UpdateGarbages()
   {
-    // int subloc_cnt = GameData.Levels.GetLocationDesc(_idx).sublocationsCnt;
-    // int subloc_passed = GameState.Progress.Locations.GetSublocationPassed(_idx);
-    // for(int q = 0; q < _garbages.Length; ++q)
-    // {
-    //   if(q < subloc_passed)
-    //     _garbages[q].SetActive(false);
-    //   else
-    //     _garbages[q].SetActive(true);
-    // }
+    if(_state == Level.State.Locked || state == Level.State.Unlocked)
+    {
+      int subloc_cnt = GameData.Levels.GetLocationDesc(_idx)?.sublocationsCnt ?? 0;
+      int subloc_passed = GameState.Progress.Locations.GetSublocationPassed(_idx);
+      for(int q = 0; q < _garbages.Length; ++q)
+      {
+        _garbages[q].SetActive(q < subloc_cnt && subloc_passed <= q);
+      }
+    }
+    else
+    {
+      _smog.SetActive(false);
+    }
   }
   int  State2MI(Level.State state) => (int)state;
   void SetStateModel(Level.State state)

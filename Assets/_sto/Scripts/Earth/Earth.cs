@@ -86,8 +86,12 @@ public class Earth : MonoBehaviour
       if(levelTransf.gameObject.activeSelf)
       {
         var loc = GameData.Prefabs.CreateLocation(_locationsContainer);
-        loc.Init(listLocations.Count, levelTransf, _rotateXRange, GameState.Progress.Locations.GetLocationState(listLocations.Count));
-        listLocations.Add(loc);
+        if(loc)
+        {
+          var st = GameState.Progress.Locations.GetLocationState(listLocations.Count);
+          loc.Init(listLocations.Count, levelTransf, _rotateXRange, st);
+          listLocations.Add(loc);
+        }
       }
     }
     _locations = listLocations.ToArray();
@@ -246,10 +250,13 @@ public class Earth : MonoBehaviour
   void SelectLocation(int loc)
   {
     location(_selectedLocation)?.Select(false);
-    location(loc)?.Select(true);
-    _selectedLocation = loc;
-    GameState.Progress.locationIdx = loc;
-    onLevelSelected?.Invoke(loc);
+    if(loc >= 0)
+    {
+      location(loc)?.Select(true);
+      _selectedLocation = loc;
+      GameState.Progress.locationIdx = loc;
+      onLevelSelected?.Invoke(loc);
+    }
   }
   void MoveVesselToLocation(Location loca)
   {
