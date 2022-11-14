@@ -537,6 +537,7 @@ public class GameState : SavableScriptableObject
       }
     }
     public static bool  CanSpendStamina(int stamina_cost) => stamina >= stamina_cost;
+    public static bool  CanPushoutItem() => stamina >= GameData.Econo.staminaPushoutItemCost;
     public static bool  CanSpendCoins(int coins_cost) => coins >= coins_cost;
     public static float GetStaminaRefillPerc()
     {

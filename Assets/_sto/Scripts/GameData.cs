@@ -71,9 +71,11 @@ public class GameData : ScriptableObject
   {
     [SerializeField] Level       _levelPrefab;
     [SerializeField] Vector2Int  _dim;
+    [SerializeField] int         _garbagesToClear = 100;
 
     public Level      levelPrefab => _levelPrefab;
     public Vector2Int dim => _dim;
+    public int        garbagesToClear => _garbagesToClear;
   }
   [System.Serializable]
   public class LevelDesc
@@ -120,9 +122,10 @@ public class GameData : ScriptableObject
   }  
 
   [Header("--Prefabs--")]
-  [SerializeField] Items[]  _items;
-  [SerializeField] GridTile _gridTile;
-  [SerializeField] Location _locationPrefab;
+  [SerializeField] Items[]    _items;
+  [SerializeField] GridTile   _gridTile;
+  [SerializeField] Location   _locationPrefab;
+  [SerializeField] Animal[]   _animalPrefabs;
   //[SerializeField] Earth    _earthPrefab;
   //[Header("Levels")]
   //[SerializeField] List<Level> _listLevels;
@@ -136,6 +139,7 @@ public class GameData : ScriptableObject
   [SerializeField] int        _staminaClearCost = 10;
   [SerializeField] int        _staminaAdReward = 15;
   [SerializeField] float      _staminaRefillTime = 60.0f;
+  [SerializeField] int        _staminaPushoutItemCost = 1;
   [SerializeField] int        _coinFeedCost = 1;
   [SerializeField] int        _coinsMax = 999;
   [SerializeField] int        _gemsStaminaRefillCost = 10;
@@ -205,6 +209,11 @@ public class GameData : ScriptableObject
         levels = get()._items[id.type].Get(0).modelContainer.childCount;
       return levels;
     }
+    public static Animal CreateAnimal(Animal.Type type, Transform parent)
+    {
+      var anim = Array.Find(get()._animalPrefabs, (anim) => anim.type == type);
+      return Instantiate(anim, parent);
+    }
     public static int ItemTypeFromKind(Item.Kind kind)
     {
       return Array.FindIndex(get()._items, (item) => item.kind == kind);
@@ -260,6 +269,7 @@ public class GameData : ScriptableObject
     public static int   staminaPlayClearCost => get()._staminaClearCost;
     public static int   staminaAdReward => get()._staminaAdReward;
     public static float staminaRefillTime => get()._staminaRefillTime;
+    public static int   staminaPushoutItemCost => get()._staminaPushoutItemCost;
     public static int   staminaMax => get()._staminaMax;
     public static int   coinsMax => get()._coinsMax;
     public static int   coinFeedCost => get()._coinFeedCost;

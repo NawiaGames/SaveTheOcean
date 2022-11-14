@@ -16,170 +16,642 @@ MonoBehaviour:
   dataPath: Data
   version: 0
   progress:
-    _location: 3
+    _location: 2
     _locations:
     - _idx: 0
       _state: 3
+      _sublocations: 1
       _visits: 1
       _passes: 1
-      _date: -8585364616740835200
+      _date: -8585335117897385120
       _cache:
         items: []
         items2: []
         requests: []
     - _idx: 1
       _state: 3
-      _visits: 1
+      _sublocations: 2
+      _visits: 5
       _passes: 1
-      _date: -8585364615668770155
+      _date: -8585331730196967662
       _cache:
         items: []
         items2: []
         requests: []
     - _idx: 2
-      _state: 3
-      _visits: 1
-      _passes: 1
-      _date: -8585364615369360952
-      _cache:
-        items: []
-        items2: []
-        requests: []
-    - _idx: 3
       _state: 1
+      _sublocations: 0
       _visits: 2
       _passes: 0
       _date: 0
       _cache:
         items:
         - id:
+            _type: 3
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: -1.5, y: 0.5}
+        - id:
+            _type: 3
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 1.5, y: 0.5}
+        - id:
             _type: 1
             _lvl: 0
             _kind: 1
-          vgrid: {x: 1.5, y: -0.5}
+          vgrid: {x: 0.5, y: 0.5}
+        - id:
+            _type: 2
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: -1.5, y: -1.5}
         - id:
             _type: 1
-            _lvl: 1
+            _lvl: 0
             _kind: 1
-          vgrid: {x: 0.5, y: -0.5}
+          vgrid: {x: -1.5, y: -0.5}
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0.5, y: -1.5}
         - id:
             _type: 0
             _lvl: 0
             _kind: 1
           vgrid: {x: 1.5, y: -1.5}
         - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: -0.5, y: -1.5}
+        - id:
             _type: 1
             _lvl: 0
             _kind: 1
-          vgrid: {x: 0.5, y: 1.5}
+          vgrid: {x: -0.5, y: -0.5}
         - id:
-            _type: 0
-            _lvl: 4
+            _type: 2
+            _lvl: 0
             _kind: 1
-          vgrid: {x: -1.5, y: -0.5}
+          vgrid: {x: 1.5, y: -0.5}
+        - id:
+            _type: 2
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 1.5, y: 1.5}
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0.5, y: -0.5}
         - id:
             _type: 0
             _lvl: 0
             _kind: 1
-          vgrid: {x: -0.5, y: 1.5}
-        - id:
-            _type: 0
-            _lvl: 1
-            _kind: 1
-          vgrid: {x: -1.5, y: 1.5}
-        - id:
-            _type: 0
-            _lvl: 2
-            _kind: 1
-          vgrid: {x: -1.5, y: -1.5}
-        - id:
-            _type: 0
-            _lvl: 3
-            _kind: 1
-          vgrid: {x: -1.5, y: 0.5}
+          vgrid: {x: -0.5, y: 0.5}
         - id:
             _type: 5
             _lvl: 0
             _kind: 3
-          vgrid: {x: 0.5, y: -1.5}
-        items2: []
+          vgrid: {x: 0.5, y: 1.5}
+        - id:
+            _type: 4
+            _lvl: 0
+            _kind: 2
+          vgrid: {x: -0.5, y: 1.5}
+        - id:
+            _type: 3
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: -1.5, y: 1.5}
+        items2:
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 5
+            _lvl: 0
+            _kind: 3
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 2
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 2
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 2
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 3
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 3
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 4
+            _lvl: 0
+            _kind: 2
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 6
+            _lvl: 0
+            _kind: 4
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 2
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 5
+            _lvl: 0
+            _kind: 3
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 5
+            _lvl: 0
+            _kind: 3
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 6
+            _lvl: 0
+            _kind: 4
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 2
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 3
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 3
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 3
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 3
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 3
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 2
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 3
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 3
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 2
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 5
+            _lvl: 0
+            _kind: 3
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 3
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 2
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 2
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 3
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 3
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 2
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 2
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 5
+            _lvl: 0
+            _kind: 3
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 4
+            _lvl: 0
+            _kind: 2
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 5
+            _lvl: 0
+            _kind: 3
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 2
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 2
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 5
+            _lvl: 0
+            _kind: 3
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 5
+            _lvl: 0
+            _kind: 3
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 4
+            _lvl: 0
+            _kind: 2
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 3
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 2
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 3
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 2
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 2
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 3
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 5
+            _lvl: 0
+            _kind: 3
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 3
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 3
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 2
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 3
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 2
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 2
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 2
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 4
+            _lvl: 0
+            _kind: 2
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 2
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vgrid: {x: 0, y: 0}
         requests:
-        - ids:
-          - _type: 0
-            _lvl: 5
-            _kind: 1
-          - _type: 1
-            _lvl: 2
-            _kind: 1
+        - ids: []
     _locationsSpec: []
     _locationsPassedTime: 0
     _itemAppears:
+    - _type: 2
+      _lvl: 0
+      _kind: 1
     - _type: 0
+      _lvl: 0
+      _kind: 1
+    - _type: 1
+      _lvl: 0
+      _kind: 1
+    - _type: 3
       _lvl: 0
       _kind: 1
     - _type: 0
       _lvl: 1
       _kind: 1
     - _type: 1
-      _lvl: 0
+      _lvl: 1
       _kind: 1
-    - _type: 5
-      _lvl: 0
-      _kind: 3
+    - _type: 3
+      _lvl: 1
+      _kind: 1
+    - _type: 3
+      _lvl: 2
+      _kind: 1
+    - _type: 2
+      _lvl: 1
+      _kind: 1
+    - _type: 2
+      _lvl: 2
+      _kind: 1
+    - _type: 1
+      _lvl: 2
+      _kind: 1
     - _type: 0
       _lvl: 2
       _kind: 1
-    - _type: 4
-      _lvl: 0
-      _kind: 2
-    - _type: 1
-      _lvl: 1
-      _kind: 1
-    - _type: 4
-      _lvl: 1
-      _kind: 2
-    - _type: 6
-      _lvl: 0
-      _kind: 4
-    - _type: 0
-      _lvl: 3
-      _kind: 1
-    - _type: 0
-      _lvl: 4
-      _kind: 1
     - _type: 5
-      _lvl: 1
+      _lvl: 0
       _kind: 3
-    - _type: 6
-      _lvl: 1
-      _kind: 4
+    - _type: 4
+      _lvl: 0
+      _kind: 2
   economy:
-    stamina: 6
-    coins: 32
-    gems: 34
-    rewardPoints: 30
-    rewardLevel: 1
-    lastStamina: -8585364606666358827
+    stamina: 2
+    coins: 25
+    gems: 25
+    rewardPoints: 0
+    rewardLevel: 0
+    lastStamina: -8585331734277042440
   chest:
     shown: 1
-    listStamina:
-    - _type: 0
-      _lvl: 0
-      _kind: 2
-    listCoins:
-    - _type: 0
+    listStamina: []
+    listCoins: []
+    listGems: []
+  storage:
+    shown: 0
+    listItems:
+    - _type: 5
       _lvl: 0
       _kind: 3
-    listGems:
-    - _type: 0
-      _lvl: 0
-      _kind: 4
-    - _type: 0
-      _lvl: 0
-      _kind: 4
-  storage:
-    shown: 1
-    listItems: []
   splitMachine:
     _capacity: 1
   feeding:
@@ -188,15 +660,18 @@ MonoBehaviour:
     level: 0
   events:
     tutStorageBoxDone: 0
-    popupNoStamina: 0
+    popupNoStamina: 2
   gameInfo:
-    appQuitTime: -8585364605252913719
+    appQuitTime: -8585331728395313993
   animals:
     animals:
     - type: 1
       kcal: 0
       lvl: 0
     - type: 2
+      kcal: 0
+      lvl: 0
+    - type: 3
       kcal: 0
       lvl: 0
   selectedTheme: 0

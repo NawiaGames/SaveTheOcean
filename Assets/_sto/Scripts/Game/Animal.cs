@@ -64,25 +64,9 @@ public class Animal : MonoBehaviour
     else
       _feedingInfo.Show(this);  
   }
-  public void Init(GameData.GarbCats[] garbCats)
+  public void Init()
   {
-    _garbagesIds = new List<Item.ID>();
     feedingMode = Level.mode == Level.Mode.Feeding;
-
-    if(!feedingMode)
-    {
-      foreach(var gcat in garbCats)
-      {
-        var gcatup = gcat;
-        var item = GameData.Prefabs.GetGarbagePrefab(gcatup);
-        _garbagesIds.Add(item.id);
-      }
-      _garbages.AddRange(_garbagesIds);
-      foreach(var id in _garbagesIds)
-      {
-        garbagesView.Add(GameData.Prefabs.CreateStaticItem(id, _garbageInfo.itemContainer));
-      }
-    }
   }
   public void Init(List<Item.ID> ids)
   {
@@ -156,8 +140,8 @@ public class Animal : MonoBehaviour
     }
     return ret;
   }
-  public Item GetReq(Item item) => garbagesView.Find((garbage) => Item.EqType(item, garbage));
-  public bool IsReq(Item item) => (!feedingMode)? GetReq(item) != null : item.id.kind == Item.Kind.Food;
+  //public Item GetReq(Item item) => garbagesView.Find((garbage) => Item.EqType(item, garbage));
+  public bool IsReq(Item item) => !item.id.IsSpecial; //(!feedingMode)? GetReq(item) != null : item.id.kind == Item.Kind.Food;
   public void Feed(Item item)
   {
     bool next_lvl = GameState.Animals.Feed(type, item.id, _baseLevelUp);
@@ -175,44 +159,33 @@ public class Animal : MonoBehaviour
   }
   public void Put(Item item)
   {
-    //if(isReady)
+    item.gameObject.SetActive(false);
+    GameObject model = null;
+    if(isReady)
     {
-      Item it = garbagesView.Find((garbage) => Item.EqType(garbage, item));
-      if(it)
-      {
-        _garbageInfo.Remove(it.id);
-        _garbagesCleared.Add(it);
-        _garbages.Remove(it.id);
-        garbagesView.Remove(it);
-        item.gameObject.SetActive(false);
-        GameObject model = null;
-        if(isReady)
-        {
-          model = item.mdl;
-          model.transform.parent = _garbageContainer;
-          model.transform.localPosition = Vector2.zero;
-          model.SetActive(true);
-        }
-
-        if(_garbages.Count > 0)
-        {
-          if(isReady)
-          {
-            AnimThrow();
-            StartCoroutine(_animator.InvokeForAnimStateEnd("itemPush", ()=> 
-            {
-              isReady = true;
-              model.SetActive(false);
-            }));
-          }
-          isReady = false;
-        }
-        else
-        {
-          isReady = false;
-          Deactivate();
-        }
-      }
+      model = item.mdl;
+      model.transform.parent = _garbageContainer;
+      model.transform.localPosition = Vector2.zero;
+      model.SetActive(true);
     }
-  }
+
+    // if(_garbages.Count > 0)
+    // {
+      if(isReady)
+      {
+        AnimThrow();
+        StartCoroutine(_animator.InvokeForAnimStateEnd("itemPush", ()=> 
+        {
+          isReady = true;
+          model.SetActive(false);
+        }));
+      }
+      isReady = false;
+    }
+    // else
+    // {
+    //   isReady = false;
+    //   Deactivate();
+    // }
+  //}
 }

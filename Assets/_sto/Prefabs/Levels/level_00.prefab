@@ -48,6 +48,7 @@ MonoBehaviour:
   completeOnInput: 0
   tutorialPanelPrefab: {fileID: 7603621871671165641, guid: f1ac8bcfe966ac645bc3306cab5902cb, type: 3}
   tutorialSender: {fileID: 322523778237032055}
+  minViewTime: 1
   InputOverlayTargets: []
 --- !u!1 &4250567927623962291
 GameObject:
@@ -97,6 +98,7 @@ MonoBehaviour:
   completeOnInput: 1
   tutorialPanelPrefab: {fileID: 2462225775060664802, guid: 7a6a268ce61ff824e9cc3bfa9cb0cba2, type: 3}
   tutorialSender: {fileID: 3127148435573647222}
+  minViewTime: 1
   InputOverlayTargets: []
 --- !u!1 &6532669846457098774
 GameObject:
@@ -146,6 +148,7 @@ MonoBehaviour:
   completeOnInput: 0
   tutorialPanelPrefab: {fileID: 7603621871671165641, guid: 528e6b9bc42092147a663ecf65ab0f00, type: 3}
   tutorialSender: {fileID: 322523778237032055}
+  minViewTime: 1
   InputOverlayTargets: []
 --- !u!1 &8241608708883191539
 GameObject:
@@ -195,6 +198,7 @@ MonoBehaviour:
   completeOnInput: 1
   tutorialPanelPrefab: {fileID: 2462225775060664802, guid: 36bf8fdacb2b93a47868e6620938a7b4, type: 3}
   tutorialSender: {fileID: 3127148435573647222}
+  minViewTime: 1
   InputOverlayTargets: []
 --- !u!1001 &6710529463363994221
 PrefabInstance:
@@ -318,6 +322,10 @@ PrefabInstance:
     - target: {fileID: 3635494399171234414, guid: af94dd176a807204382d3b034b767ac9, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4761084756197193341, guid: af94dd176a807204382d3b034b767ac9, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4886946996522908060, guid: af94dd176a807204382d3b034b767ac9, type: 3}
       propertyPath: _dim.x

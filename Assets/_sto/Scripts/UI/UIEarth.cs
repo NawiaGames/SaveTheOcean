@@ -78,7 +78,7 @@ public class UIEarth : MonoBehaviour
     else
     {
       _btnActionInfo.text = "Play";
-      _btnStaminaInfo.text = UIDefaults.GetStaminaString(GameData.Econo.staminaPlayCost);
+      _btnStaminaInfo.text = "";//UIDefaults.GetStaminaString(GameData.Econo.staminaPlayCost);
     }
   }
 
@@ -97,7 +97,7 @@ public class UIEarth : MonoBehaviour
   {
     (int cost, Level.Mode mode)[] modes = 
     {
-      new (GameData.Econo.staminaPlayCost, Level.Mode.Standard),
+      new (GameData.Econo.staminaPlayCost * 0, Level.Mode.Standard),
       new (GameData.Econo.staminaPlayFeedCost, Level.Mode.Feeding),
       new (GameData.Econo.staminaPlayClearCost, Level.Mode.Clearing),
     };

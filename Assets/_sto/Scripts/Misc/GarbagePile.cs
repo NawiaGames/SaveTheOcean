@@ -23,18 +23,28 @@ public class GarbagePile : MonoBehaviour
     private void OnEnable() {
         Level.onStart += GeneratePile;
         Level.onUnderwaterSpawn += ItemSpawn;
+        Item.onPut += ItemPut;
     }
     private void OnDisable() {
         Level.onStart -= GeneratePile;
         Level.onUnderwaterSpawn -= ItemSpawn;
+        Item.onPut -= ItemPut;
     }
-    void GeneratePile(Level sender) {
-        GeneratePile(sender.GetUnderwaterGarbagesCnt());
+    void GeneratePile(Level sender) 
+    {
+      GeneratePile(sender.garbagesCapacity);
+        //GeneratePile(sender.GetUnderwaterGarbagesCnt());
+    }
+    void ItemPut(Item item)
+    {
+      int cnt = (int)Mathf.Pow(2, item.id.lvl) * 2;
+      for(int q = 0; q < cnt; ++q)
+        PopTrash();
     }
     void ItemSpawn(Item item)
     {
-      if(!item.id.IsSpecial)
-        PopTrash();
+      // if(!item.id.IsSpecial)
+      //   PopTrash();
     }
     void PopTrash(object sender) => PopTrash();
 

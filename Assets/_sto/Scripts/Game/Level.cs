@@ -14,6 +14,7 @@ public class Level : MonoBehaviour
   public static System.Action<Vector3> onMagnetBeg;
   public static System.Action<bool>    onMagnetEnd;
   public static System.Action<Item>    onPremiumItem, onItemCollected, onItemCleared, onUnderwaterSpawn;
+  public static System.Action          onNoStaminaToPushout;
 
   [Header("Refs")]
   [SerializeField] Transform      _itemsContainer;
@@ -41,14 +42,14 @@ public class Level : MonoBehaviour
   [SerializeField] float      _resGemsPart = 0.1f;
   [SerializeField] float      _resCoinsPart = 0.4f;
   [SerializeField] float      _resStaminaPart = 0.5f;
-  [SerializeField] LvlDesc[]  _lvlDescs;
+  //[SerializeField] LvlDesc[]  _lvlDescs;
 
-  public bool IsSolvable(){
-    var allItems = new List<GarbCats>();
-    foreach(var x in _lvlDescs)
-      allItems.AddRange(x.itemsCats);
-    return allItems.Count == allItems.Distinct().Count();
-  }
+  // public bool IsSolvable(){
+  //   var allItems = new List<GarbCats>();
+  //   foreach(var x in _lvlDescs)
+  //     allItems.AddRange(x.itemsCats);
+  //   return allItems.Count == allItems.Distinct().Count();
+  // }
 
   public enum Mode
   {
@@ -70,41 +71,41 @@ public class Level : MonoBehaviour
     Clearing,
   }
 
-  [System.Serializable]
-  public struct LvlDesc
-  {
-    [SerializeField] Animal _animal;
-    [SerializeField] GarbCats[] _itemsCats;
+  // [System.Serializable]
+  // public struct LvlDesc
+  // {
+  //   [SerializeField] Animal _animal;
+  //   [SerializeField] GarbCats[] _itemsCats;
 
-    public void IncCats(int incBy)
-    {
-      for(int i = 0; i <_itemsCats.Length ; i++)
-      {
-        var id = GameData.Prefabs.GetGarbagePrefab(_itemsCats[i]).id;
-        id.lvl = Mathf.Clamp(id.lvl + incBy, 0, id.LevelsCnt-1);
-        _itemsCats[i] = (GarbCats)(id.type * 10 + id.lvl);
-      }
-    }
+  //   public void IncCats(int incBy)
+  //   {
+  //     for(int i = 0; i <_itemsCats.Length ; i++)
+  //     {
+  //       var id = GameData.Prefabs.GetGarbagePrefab(_itemsCats[i]).id;
+  //       id.lvl = Mathf.Clamp(id.lvl + incBy, 0, id.LevelsCnt-1);
+  //       _itemsCats[i] = (GarbCats)(id.type * 10 + id.lvl);
+  //     }
+  //   }
 
-    public int GetSolutionMoveCount() {
-      var solution = 0;
-      for (int i = 0; i <_itemsCats.Length ; i++)
-        solution += (int)Mathf.Pow(2, (int)_itemsCats[i]%10);
-      return solution;
-    }
+  //   public int GetSolutionMoveCount() {
+  //     var solution = 0;
+  //     for (int i = 0; i <_itemsCats.Length ; i++)
+  //       solution += (int)Mathf.Pow(2, (int)_itemsCats[i]%10);
+  //     return solution;
+  //   }
 
-    public Animal  animal => _animal;
-    public GarbCats[] itemsCats => _itemsCats;
-    public Item items(int idx) => GameData.Prefabs.GetGarbagePrefab(_itemsCats[idx]);
-  }
+  //   public Animal  animal => _animal;
+  //   public GarbCats[] itemsCats => _itemsCats;
+  //   public Item items(int idx) => GameData.Prefabs.GetGarbagePrefab(_itemsCats[idx]);
+  // }
 
-  public int       GetNumberOfMovesToSolve(){
-    var solution = 0;
-    foreach (var animal in _lvlDescs){
-        solution += animal.GetSolutionMoveCount();
-    }
-    return solution;
-  }
+  // public int       GetNumberOfMovesToSolve(){
+  //   var solution = 0;
+  //   foreach (var animal in _lvlDescs){
+  //       solution += animal.GetSolutionMoveCount();
+  //   }
+  //   return solution;
+  // }
   public Transform GetPrimaryAnimalContainer() => _animalContainers.FirstOrDefault();  
   public int       GetUnderwaterGarbagesCnt() => _items2.Count((item) => !item.id.IsSpecial);  
 
@@ -114,12 +115,15 @@ public class Level : MonoBehaviour
   public int      points {get; set;} = 0;
   public int      stars {get; set;}
   public int      itemsCount => _items.Count + _items2.Count;
-  public int      initialItemsCnt => _initialItemsCnt;
+  //public int      initialItemsCnt => _initialItemsCnt;
   public bool     hoverItemMatch = false;
   public Vector2Int dim => _dim;
   public List<Item> listItems => _items;
   public List<Item> listItems2 => _items2;
   public List<Animal> animals => _animals;
+
+  public int         garbagesCapacity => _garbagesCapacity;
+  public int         garbagesCleared => _garbagesCleared;
   
   public bool isRegular => locationIdx < Location.SpecialLocBeg && !isPolluted;
   public bool isPolluted => GameState.Progress.Locations.GetLocationState(locationIdx) == Level.State.Polluted;
@@ -150,11 +154,14 @@ public class Level : MonoBehaviour
   Animal      _animalHovered;
   List<Item>  _items = new List<Item>();
   List<Item>  _items2 = new List<Item>();
-  int         _requestCnt = 0;
-  int         _initialItemsCnt = 0;
+
+  int         _garbagesCapacity = 0;
+  int         _garbagesCleared = 0;
+  //int         _requestCnt = 0;
+  //int         _initialItemsCnt = 0;
 
   //float       _pollutionRate = 1.0f;
-  float       _pollutionDest = 1.0f;
+  //float       _pollutionDest = 1.0f;
 
   StorageBox _storageBox;
 
@@ -265,6 +272,9 @@ public class Level : MonoBehaviour
 
     _storageBox = GetComponentInChildren<StorageBox>();
 
+    _garbagesCapacity = GameData.Levels.GetSublocation(locationIdx, GameState.Progress.Locations.GetSublocationPassed(locationIdx)).garbagesToClear;
+    _garbagesCleared = 0;
+
     onCreate?.Invoke(this);
   }
   void OnDestroy()
@@ -331,33 +341,14 @@ public class Level : MonoBehaviour
     {
       Item.ID id = new Item.ID();
       List<Item.ID> ids = new List<Item.ID>();
-      for(int q = 0; q < _lvlDescs.Length; ++q)
+      for(int q = 0; q < _garbagesCapacity / 4; ++q)
       {
-        if(isCleanupMode)
-          _lvlDescs[q].IncCats(GameState.Cleanup.level);
-
-        var lvlDesc = _lvlDescs[q];
-        _requestCnt += lvlDesc.itemsCats.Length;
-        for(int i = 0; i < lvlDesc.itemsCats.Length; ++i)
+        id.kind = Item.Kind.Garbage;
+        for(int type = 0; type < 4; ++type)
         {
-          var item = _lvlDescs[q].items(i);
-          int itemLevel = item.id.lvl;
-          id.type = item.id.type;
-          id.kind = item.id.kind;
-          id.lvl = item.id.lvl;
-          int vi = (levels_idx.Count > 0)? levels_idx[Random.Range(0, levels_idx.Count-1)] : 0;
-          if(vi < itemLevel)
-          {
-            for(int d = 0; d < 1 << (itemLevel-vi); ++d)
-            {
-              id.lvl = vi;
-              ids.Add(id);
-            }
-          }
-          else
-          {
-            ids.Add(id);
-          }
+          id.type = type;
+          id.lvl = 0;
+          ids.Add(id);
         }
       }
       ids.shuffle(ids.Count * 5);
@@ -425,7 +416,7 @@ public class Level : MonoBehaviour
     {
       Restore();
     }
-    _initialItemsCnt = itemsCount;
+    //_initialItemsCnt = itemsCount;
   }
   void Restore()
   {
@@ -450,38 +441,16 @@ public class Level : MonoBehaviour
   }
   void InitAnimals()
   {
-    for(int q = 0; q < _lvlDescs.Length; ++q)
-    {
-      if(isFeedingMode)
-      { 
-        if(!GameState.Animals.DidAnimalAppear(_lvlDescs[q].animal.type))
-          continue;
-      }
-      Animal animal = Instantiate(_lvlDescs[q].animal, _animalContainers[q]);
-      GameState.Animals.AnimalAppears(animal.type);
-      animal.Init(_lvlDescs[q].itemsCats);
-      animal.Activate(true);
-      _animals.Add(animal);
-    }
+    var anim_type = GameData.Levels.GetLocationDesc(locationIdx).animalType;
+    Animal animal = GameData.Prefabs.CreateAnimal(anim_type, _animalContainers[0]);
+    GameState.Animals.AnimalAppears(animal.type);
+    animal.Init();
+    animal.Activate(true);
+    _animals.Add(animal);
   }
   void RestoreAnimals()
   {
-    var cache = GameState.Progress.Locations.GetCache(locationIdx);
-    if(!isFeedingMode)
-    {
-      for(int q = 0; q < _lvlDescs.Length; ++q)
-      {
-        Animal animal = Instantiate(_lvlDescs[q].animal, _animalContainers[q]);
-        animal.Init(cache.requests[q].ids);
-        if(cache.requests[q].ids.Count > 0)
-          animal.Activate(true);
-        else
-          animal.SetInactive();
-        _animals.Add(animal);
-      }
-    }
-    else
-      InitAnimals();
+    InitAnimals();
   }
   //bool  firstPremium = false;
   void  AddItem(Item item)
@@ -518,9 +487,11 @@ public class Level : MonoBehaviour
 
   public float PollutionRate()
   {
-    int requests = 0;
-    _animals.ForEach((animal) => requests += animal.requests);
-    return (float)requests / _requestCnt;
+    // int requests = 0;
+    // _animals.ForEach((animal) => requests += animal.requests);
+    // return (float)requests / _requestCnt;
+
+    return (float)garbagesCleared / garbagesCapacity;
   }
   
   Item GetNearestItem(Item[] arr)
@@ -705,16 +676,26 @@ public class Level : MonoBehaviour
           }
           else if(item.id.kind == Item.Kind.Garbage)
           {
-            for(int q = 0; q < _animals.Count; ++q)
+            if(GameState.Econo.CanPushoutItem())
             {
-              var animal = _animals[q];
-              if(animal.isActive && animal.IsReq(item))
+              for(int q = 0; q < _animals.Count; ++q)
               {
-                item.ThrowToAnimal(animal.transform.position + new Vector3(0,0.5f, 0), (Item item) => {PutItemToAnim(animal, item); CacheLoc(); CheckEnd();});
-                break;
+                var animal = _animals[q];
+                if(animal.isActive)
+                {
+                  item.ThrowToAnimal(animal.transform.position + new Vector3(0,0.5f, 0), (Item item) => 
+                  {
+                    TryPushoutItem(animal, item); CacheLoc(); CheckEnd();
+                  });
+                  break;
+                }
               }
             }
-          } 
+            else
+            {  
+              onNoStaminaToPushout?.Invoke();
+            }
+          }
         }
         else
         {
@@ -806,23 +787,35 @@ public class Level : MonoBehaviour
 
     return is_hit;
   }
-  void PutItemToAnim(Animal animalHit, Item item)
+  void TryPushoutItem(Animal animalHit, Item item)
   {
-    Item.onPut?.Invoke(item);
-    if(!isFeedingMode)
-      animalHit.Put(item);
-    else
-      animalHit.Feed(item);
-    onItemCleared?.Invoke(item);
-    _grid.set(item.vgrid, 0);
-    _items.Remove(item);
-    if(item.IsInMachine)
-      _splitMachine.RemoveFromSplitSlot(item);
+    if(GameState.Econo.CanPushoutItem())
+    {
+      Item.onPut?.Invoke(item);
+      if(!isFeedingMode)
+      {
+        animalHit.Put(item);
+        GameState.Econo.stamina -= 1;
+        _garbagesCleared += (int)Mathf.Pow(2.0f, (float)item.id.lvl) * 2;
+      }
+      else
+        animalHit.Feed(item);
+      onItemCleared?.Invoke(item);
+      _grid.set(item.vgrid, 0);
+      _items.Remove(item);
+      if(item.IsInMachine)
+        _splitMachine.RemoveFromSplitSlot(item);
 
-    _pollutionDest = PollutionRate();
-    onGarbageOut?.Invoke(this);
-    SpawnItem(item.vgrid);
-    CacheLoc();
+      //_pollutionDest = PollutionRate();
+      onGarbageOut?.Invoke(this);
+      SpawnItem(item.vgrid);
+      CacheLoc();
+    }
+    else
+    {
+      onNoStaminaToPushout?.Invoke();
+      MoveItemBack(_itemSelected);
+    }
   }
   bool IsAnimalHit(TouchInputData tid)
   {
@@ -830,18 +823,10 @@ public class Level : MonoBehaviour
     var animalHit = tid.GetClosestCollider(_inputAnimRad, Animal.layerMask)?.GetComponent<Animal>() ?? null;
     if(animalHit)
     {
-      if(animalHit.IsReq(_itemSelected)) //CanPut(_itemSelected))
-      {
-        PutItemToAnim(animalHit, _itemSelected);
-        CheckEnd();
-        is_hit = true;
-        CacheLoc();
-      }
-      else
-      {
-        if(!animalHit.IsReq(_itemSelected))
-          Item.onNoPut?.Invoke(_itemSelected);
-      }
+      TryPushoutItem(animalHit, _itemSelected);
+      CheckEnd();
+      is_hit = true;
+      CacheLoc();
     }
 
     return is_hit;
@@ -966,8 +951,10 @@ public class Level : MonoBehaviour
   IEnumerator coEnd()
   {
     yield return StartCoroutine(coMoveToSB());
-
-    yield return new WaitForSeconds(2.5f);
+    yield return new WaitForSeconds(1.0f);
+    foreach(var anim in _animals)
+      anim.Deactivate();
+    yield return new WaitForSeconds(1.5f);
     succeed = true;
     onFinished?.Invoke(this);
     if(!isFeedingMode)
@@ -986,8 +973,9 @@ public class Level : MonoBehaviour
     if(isFeedingMode)
       return;
 
-    int activeAnimals = _animals.Count((animal) => animal.isActive);
-    if(!finished && activeAnimals == 0)
+    //int activeAnimals = _animals.Count((animal) => animal.isActive);
+    //if(!finished && activeAnimals == 0)
+    if(!finished && _garbagesCleared >= _garbagesCapacity)
     {
       finished = true;
       StartCoroutine(coEnd());

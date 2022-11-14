@@ -19,10 +19,12 @@ public class UIPopupStamina : MonoBehaviour
   void Awake()
   {
     UnityAdsRewarded.onCompleted += OnRewardedComplete;
+    Level.onNoStaminaToPushout += Show;
   }
   void OnDestroy()
   {
     UnityAdsRewarded.onCompleted -= OnRewardedComplete;
+    Level.onNoStaminaToPushout -= Show;
   }
   public void Show()
   {
