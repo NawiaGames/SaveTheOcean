@@ -19,7 +19,6 @@ public class Level : MonoBehaviour
   [Header("Refs")]
   [SerializeField] Transform      _itemsContainer;
   [SerializeField] Transform      _tilesContainer;
-  //[SerializeField] Transform      _animalsContainer;
   [SerializeField] Transform[]    _animalContainers;
   [SerializeField] Renderer       _waterRenderer;
   [SerializeField] RewardChest    _rewardChest;
@@ -37,20 +36,11 @@ public class Level : MonoBehaviour
   [SerializeField] float      _inputRad = 1.5f;
   [SerializeField] float      _inputAnimRad = 2.0f;
   [Header("LvlDesc")]
-  [SerializeField] float[]    _chanceToDowngradeItem = new float[6];
-  [field:SerializeField] public int  _resItemPerItems {get; private set;}= 0;
+  [SerializeField] int        _resItemPerItems = 0;
   [SerializeField] float      _resGemsPart = 0.1f;
   [SerializeField] float      _resCoinsPart = 0.4f;
   [SerializeField] float      _resStaminaPart = 0.5f;
-  //[SerializeField] LvlDesc[]  _lvlDescs;
-
-  // public bool IsSolvable(){
-  //   var allItems = new List<GarbCats>();
-  //   foreach(var x in _lvlDescs)
-  //     allItems.AddRange(x.itemsCats);
-  //   return allItems.Count == allItems.Distinct().Count();
-  // }
-
+  
   public enum Mode
   {
     Standard,
@@ -71,42 +61,7 @@ public class Level : MonoBehaviour
     Clearing,
   }
 
-  // [System.Serializable]
-  // public struct LvlDesc
-  // {
-  //   [SerializeField] Animal _animal;
-  //   [SerializeField] GarbCats[] _itemsCats;
-
-  //   public void IncCats(int incBy)
-  //   {
-  //     for(int i = 0; i <_itemsCats.Length ; i++)
-  //     {
-  //       var id = GameData.Prefabs.GetGarbagePrefab(_itemsCats[i]).id;
-  //       id.lvl = Mathf.Clamp(id.lvl + incBy, 0, id.LevelsCnt-1);
-  //       _itemsCats[i] = (GarbCats)(id.type * 10 + id.lvl);
-  //     }
-  //   }
-
-  //   public int GetSolutionMoveCount() {
-  //     var solution = 0;
-  //     for (int i = 0; i <_itemsCats.Length ; i++)
-  //       solution += (int)Mathf.Pow(2, (int)_itemsCats[i]%10);
-  //     return solution;
-  //   }
-
-  //   public Animal  animal => _animal;
-  //   public GarbCats[] itemsCats => _itemsCats;
-  //   public Item items(int idx) => GameData.Prefabs.GetGarbagePrefab(_itemsCats[idx]);
-  // }
-
-  // public int       GetNumberOfMovesToSolve(){
-  //   var solution = 0;
-  //   foreach (var animal in _lvlDescs){
-  //       solution += animal.GetSolutionMoveCount();
-  //   }
-  //   return solution;
-  // }
-  public Transform GetPrimaryAnimalContainer() => _animalContainers.FirstOrDefault();  
+  public Transform GetPrimaryAnimalContainer() => _animalContainers.FirstOrDefault();
   public int       GetUnderwaterGarbagesCnt() => _items2.Count((item) => !item.id.IsSpecial);  
 
   public int      locationIdx {get; private set;} = -1;
@@ -122,8 +77,10 @@ public class Level : MonoBehaviour
   public List<Item> listItems2 => _items2;
   public List<Animal> animals => _animals;
 
-  public int         garbagesCapacity => _garbagesCapacity;
-  public int         garbagesCleared => _garbagesCleared;
+  public int         garbagesCapacity(int garb_type) => _garbagesCapacity[garb_type];
+  public int         garbagesCleared(int garb_type) => _garbagesCleared[garb_type];
+  public int         totalGarbagesCapacity => _garbagesCapacity.Sum();
+  public int         totalGarbagesCleared => _garbagesCleared.Sum();
   
   public bool isRegular => locationIdx < Location.SpecialLocBeg && !isPolluted;
   public bool isPolluted => GameState.Progress.Locations.GetLocationState(locationIdx) == Level.State.Polluted;
@@ -147,21 +104,17 @@ public class Level : MonoBehaviour
   List<Animal> _animals = new List<Animal>();
   MaterialPropertyBlock _mpb = null;
 
-  Item        _itemSelected;
-  Item        _itemHovered;
-  Item        _itemTileSelected;
-  GridTile    _tileSelected;  
-  Animal      _animalHovered;
-  List<Item>  _items = new List<Item>();
-  List<Item>  _items2 = new List<Item>();
-
-  int         _garbagesCapacity = 0;
-  int         _garbagesCleared = 0;
-  //int         _requestCnt = 0;
-  //int         _initialItemsCnt = 0;
-
-  //float       _pollutionRate = 1.0f;
-  //float       _pollutionDest = 1.0f;
+  Item          _itemSelected;
+  Item          _itemHovered;
+  Item          _itemTileSelected;
+  GridTile      _tileSelected;  
+  Animal        _animalHovered;
+  List<Item>    _items = new List<Item>();
+  List<Item>    _items2 = new List<Item>();
+  
+  GarbagePile[] _garbagePiles;
+  int[]         _garbagesCapacity = new int[4];
+  int[]         _garbagesCleared = new int[4];
 
   StorageBox _storageBox;
 
@@ -272,8 +225,12 @@ public class Level : MonoBehaviour
 
     _storageBox = GetComponentInChildren<StorageBox>();
 
-    _garbagesCapacity = GameData.Levels.GetSublocation(locationIdx, GameState.Progress.Locations.GetSublocationPassed(locationIdx)).garbagesToClear;
-    _garbagesCleared = 0;
+    _garbagePiles = GetComponentsInChildren<GarbagePile>();
+    _garbagesCapacity = GameData.Levels.GetLocationDesc(locationIdx).garbages.clone();
+    _garbagesCleared.fill(0);
+    
+    int sublocation = GameState.Progress.Locations.GetSublocationPassed(locationIdx);
+    _dim = GameData.Levels.GetSublocation(locationIdx, sublocation).dim;
 
     onCreate?.Invoke(this);
   }
@@ -308,16 +265,6 @@ public class Level : MonoBehaviour
   }
   void  Init()
   {
-    List<int> levels_idx = new List<int>();
-    levels_idx.Capacity = 1000;
-    for(int q = 0; q < _chanceToDowngradeItem.Length; ++q)
-    {
-      int cnt = (int)(1000 * _chanceToDowngradeItem[q]);
-      for(int w = 0; w < cnt; ++w)
-        levels_idx.Add(q);
-    }
-    levels_idx.shuffle(2000);
-
     _grid.Init(dim, _gridSpace);
 
     List<Vector2> vs = new List<Vector2>();
@@ -341,11 +288,11 @@ public class Level : MonoBehaviour
     {
       Item.ID id = new Item.ID();
       List<Item.ID> ids = new List<Item.ID>();
-      for(int q = 0; q < _garbagesCapacity / 4; ++q)
+      for(int type = 0; type < _garbagesCapacity.GetLength(0); ++type)
       {
-        id.kind = Item.Kind.Garbage;
-        for(int type = 0; type < 4; ++type)
+        for(int q = 0; q < _garbagesCapacity[type]; ++q)
         {
+          id.kind = Item.Kind.Garbage;
           id.type = type;
           id.lvl = 0;
           ids.Add(id);
@@ -417,6 +364,13 @@ public class Level : MonoBehaviour
       Restore();
     }
     //_initialItemsCnt = itemsCount;
+
+    InitGarbagePiles();
+  }
+  void InitGarbagePiles()
+  {
+    for(int q = 0; q < _garbagePiles.Length; ++q)
+      _garbagePiles[q].Init(q, _items2.Count((Item it) => it.id.type == q));
   }
   void Restore()
   {
@@ -491,7 +445,7 @@ public class Level : MonoBehaviour
     // _animals.ForEach((animal) => requests += animal.requests);
     // return (float)requests / _requestCnt;
 
-    return (float)garbagesCleared / garbagesCapacity;
+    return (float)totalGarbagesCleared / totalGarbagesCapacity;
   }
   
   Item GetNearestItem(Item[] arr)
@@ -587,11 +541,7 @@ public class Level : MonoBehaviour
     if(!_itemSelected)
       return;
 
-    bool is_hit = IsItemHit(tid) || IsAnimalHit(tid) || IsTileHit(tid) || IsSplitMachineHit(tid) || IsStorageHit(tid) || IsChestHit(tid);
-    if(!is_hit)
-    {
-      MoveItemBack(_itemSelected);
-    }
+    bool isHit = IsItemHit(tid) || IsAnimalHit(tid) || IsTileHit(tid) || IsStorageHit(tid) || IsChestHit(tid);
     _itemSelected = null;
     _grid.hovers(false);
     _itemHovered = null;
@@ -674,28 +624,6 @@ public class Level : MonoBehaviour
             SpawnItem(item.vgrid);
             CacheLoc();
           }
-          else if(item.id.kind == Item.Kind.Garbage)
-          {
-            if(GameState.Econo.CanPushoutItem())
-            {
-              for(int q = 0; q < _animals.Count; ++q)
-              {
-                var animal = _animals[q];
-                if(animal.isActive)
-                {
-                  item.ThrowToAnimal(animal.transform.position + new Vector3(0,0.5f, 0), (Item item) => 
-                  {
-                    TryPushoutItem(animal, item); CacheLoc(); CheckEnd();
-                  });
-                  break;
-                }
-              }
-            }
-            else
-            {  
-              onNoStaminaToPushout?.Invoke();
-            }
-          }
         }
         else
         {
@@ -759,6 +687,34 @@ public class Level : MonoBehaviour
     _itemTileSelected = null;
     
   }
+  bool TryPushoutItem(Animal animalHit, Item item)
+  {
+    bool pushed = false;
+    if(!item.id.IsSpecial)
+    {
+      Item.onPut?.Invoke(item);
+      if(!isFeedingMode)
+      {
+        animalHit.Put(item);
+        GameState.Econo.stamina -= 1;
+        _garbagesCleared[item.id.type] += 1<<item.id.lvl;
+        pushed = true;
+      }
+      else
+        animalHit.Feed(item);
+      onItemCleared?.Invoke(item);
+      _grid.set(item.vgrid, 0);
+      _items.Remove(item);
+      if(item.IsInMachine)
+        _splitMachine.RemoveFromSplitSlot(item);
+
+      //_pollutionDest = PollutionRate();
+      onGarbageOut?.Invoke(this);
+      SpawnItem(item.vgrid);
+      CacheLoc();
+    }
+    return pushed;
+  }
   bool IsItemHit(TouchInputData tid)
   {
     bool is_hit = false;
@@ -780,42 +736,12 @@ public class Level : MonoBehaviour
         CacheLoc();  
       }
     }
-    if(is_hit && !is_merged)
+    if(!is_hit || (is_hit && !is_merged))
     {
       MoveItemBack(_itemSelected);
     }
 
     return is_hit;
-  }
-  void TryPushoutItem(Animal animalHit, Item item)
-  {
-    if(GameState.Econo.CanPushoutItem())
-    {
-      Item.onPut?.Invoke(item);
-      if(!isFeedingMode)
-      {
-        animalHit.Put(item);
-        GameState.Econo.stamina -= 1;
-        _garbagesCleared += (int)Mathf.Pow(2.0f, (float)item.id.lvl) * 2;
-      }
-      else
-        animalHit.Feed(item);
-      onItemCleared?.Invoke(item);
-      _grid.set(item.vgrid, 0);
-      _items.Remove(item);
-      if(item.IsInMachine)
-        _splitMachine.RemoveFromSplitSlot(item);
-
-      //_pollutionDest = PollutionRate();
-      onGarbageOut?.Invoke(this);
-      SpawnItem(item.vgrid);
-      CacheLoc();
-    }
-    else
-    {
-      onNoStaminaToPushout?.Invoke();
-      MoveItemBack(_itemSelected);
-    }
   }
   bool IsAnimalHit(TouchInputData tid)
   {
@@ -823,62 +749,45 @@ public class Level : MonoBehaviour
     var animalHit = tid.GetClosestCollider(_inputAnimRad, Animal.layerMask)?.GetComponent<Animal>() ?? null;
     if(animalHit)
     {
-      TryPushoutItem(animalHit, _itemSelected);
-      CheckEnd();
-      is_hit = true;
-      CacheLoc();
-    }
-
-    return is_hit;
-  }
-  bool IsSplitMachineHit(TouchInputData tid)
-  {
-    bool is_hit = false;
-    var splitMachineHit = tid.GetClosestCollider(0.5f);
-    bool is_split_machine = _splitMachine?.IsDropSlot(splitMachineHit) ?? false;
-    if(is_split_machine)
-    {
-      bool itemFromSplitMachine = _itemSelected.IsInMachine && _splitMachine.capacity == 1;
-      if(_splitMachine.IsReady || itemFromSplitMachine)
+      if(GameState.Econo.CanPushoutItem())
       {
-        if(_itemSelected.IsSplitable && !_itemSelected.id.IsSpecial)
-        {
-          if(itemFromSplitMachine)
-            _splitMachine.RemoveFromSplitSlot(_itemSelected);
-          _splitMachine.DropDone();
-          _grid.set(_itemSelected.vgrid, 0);
-          _splitMachine.AddToDropSlot(_itemSelected);
-          is_hit = true;
-        }
-        else
-          _splitMachine.DropNoSplittable();
+        is_hit = true;
+        if(!TryPushoutItem(animalHit, _itemSelected))
+          MoveItemBack(_itemSelected);
+        CheckEnd();
+        CacheLoc();
       }
       else
-        _splitMachine.DropNoCapacity();
-
-      SplitMachine.onDropped?.Invoke(_splitMachine);
+      {
+        onNoStaminaToPushout?.Invoke();
+      }
     }
+
+    if(!is_hit)
+      MoveItemBack(_itemSelected);
+
     return is_hit;
   }
   bool IsTileHit(TouchInputData tid)
   {
     bool is_hit = false;
-    //if(_itemSelected.IsInMachine)
+    var tileHit = tid.GetClosestObjectInRange<GridTile>(_inputRad);
+    if(tileHit && _grid.get(tileHit.vgrid) == 0)
     {
-      var tileHit = tid.GetClosestObjectInRange<GridTile>(_inputRad);
-      if(tileHit && _grid.get(tileHit.vgrid) == 0)
-      {
-        _grid.set(_itemSelected.vgrid, 0);
-        _itemSelected.vgrid = tileHit.vgrid;
-        _grid.set(_itemSelected.vgrid, 1, _itemSelected.id.kind);
-        _itemSelected.Select(false);
-        _splitMachine.RemoveFromSplitSlot(_itemSelected);
-        _itemSelected.MoveToGrid();
-        is_hit = true;
-        _grid.hovers(false);
-        CacheLoc();
-      }
+      _grid.set(_itemSelected.vgrid, 0);
+      _itemSelected.vgrid = tileHit.vgrid;
+      _grid.set(_itemSelected.vgrid, 1, _itemSelected.id.kind);
+      _itemSelected.Select(false);
+      _splitMachine.RemoveFromSplitSlot(_itemSelected);
+      _itemSelected.MoveToGrid();
+      is_hit = true;
+      _grid.hovers(false);
+      CacheLoc();
     }
+    
+    if(!is_hit)
+      MoveItemBack(_itemSelected);
+
     return is_hit;
   }
   bool IsStorageHit(TouchInputData tid)
@@ -897,8 +806,12 @@ public class Level : MonoBehaviour
         SpawnItem(_itemSelected.vgrid);
       }
       else
+      {
         storage.NoPush(_itemSelected.id);
+      }
     }
+    if(!is_hit)
+      MoveItemBack(_itemSelected);
 
     return is_hit;
   }
@@ -907,7 +820,10 @@ public class Level : MonoBehaviour
     bool is_hit = false;
     var chest = tid.GetClosestObjectInRange<RewardChest>(_inputRad, RewardChest.layerMask);
     if(chest)
+    {
       chest.NoPush(_itemSelected.id);
+      MoveItemBack(_itemSelected);
+    }
     
     return is_hit;
   }
@@ -960,8 +876,8 @@ public class Level : MonoBehaviour
     if(!isFeedingMode)
     {
       //GameState.Progress.Locations.SetLocationFinished();
-      bool passedLoc = GameState.Progress.Locations.SetSublocationPassed(GameState.Progress.locationIdx);
-      if(!isCleanupMode && passedLoc)
+      //bool passedLoc = GameState.Progress.Locations.SetSublocationPassed(GameState.Progress.locationIdx);
+      if(!isCleanupMode)// && passedLoc)
         GameState.Progress.Locations.UnlockNextLocation();
     }
     yield return new WaitForSeconds(0.5f);
@@ -975,7 +891,7 @@ public class Level : MonoBehaviour
 
     //int activeAnimals = _animals.Count((animal) => animal.isActive);
     //if(!finished && activeAnimals == 0)
-    if(!finished && _garbagesCleared >= _garbagesCapacity)
+    if(!finished && totalGarbagesCleared >= totalGarbagesCapacity)
     {
       finished = true;
       StartCoroutine(coEnd());

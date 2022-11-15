@@ -15,40 +15,37 @@ public class GarbagePile : MonoBehaviour
     [SerializeField] Vector2 areaClamp = new Vector2(1, 5);
     float _areaMultiplier(int itemCount) => Mathf.Clamp((Mathf.RoundToInt(itemCount/100f) + 1), areaClamp.x, areaClamp.y);
     [SerializeField] ParticleSystem trashPopFX = null;
+    int  _garbageType = 0;
     
     Queue<GameObject> _pileQueue = new Queue<GameObject>();
     
     Vector3 GetRandomPointInArea(float radius, float height) => new Vector3(Random.Range(-radius, radius), Random.Range(0f, height), Random.Range(-radius, radius));
 
     private void OnEnable() {
-        Level.onStart += GeneratePile;
+        //Level.onStart += GeneratePile;
         Level.onUnderwaterSpawn += ItemSpawn;
-        Item.onPut += ItemPut;
+        //Item.onPut += ItemPut;
     }
     private void OnDisable() {
-        Level.onStart -= GeneratePile;
+        //Level.onStart -= GeneratePile;
         Level.onUnderwaterSpawn -= ItemSpawn;
-        Item.onPut -= ItemPut;
+        //Item.onPut -= ItemPut;
     }
-    void GeneratePile(Level sender) 
+    public void Init(int garbageType, int garbageCnt)
     {
-      GeneratePile(sender.garbagesCapacity);
-        //GeneratePile(sender.GetUnderwaterGarbagesCnt());
-    }
-    void ItemPut(Item item)
-    {
-      int cnt = (int)Mathf.Pow(2, item.id.lvl) * 2;
-      for(int q = 0; q < cnt; ++q)
-        PopTrash();
+      _garbageType = garbageType;
+      GeneratePile(garbageCnt);
     }
     void ItemSpawn(Item item)
     {
-      // if(!item.id.IsSpecial)
-      //   PopTrash();
+      if(!item.id.IsSpecial && item.id.type == _garbageType)
+      {
+        PopTrash();
+      }
     }
     void PopTrash(object sender) => PopTrash();
 
-    public void GeneratePile(int quantity){
+    void GeneratePile(int quantity){
         _pileQueue = new Queue<GameObject>();
         var _pileRadius = _areaMultiplier(quantity) * pileSize.x;
 

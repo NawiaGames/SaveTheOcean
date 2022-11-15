@@ -141,7 +141,13 @@ public static class StringEx
 }
 public static class ListEx
 {
-  public static void shuffle<T>(this List<T> list, int swap_cnt)
+  public static T     first<T>(this List<T> list) => list[0];
+  public static T     last<T>(this List<T> list, int idx_from_end = 0) => list[list.Count - 1 + idx_from_end];
+  public static int   last_idx<T>(this List<T> list) => list.Count - 1;
+  public static T     get_random<T>(this List<T> list) => list[Random.Range(0, list.Count)];
+  public static int   get_random_idx<T>(this List<T> list) => Random.Range(0,list.Count);
+  public static List<T> clone<T>(this List<T> list) => new List<T>(list);
+  public static void  shuffle<T>(this List<T> list, int swap_cnt)
   {
     if(list != null && list.Count > 0)
     {
@@ -155,30 +161,6 @@ public static class ListEx
       }
     }
   }
-  public static T get_random<T>(this List<T> list)
-  {
-    return list[Random.Range(0, list.Count)];
-  }
-  public static int get_random_idx<T>(this List<T> list)
-  {
-    return Random.Range(0,list.Count); 
-  }
-  public static T first<T>(this List<T> list)
-  {
-    return list[0];
-  }  
-  public static T last<T>(this List<T> list, int idx_from_end = 0)
-  {
-    return list[list.Count - 1 + idx_from_end];
-  }
-  public static int last_idx<T>(this List<T> list)
-  {
-    return list.Count - 1;
-  }
-  public static List<T> clone<T>(this List<T> list)
-  {
-    return new List<T>(list);
-  }
   public static void swap<T>(this List<T> list, int idx0, int idx1)
   {
     T tmp = list[idx0];
@@ -188,27 +170,14 @@ public static class ListEx
 }
 public static class ArrayEx
 {
-  public static T get_random<T>(this T[] array)
-  {
-    return array[Random.Range(0, array.Length)];
-  }
-  public static int get_random_idx<T>(this T[] array)
-  {
-    return Random.Range(0, array.Length);
-  }  
-  public static T first<T>(this T[] array)
-  {
-    return array[0];
-  }
-  public static T last<T>(this T[] array, int idx_from_end = 0)
-  {
-    return array[array.Length - 1 + idx_from_end];
-  }
-  public static int last_idx<T>(this T[] array)
-  {
-    return array.Length-1;
-  }
-  public static void shuffle<T>(this T[] array, int swap_cnt)
+  public static void  fill<T>(this T[] array, T val) => System.Array.Fill(array, val);
+  public static T     get_random<T>(this T[] array) => array[Random.Range(0, array.Length)];
+  public static int   get_random_idx<T>(this T[] array) => Random.Range(0, array.Length);  
+  public static T     first<T>(this T[] array) => array[0];  
+  public static T     last<T>(this T[] array, int idx_from_end = 0) => array[array.Length - 1 + idx_from_end];
+  public static int   last_idx<T>(this T[] array) => array.Length-1;
+  public static T[]   clone<T>(this T[] array) => (T[])array.Clone();
+  public static void  shuffle<T>(this T[] array, int swap_cnt)
   {
     for(int q = 0; q < swap_cnt; ++q)
     {

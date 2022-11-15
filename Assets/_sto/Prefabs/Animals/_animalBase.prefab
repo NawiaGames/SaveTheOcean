@@ -269,6 +269,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: garbageInfo
       objectReference: {fileID: 0}
+    - target: {fileID: 4068450952047380844, guid: b8cd97d1e57090e488e3ab6c2469e881, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7373343789543755764, guid: b8cd97d1e57090e488e3ab6c2469e881, type: 3}
       propertyPath: m_Enabled
       value: 0

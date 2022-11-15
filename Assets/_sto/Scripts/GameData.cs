@@ -69,23 +69,23 @@ public class GameData : ScriptableObject
   [System.Serializable]
   public class Sublocation
   {
-    [SerializeField] Level       _levelPrefab;
     [SerializeField] Vector2Int  _dim;
-    [SerializeField] int         _garbagesToClear = 100;
-
-    public Level      levelPrefab => _levelPrefab;
     public Vector2Int dim => _dim;
-    public int        garbagesToClear => _garbagesToClear;
   }
   [System.Serializable]
   public class LevelDesc
   {
     [SerializeField] Animal.Type   _animalType;
+    [SerializeField] Level         _levelPrefab;
     [SerializeField] Sublocation[] _sublocations;
+    [SerializeField] int[]         _garbages = new int[4]{10,12,14,16};
 
     public Animal.Type animalType => _animalType;
+    public Level       levelPrefab => _levelPrefab;
     public int         sublocationsCnt => _sublocations.Length;
     public Sublocation sublocation(int idx) => _sublocations[idx];
+    public int[]       garbages => _garbages;
+    public int         garbagesCnt(int garbage_type) => _garbages[garbage_type];
   }
 
   [System.Serializable]
@@ -235,17 +235,9 @@ public class GameData : ScriptableObject
   }
   public static class Levels
   {
-    //static public Level       GetPrefab(int idx) => get()._listLevels[idx];
-    //static public Level       CreateLevel(int idx, Transform levelsContainer) => Instantiate(get()._listLevels[idx], levelsContainer);
-    static public Level       CreateLevel(int idx, Transform levelsContainer)
-    {
-      int sub_idx = GameState.Progress.Locations.GetSublocationPassed(idx);
-      return Instantiate(GetSublocation(idx, sub_idx).levelPrefab, levelsContainer);
-    }
+    static public Level       CreateLevel(int idx, Transform levelsContainer) => Instantiate(GetLocationDesc(idx).levelPrefab, levelsContainer);
     static public Level       CreateFeedingLevel(Transform levelsContainer) => Instantiate(get()._levelFeeding, levelsContainer);
     static public Level       CreateClearingLevel(Transform levelsContainer) => Instantiate(get()._levelClearing, levelsContainer);
-    //static public int         levelsCnt => get()._listLevels.Count;
-    //static public Vector2Int feedingDim => get()._feedingBoardDim;
     static public int         GetFeedingAvailLoc() => get()._feedingAvailLoc;
     static public int         GetClearingAvailLoc() => get()._clearingAvailLoc;
     static public LevelDesc   GetLocationDesc(int level_idx) => (level_idx < get()._levelsDesc.Length)? get()._levelsDesc[level_idx] : null;

@@ -165,6 +165,7 @@ public class EffectsManager : MonoBehaviour
     void OnItemPut(Item sender)
     {
       PlayFXAtPosition(fxHit, sender.transform.position, 0, false);
+      infoLblMan.ShowTextPopup(sender.transform.position + new Vector3(0, 1.0f, 0), UIDefaults.GetStaminaString(-GameData.Econo.staminaPushoutItemCost));
     }
     void OnItemNoPut(Item sender)
     {
