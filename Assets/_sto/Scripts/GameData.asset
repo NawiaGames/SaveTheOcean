@@ -89,14 +89,14 @@ MonoBehaviour:
   - _animalType: 1
     _levelPrefab: {fileID: 2229698086017596401, guid: 26112caae72b86d46a016484bf618140, type: 3}
     _sublocations:
-    - _dim: {x: 3, y: 2}
+    - _dim: {x: 3, y: 4}
     _garbages: 04000000040000000400000004000000
   - _animalType: 2
     _levelPrefab: {fileID: 2229698086017596401, guid: 1bf49517c8dd6314d95996effc4bc308, type: 3}
     _sublocations:
     - _dim: {x: 4, y: 3}
     - _dim: {x: 4, y: 4}
-    _garbages: 0a0000000c0000000e00000010000000
+    _garbages: 08000000080000000800000008000000
   - _animalType: 3
     _levelPrefab: {fileID: 2229698086017596401, guid: 7432c63a0628fd14f907e9254a41adec, type: 3}
     _sublocations:

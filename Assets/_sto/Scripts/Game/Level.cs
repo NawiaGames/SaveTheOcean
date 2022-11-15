@@ -9,7 +9,7 @@ using GarbCats = GameData.GarbCats;
 
 public class Level : MonoBehaviour
 {
-  public static System.Action<Level>   onCreate, onStart, onGarbageOut, onNoRoomOnGrid, onItemHovered, onAnimalHovered;
+  public static System.Action<Level>   onCreate, onStart, onGarbageOut, onNoRoomOnGrid, onItemHovered, onAnimalHovered, onSublocCleared;
   public static System.Action<Level>   onDone, onFinished, onHide, onDestroy;
   public static System.Action<Vector3> onMagnetBeg;
   public static System.Action<bool>    onMagnetEnd;
@@ -70,19 +70,11 @@ public class Level : MonoBehaviour
   public int      points {get; set;} = 0;
   public int      stars {get; set;}
   public int      itemsCount => _items.Count + _items2.Count;
-  //public int      initialItemsCnt => _initialItemsCnt;
   public bool     hoverItemMatch = false;
   public Vector2Int dim => _dim;
   public List<Item> listItems => _items;
   public List<Item> listItems2 => _items2;
   public List<Animal> animals => _animals;
-
-
-
-  //public int         garbagesCapacity(int garb_type) => _garbagesCapacity[garb_type];
-  //public int         garbagesCleared(int garb_type) => _garbagesCleared[garb_type];
-  //public int         totalGarbages => _garbagesCnt;
-  //public int         totalGarbagesCleared => _garbagesCleared.Sum();
 
   public bool isRegular => locationIdx < Location.SpecialLocBeg && !isPolluted;
   public bool isPolluted => GameState.Progress.Locations.GetLocationState(locationIdx) == Level.State.Polluted;
@@ -115,8 +107,10 @@ public class Level : MonoBehaviour
   List<Item>    _items2 = new List<Item>();
   
   int           _garbagesCleared = 0;
-  int           _initialGarbagesCnt = 0;
+  int           _garbagesInitialCnt => GameData.Levels.GetGabrbagesCnt(locationIdx);
   GarbagePile[] _garbagePiles;
+  int           _sublocation_idx = 0;
+  int           _sublocations = 0;
 
   StorageBox _storageBox;
 
@@ -229,8 +223,9 @@ public class Level : MonoBehaviour
 
     _garbagePiles = GetComponentsInChildren<GarbagePile>();
     
-    int sublocation = GameState.Progress.Locations.GetSublocationPassed(locationIdx);
-    _dim = GameData.Levels.GetSublocation(locationIdx, sublocation).dim;
+    _sublocations = GameData.Levels.GetLocationDesc(locationIdx).sublocationsCnt;
+    _sublocation_idx = GameState.Progress.Locations.GetSublocationPassed(locationIdx);
+    _dim = GameData.Levels.GetSublocation(locationIdx, _sublocation_idx).dim;
 
     onCreate?.Invoke(this);
   }
@@ -365,8 +360,6 @@ public class Level : MonoBehaviour
       Restore();
     }
     
-    _initialGarbagesCnt = _items.Count((it) => it.id.kind == Item.Kind.Garbage) + _items2.Count((it) => it.id.kind == Item.Kind.Garbage);
-
     InitGarbagePiles();
   }
   void InitGarbagePiles()
@@ -430,8 +423,7 @@ public class Level : MonoBehaviour
   {
     item.Select(false);
     item.MoveBack();
-    if(!item.IsInMachine)
-      _grid.set(item.vgrid, 1, item.id.kind);
+    _grid.set(item.vgrid, 1, item.id.kind);
   }  
   void  DestroyItem(Item item)
   {
@@ -443,7 +435,7 @@ public class Level : MonoBehaviour
 
   public float PollutionRate()
   {
-    return (float)_garbagesCleared / _initialGarbagesCnt;
+    return (float)_garbagesCleared / _garbagesInitialCnt;
   }
   
   Item GetNearestItem(Item[] arr)
@@ -461,10 +453,15 @@ public class Level : MonoBehaviour
   }
   public void OnInputBeg(TouchInputData tid)
   {
+    OnInputBegMove(tid);
+  }
+  public void OnInputBegMove(TouchInputData tid)
+  {
     _itemSelected = null;
     _itemSelected = tid.GetClosestCollider(_inputRad, Item.layerMask)?.GetComponent<Item>() ?? null;
     _itemSelected?.Select(true);
     _itemHovered = null;
+    //_itemTileSelected = null;
     voffs = Vector3.zero;
   }
   Vector3 voffs = Vector3.zero;
@@ -506,8 +503,8 @@ public class Level : MonoBehaviour
           {
             hoverItemMatch = nearestAnimal.CanPut(_itemSelected);
             onAnimalHovered?.Invoke(this);
-            if(!isFeedingMode && hoverItemMatch)
-              nearestAnimal.AnimTalk();
+            // if(!isFeedingMode && hoverItemMatch)
+            //   nearestAnimal.AnimTalk();
           }
         }
         _animalHovered = nearestAnimal;
@@ -539,7 +536,13 @@ public class Level : MonoBehaviour
     if(!_itemSelected)
       return;
 
-    bool isHit = IsItemHit(tid) || IsAnimalHit(tid) || IsTileHit(tid) || IsStorageHit(tid) || IsChestHit(tid);
+    bool move_back = false;
+    bool none_hit = IsItemHit(tid, ref move_back) && IsAnimalHit(tid, ref move_back) && IsTileHit(tid, ref move_back) && IsStorageHit(tid, ref move_back) && IsChestHit(tid, ref move_back);
+    if(move_back || none_hit)
+      MoveItemBack(_itemSelected);
+    else  
+      DeselectTile();
+      
     _itemSelected = null;
     _grid.hovers(false);
     _itemHovered = null;
@@ -621,6 +624,11 @@ public class Level : MonoBehaviour
             item.Hide();
             SpawnItem(item.vgrid);
             CacheLoc();
+            DeselectTile();
+          }
+          else
+          {
+            SelectTile(item);
           }
         }
         else
@@ -683,7 +691,6 @@ public class Level : MonoBehaviour
       _tileSelected.Hover(false);
     _tileSelected = null;
     _itemTileSelected = null;
-    
   }
   bool TryPushoutItem(Animal animalHit, Item item)
   {
@@ -713,14 +720,12 @@ public class Level : MonoBehaviour
     }
     return pushed;
   }
-  bool IsItemHit(TouchInputData tid)
+  bool IsItemHit(TouchInputData tid, ref bool move_back)
   {
-    bool is_hit = false;
+    bool check_next = true;
     var itemHit = GetNearestItem(tid.GetObjectsInRange<Item>(_inputRad, Item.layerMask, true));//     tid.GetClosestCollider(_inputRad, Item.layerMask)?.GetComponent<Item>() ?? null;
-    bool is_merged = false;
     if(itemHit && itemHit != _itemSelected && !itemHit.IsInMachine)
     {
-      is_hit = true;
       var newItem = Item.Merge(_itemSelected, itemHit, _items);
       if(newItem)
       {
@@ -730,100 +735,93 @@ public class Level : MonoBehaviour
         newItem.Show();
         GameState.Progress.Items.ItemAppears(newItem.id);
         SpawnItem(_itemSelected.vgrid);
-        is_merged = true;
-        CacheLoc();  
+        CacheLoc();
+        check_next = false;
       }
-    }
-    if(!is_hit || (is_hit && !is_merged))
-    {
-      MoveItemBack(_itemSelected);
+      else
+        move_back |= true;
     }
 
-    return is_hit;
+    return check_next;
   }
-  bool IsAnimalHit(TouchInputData tid)
+  bool IsAnimalHit(TouchInputData tid, ref bool move_back)
   {
-    bool is_hit = false;
+    bool check_next = true;
     var animalHit = tid.GetClosestCollider(_inputAnimRad, Animal.layerMask)?.GetComponent<Animal>() ?? null;
     if(animalHit)
     {
       if(GameState.Econo.CanPushoutItem())
       {
-        is_hit = true;
+        check_next = false;
         if(!TryPushoutItem(animalHit, _itemSelected))
-          MoveItemBack(_itemSelected);
+          move_back |= true;
         CheckEnd();
         CacheLoc();
       }
       else
       {
         onNoStaminaToPushout?.Invoke();
+        move_back |= true;
       }
     }
 
-    if(!is_hit)
-      MoveItemBack(_itemSelected);
-
-    return is_hit;
+    return check_next;
   }
-  bool IsTileHit(TouchInputData tid)
+  bool IsTileHit(TouchInputData tid, ref bool move_back)
   {
-    bool is_hit = false;
+    bool check_next = true;
     var tileHit = tid.GetClosestObjectInRange<GridTile>(_inputRad);
     if(tileHit && _grid.get(tileHit.vgrid) == 0)
     {
+      check_next = false;
       _grid.set(_itemSelected.vgrid, 0);
       _itemSelected.vgrid = tileHit.vgrid;
       _grid.set(_itemSelected.vgrid, 1, _itemSelected.id.kind);
       _itemSelected.Select(false);
       _splitMachine.RemoveFromSplitSlot(_itemSelected);
       _itemSelected.MoveToGrid();
-      is_hit = true;
       _grid.hovers(false);
       CacheLoc();
     }
-    
-    if(!is_hit)
-      MoveItemBack(_itemSelected);
 
-    return is_hit;
+    return check_next;
   }
-  bool IsStorageHit(TouchInputData tid)
+  bool IsStorageHit(TouchInputData tid, ref bool move_back)
   {
-    bool is_hit = false;
+    bool check_next = true;
     var storage = tid.GetClosestObjectInRange<StorageBox>(_inputRad, StorageBox.layerMask);
     if(storage)
     {
+      check_next = false;
       if(_itemSelected.id.IsSpecial)
       {
         storage.Push(_itemSelected.id);
         _items.Remove(_itemSelected);
         _grid.set(_itemSelected.vgrid, 0);
         _itemSelected.Hide();
-        is_hit = true;
         SpawnItem(_itemSelected.vgrid);
       }
       else
       {
         storage.NoPush(_itemSelected.id);
+        move_back |= true;
       }
     }
-    if(!is_hit)
-      MoveItemBack(_itemSelected);
 
-    return is_hit;
+    return check_next;
   }
-  bool IsChestHit(TouchInputData tid)
+  bool IsChestHit(TouchInputData tid, ref bool move_back)
   {
-    bool is_hit = false;
+    bool check_next = true;
     var chest = tid.GetClosestObjectInRange<RewardChest>(_inputRad, RewardChest.layerMask);
     if(chest)
     {
+      check_next = false;
       chest.NoPush(_itemSelected.id);
-      MoveItemBack(_itemSelected);
+      move_back |= true;
     }
     
-    return is_hit;
+    return check_next;
   }
   bool IsTutorial<T>() where T : TutorialSystem.TutorialStep
   {
@@ -840,6 +838,10 @@ public class Level : MonoBehaviour
   public void Quit()
   {
     CacheLoc();
+  }
+  IEnumerator coSubEnd()
+  {
+    yield return null;
   }
   IEnumerator coMoveToSB()
   {
@@ -866,33 +868,44 @@ public class Level : MonoBehaviour
   {
     yield return StartCoroutine(coMoveToSB());
     yield return new WaitForSeconds(1.0f);
+    onFinished?.Invoke(this);
+    yield return new WaitForSeconds(1.0f);
     foreach(var anim in _animals)
       anim.Deactivate();
-    yield return new WaitForSeconds(1.5f);
     succeed = true;
-    onFinished?.Invoke(this);
     if(!isFeedingMode)
     {
-      //GameState.Progress.Locations.SetLocationFinished();
-      //bool passedLoc = GameState.Progress.Locations.SetSublocationPassed(GameState.Progress.locationIdx);
-      if(!isCleanupMode)// && passedLoc)
+      GameState.Progress.Locations.SetLocationFinished();
+      if(!isCleanupMode)
         GameState.Progress.Locations.UnlockNextLocation();
     }
     yield return new WaitForSeconds(0.5f);
     GameState.Progress.Locations.ClearCache(locationIdx);
     _uiSummary.Show(this);
   }
+
+  void CheckSubend()
+  {
+    int i = _sublocations * _garbagesCleared / _garbagesInitialCnt;
+    if(i > _sublocation_idx)
+    {
+      if(_garbagesCleared < _garbagesInitialCnt)
+        onSublocCleared?.Invoke(this);
+
+      GameState.Progress.Locations.SetSublocationPassed(locationIdx);
+      _sublocation_idx = i;
+    }
+  }
   void CheckEnd()
   {
-    if(isFeedingMode)
-      return;
-
-    //int activeAnimals = _animals.Count((animal) => animal.isActive);
-    //if(!finished && activeAnimals == 0)
-    if(!finished && _garbagesCleared >= _initialGarbagesCnt)
+    CheckSubend();
+    if(!finished)
     {
-      finished = true;
-      StartCoroutine(coEnd());
+      if(_garbagesCleared >= _garbagesInitialCnt)  //not use itemsCount it has resources
+      {
+        finished = true;
+        StartCoroutine(coEnd());
+      }
     }
   }
   void CheckMatchingItems()

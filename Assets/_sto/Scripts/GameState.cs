@@ -423,12 +423,11 @@ public class GameState : SavableScriptableObject
       public static void          SetLocationFinished(int loc_idx) => get().progress.PassLocation(loc_idx);
       public static void          SetLocationFinished() => SetLocationFinished(locationIdx);
       public static void          SetLocationUnlocked(int loc_idx) => get().progress.UnlockLocation(loc_idx);
-      //public static bool          SetSublocationPassed(int loc_idx) => get().progress.PassSublocation(loc_idx);
+      public static bool          SetSublocationPassed(int loc_idx) => get().progress.PassSublocation(loc_idx);
       public static void          UnlockNextLocation(int loc_idx) => get().progress.UnlockLocation(GameData.Locations.NextLocation(loc_idx));
       public static void          UnlockNextLocation() => UnlockNextLocation(locationIdx);
       public static void          VisitLocation(int loc_idx) => get().progress.VisitLocation(loc_idx);
       public static int           GetLocationVisits(int loc_idx) => get().progress.GetLocationVisits(loc_idx);
-      //public static int[]         GetLocationGarbages(int loc_idx) => get().progress.GetLocationGarbages(loc_idx);
       public static int           GetSublocationPassed(int loc_idx) => get().progress.FindLocation(loc_idx)?.sublevels ?? 0;
       public static Level.State[] GetStates()
       {

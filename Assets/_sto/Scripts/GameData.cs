@@ -241,6 +241,7 @@ public class GameData : ScriptableObject
     static public int         GetFeedingAvailLoc() => get()._feedingAvailLoc;
     static public int         GetClearingAvailLoc() => get()._clearingAvailLoc;
     static public LevelDesc   GetLocationDesc(int level_idx) => (level_idx < get()._levelsDesc.Length)? get()._levelsDesc[level_idx] : null;
+    static public int         GetGabrbagesCnt(int level_idx) => GetLocationDesc(level_idx).garbages.Sum();
     static public Sublocation GetSublocation(int level_idx, int sub_idx) => GetLocationDesc(level_idx)?.sublocation(sub_idx) ?? null;
   }
   public static class Locations

@@ -8,14 +8,13 @@ using GameLib.UI;
 public class UIIngame : MonoBehaviour
 {
   [Header("Refs")]
-  [SerializeField] Slider     _progress;
-  //[SerializeField] UIPanel    _topPanel;
-  //[SerializeField] TMPLbl     _score;
-  //[SerializeField] TMPLbl     _lblLevelInfo;
+  [SerializeField] Slider          _progress;
+  [SerializeField] RectTransform[] _bagsIndicators;
 
   float _pollution = 0;
   float _pollutionDest = 0;
   Level _lvl = null;
+  
 
   void Awake()
   {
@@ -42,6 +41,13 @@ public class UIIngame : MonoBehaviour
 
   public void Show(Level level)
   {
+    int cnt = GameData.Levels.GetLocationDesc(level.locationIdx).sublocationsCnt;
+    int dist = (int)_bagsIndicators[0].parent.GetComponent<RectTransform>().rect.width / cnt;
+    for(int q = 0; q < _bagsIndicators.Length; ++q)
+    {
+      _bagsIndicators[q].gameObject.SetActive(q < cnt);
+      _bagsIndicators[q].anchoredPosition = new Vector2((q+1) * dist, 0);
+    }
     GetComponent<UIPanel>()?.ActivatePanel();
   }
   void Hide()
@@ -114,7 +120,7 @@ public class UIIngame : MonoBehaviour
   {
     if(_pollution < _pollutionDest)
     {
-      _pollution = Mathf.Lerp(_pollution, _pollutionDest, Time.deltaTime * 2);
+      _pollution = Mathf.Lerp(_pollution, _pollutionDest, Time.deltaTime * 4);
       _progress.value = Mathf.Clamp01(_pollution);
     }
   }
