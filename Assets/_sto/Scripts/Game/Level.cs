@@ -77,11 +77,13 @@ public class Level : MonoBehaviour
   public List<Item> listItems2 => _items2;
   public List<Animal> animals => _animals;
 
-  public int         garbagesCapacity(int garb_type) => _garbagesCapacity[garb_type];
-  public int         garbagesCleared(int garb_type) => _garbagesCleared[garb_type];
-  public int         totalGarbagesCapacity => _garbagesCapacity.Sum();
-  public int         totalGarbagesCleared => _garbagesCleared.Sum();
-  
+
+
+  //public int         garbagesCapacity(int garb_type) => _garbagesCapacity[garb_type];
+  //public int         garbagesCleared(int garb_type) => _garbagesCleared[garb_type];
+  //public int         totalGarbages => _garbagesCnt;
+  //public int         totalGarbagesCleared => _garbagesCleared.Sum();
+
   public bool isRegular => locationIdx < Location.SpecialLocBeg && !isPolluted;
   public bool isPolluted => GameState.Progress.Locations.GetLocationState(locationIdx) == Level.State.Polluted;
   public bool isFeedingMode => locationIdx == Location.FeedLocation;
@@ -112,9 +114,9 @@ public class Level : MonoBehaviour
   List<Item>    _items = new List<Item>();
   List<Item>    _items2 = new List<Item>();
   
+  int           _garbagesCleared = 0;
+  int           _initialGarbagesCnt = 0;
   GarbagePile[] _garbagePiles;
-  int[]         _garbagesCapacity = new int[4];
-  int[]         _garbagesCleared = new int[4];
 
   StorageBox _storageBox;
 
@@ -226,8 +228,6 @@ public class Level : MonoBehaviour
     _storageBox = GetComponentInChildren<StorageBox>();
 
     _garbagePiles = GetComponentsInChildren<GarbagePile>();
-    _garbagesCapacity = GameData.Levels.GetLocationDesc(locationIdx).garbages.clone();
-    _garbagesCleared.fill(0);
     
     int sublocation = GameState.Progress.Locations.GetSublocationPassed(locationIdx);
     _dim = GameData.Levels.GetSublocation(locationIdx, sublocation).dim;
@@ -286,11 +286,12 @@ public class Level : MonoBehaviour
 
     if(!GameState.Progress.Locations.IsCache(locationIdx))
     {
+      int[] garbagesTypesCnt = GameData.Levels.GetLocationDesc(locationIdx).garbages.clone();
       Item.ID id = new Item.ID();
       List<Item.ID> ids = new List<Item.ID>();
-      for(int type = 0; type < _garbagesCapacity.GetLength(0); ++type)
+      for(int type = 0; type < garbagesTypesCnt.GetLength(0); ++type)
       {
-        for(int q = 0; q < _garbagesCapacity[type]; ++q)
+        for(int q = 0; q < garbagesTypesCnt[type]; ++q)
         {
           id.kind = Item.Kind.Garbage;
           id.type = type;
@@ -363,7 +364,8 @@ public class Level : MonoBehaviour
     {
       Restore();
     }
-    //_initialItemsCnt = itemsCount;
+    
+    _initialGarbagesCnt = _items.Count((it) => it.id.kind == Item.Kind.Garbage) + _items2.Count((it) => it.id.kind == Item.Kind.Garbage);
 
     InitGarbagePiles();
   }
@@ -441,11 +443,7 @@ public class Level : MonoBehaviour
 
   public float PollutionRate()
   {
-    // int requests = 0;
-    // _animals.ForEach((animal) => requests += animal.requests);
-    // return (float)requests / _requestCnt;
-
-    return (float)totalGarbagesCleared / totalGarbagesCapacity;
+    return (float)_garbagesCleared / _initialGarbagesCnt;
   }
   
   Item GetNearestItem(Item[] arr)
@@ -697,7 +695,7 @@ public class Level : MonoBehaviour
       {
         animalHit.Put(item);
         GameState.Econo.stamina -= 1;
-        _garbagesCleared[item.id.type] += 1<<item.id.lvl;
+        _garbagesCleared += 1<<item.id.lvl;
         pushed = true;
       }
       else
@@ -891,7 +889,7 @@ public class Level : MonoBehaviour
 
     //int activeAnimals = _animals.Count((animal) => animal.isActive);
     //if(!finished && activeAnimals == 0)
-    if(!finished && totalGarbagesCleared >= totalGarbagesCapacity)
+    if(!finished && _garbagesCleared >= _initialGarbagesCnt)
     {
       finished = true;
       StartCoroutine(coEnd());
