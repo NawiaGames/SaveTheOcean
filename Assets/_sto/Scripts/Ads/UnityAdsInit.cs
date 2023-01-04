@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Advertisements;
  
-public class UnityAdsInit : MonoBehaviour, IUnityAdsInitializationListener
+public class UnityAdsInit : MonoBehaviour //, IUnityAdsInitializationListener
 {
 	[SerializeField] string _androidGameId;
 	[SerializeField] string _iOSGameId;
@@ -23,17 +23,17 @@ public class UnityAdsInit : MonoBehaviour, IUnityAdsInitializationListener
 #endif
 
     //Advertisement.Initialize(_gameId, Debug.isDebugBuild, this);
-		Advertisement.Initialize(_gameId, false, this);
+		//Advertisement.Initialize(_gameId, false, this);
 	}
 
-	public void OnInitializationComplete()
-	{
-		Debug.Log("Unity Ads initialization complete.");
-		onInitialized?.Invoke();
-	}
+	// public void OnInitializationComplete()
+	// {
+	// 	Debug.Log("Unity Ads initialization complete.");
+	// 	onInitialized?.Invoke();
+	// }
 
-	public void OnInitializationFailed(UnityAdsInitializationError error, string message)
-	{
-		Debug.Log($"Unity Ads Initialization Failed: {error.ToString()} - {message}");
-	}
+	// public void OnInitializationFailed(UnityAdsInitializationError error, string message)
+	// {
+	// 	Debug.Log($"Unity Ads Initialization Failed: {error.ToString()} - {message}");
+	// }
 }
