@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "com.ms.gamelib": "https://github.com/theunspokenterror/gamelib.git",
+    "com.ms.gamelibtools": "https://github.com/theunspokenterror/gamelibtools.git",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.2d.tilemap": "1.0.0",
     "com.unity.ai.navigation": "1.1.1",
