@@ -45,7 +45,7 @@ TextureImporter:
       213: 120732564627207472
     second: frame_circle_128
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 12
   mipmaps:
     mipMapMode: 0
     enableMipMap: 1
@@ -62,11 +62,12 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
-  ignoreMasterTextureLimit: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -105,6 +106,8 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -462,23 +465,22 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      fill_circle_64: 1379695144335951887
-      frame_circle_32: 3896355856569584575
-      frame_rect_128: 10181151876957438
-      frame_circle_64: -1511163988401128982
-      fill_rect_32: -4984944074102830276
-      fill_rect_64: -311178929867476275
+      fill_circle_128: -361070464876270492
       fill_circle_192: -6223862142858691440
       fill_circle_32: -5421950921573093990
-      frame_rect_64: 2116001403192198115
-      frame_circle_128: 120732564627207472
-      fill_rect_192: -7000299447043574759
+      fill_circle_64: 1379695144335951887
       fill_rect_128: -6672080656554734240
+      fill_rect_192: -7000299447043574759
+      fill_rect_32: -4984944074102830276
+      fill_rect_64: -311178929867476275
+      frame_circle_128: 120732564627207472
+      frame_circle_32: 3896355856569584575
+      frame_circle_64: -1511163988401128982
+      frame_rect_128: 10181151876957438
       frame_rect_32: -2290830395695717841
-      fill_circle_128: -361070464876270492
-  spritePackingTag: 
+      frame_rect_64: 2116001403192198115
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 

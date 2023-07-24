@@ -129,7 +129,7 @@ TextureImporter:
       213: 3490911786087301736
     second: icoInfo
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 12
   mipmaps:
     mipMapMode: 0
     enableMipMap: 1
@@ -146,11 +146,12 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
-  ignoreMasterTextureLimit: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -189,6 +190,8 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -1135,50 +1138,49 @@ TextureImporter:
     secondaryTextures: []
     nameFileIdTable:
       icoAd: 2692270910049350034
-      icoHome: 8975438364317080290
-      icoDice: 4471530978540473088
-      icoMenu: -5796030141632932448
-      icoTimer: -7279740351054536597
-      icoOptionVideoPerformance: -7805393852215975592
-      icoTickOff: 7243069106556315173
-      icoRemoveAds: 5083954908230747192
-      icoPlay: -6337232230797566912
-      icoPause: -5996611039628426195
-      toggleOn: 1913874200572427187
-      icoStand: 7150611670834803239
-      icoOptionNotificationsOn: -656980557180677016
-      icoCalendar: 1921991484609247254
-      icoOptionHapticsOff: -3652920012003672562
-      icoStar: 296975035237105433
       icoAdd: 4622722938145059118
-      icoX: 8220351963736018528
-      icoFF: 1482283405588698227
-      icoOptionMusicOn: -7031234596132530902
-      icoInfo: 3490911786087301736
-      icoOptionHapticsOn: 4442462667243491233
-      icoStorage: 3691619459819820266
-      levelUp: -8694753852053218860
-      icoOptionAudioOff: 5749765625417164315
-      icoGift: 6369697263092227975
-      icoTrophy: -1512589729013068928
-      icoQuestion: -8011711507560149565
-      icoTickOn: 6666806112652386258
-      icoOptionMusicOff: -2169770236825494639
-      icoUnlock: 5571261089208812302
-      icoMagnet: 2515310047858559288
-      icoRestart: 6669031516120075476
-      icoOptions: -2389091874211348730
-      icoOptionVideoQuality: 4438865650730646475
-      toggleOff: 6323293457793957108
       icoArrow: -7795406823698535261
-      icoCart: -7522732140784649716
-      icoLock: -7522677793511808926
       icoBack: -1044357599460916622
-      icoOptionNotificationsOff: -8520489433234513081
+      icoCalendar: 1921991484609247254
+      icoCart: -7522732140784649716
+      icoDice: 4471530978540473088
+      icoFF: 1482283405588698227
+      icoGift: 6369697263092227975
+      icoHome: 8975438364317080290
+      icoInfo: 3490911786087301736
+      icoLock: -7522677793511808926
+      icoMagnet: 2515310047858559288
+      icoMenu: -5796030141632932448
+      icoOptionAudioOff: 5749765625417164315
       icoOptionAudioOn: 6654652251319143726
-  spritePackingTag: 
+      icoOptionHapticsOff: -3652920012003672562
+      icoOptionHapticsOn: 4442462667243491233
+      icoOptionMusicOff: -2169770236825494639
+      icoOptionMusicOn: -7031234596132530902
+      icoOptionNotificationsOff: -8520489433234513081
+      icoOptionNotificationsOn: -656980557180677016
+      icoOptionVideoPerformance: -7805393852215975592
+      icoOptionVideoQuality: 4438865650730646475
+      icoOptions: -2389091874211348730
+      icoPause: -5996611039628426195
+      icoPlay: -6337232230797566912
+      icoQuestion: -8011711507560149565
+      icoRemoveAds: 5083954908230747192
+      icoRestart: 6669031516120075476
+      icoStand: 7150611670834803239
+      icoStar: 296975035237105433
+      icoStorage: 3691619459819820266
+      icoTickOff: 7243069106556315173
+      icoTickOn: 6666806112652386258
+      icoTimer: -7279740351054536597
+      icoTrophy: -1512589729013068928
+      icoUnlock: 5571261089208812302
+      icoX: 8220351963736018528
+      levelUp: -8694753852053218860
+      toggleOff: 6323293457793957108
+      toggleOn: 1913874200572427187
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 

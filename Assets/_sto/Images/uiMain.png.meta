@@ -33,7 +33,7 @@ TextureImporter:
       213: -7279191870285401951
     second: btn
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 12
   mipmaps:
     mipMapMode: 0
     enableMipMap: 1
@@ -50,11 +50,12 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
-  ignoreMasterTextureLimit: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -93,6 +94,8 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -408,21 +411,20 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+      btn: -7279191870285401951
+      btnBase: 3361918274068334627
       btnL: -6427363221580456094
       btnSelectionFrame: 1941898497978530315
-      sliderFrame: -209140914433533943
-      progressBarS: -1190242727
-      sliderFillL: -3377532705539381309
-      windowBase: -5883958333880756726
-      sliderFill: 3837013019027386467
-      btn: -7279191870285401951
-      sliderFrameL: -1087344942267900608
-      btnBase: 3361918274068334627
-      levelProgress: -2411885852242516401
       insetArea: 324370132
-  spritePackingTag: 
+      levelProgress: -2411885852242516401
+      progressBarS: -1190242727
+      sliderFill: 3837013019027386467
+      sliderFillL: -3377532705539381309
+      sliderFrame: -209140914433533943
+      sliderFrameL: -1087344942267900608
+      windowBase: -5883958333880756726
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 
