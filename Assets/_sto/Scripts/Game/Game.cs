@@ -95,14 +95,14 @@ public class Game : MonoBehaviour
   {
     if(_level)
       Destroy(_level.gameObject);
-    _level = null;  
+    _level = null;
 
     if(Level.mode == Level.Mode.Feeding)
       _level = GameData.Levels.CreateFeedingLevel(levelsContainer);
     else if(Level.mode == Level.Mode.Clearing)
       _level = GameData.Levels.CreateClearingLevel(levelsContainer);
     else //if(Level.mode == Level.Mode.Standard || Level.mode == Level.Mode.Polluted)
-      _level = GameData.Levels.CreateLevel(_earth.GetLevel(GameState.Progress.locationIdx), levelsContainer);  
+      _level = GameData.Levels.CreateLevel(_earth.GetLevel(GameState.Progress.locationIdx), levelsContainer);
   }
   public void RestartLevel()
   {
@@ -188,6 +188,6 @@ public class Game : MonoBehaviour
       Level.onFinished?.Invoke(_level);
       RestartLevel();
     }
-#endif    
+#endif
   }
 }
