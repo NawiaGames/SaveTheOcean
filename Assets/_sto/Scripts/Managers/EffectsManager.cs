@@ -38,14 +38,14 @@ public class EffectsManager : MonoBehaviour
 
     List<GameLib.ObjectFracture> listFractures = new List<GameLib.ObjectFracture>();
 
-    private void Awake() 
+    private void Awake()
     {
       mainCamera = Camera.main;
       cameraShakeContainer = Camera.main.GetComponentInParent<ObjectShake>();
-      infoLblMan = FindObjectOfType<UIInfoLabelManager>(true);
+      infoLblMan = FindFirstObjectByType<UIInfoLabelManager>(FindObjectsInactive.Include);
       //infoLblManDown = GameObject.Find("infoCanvas2").GetComponent<UIInfoLabelManager>();
     }
-    private void OnEnable() 
+    private void OnEnable()
     {
       Level.onStart += OnLevelStart;
       //Level.onDone += OnLevelDone;
@@ -76,7 +76,7 @@ public class EffectsManager : MonoBehaviour
       StorageBox.onPushed += OnItemPushed;
       StorageBox.onNotPushed += OnItemNotPushed;
       FeedingMachine.onPoped += OnItemPoped;
-      FeedingMachine.onNotPoped += OnItemNotPoped;      
+      FeedingMachine.onNotPoped += OnItemNotPoped;
     }
     private void OnDisable()
     {
@@ -135,8 +135,8 @@ public class EffectsManager : MonoBehaviour
       }
       else
         ps.Play(true);
-    }    
-    
+    }
+
     void OnLevelStart(Level lvl)
     {
 
@@ -153,7 +153,7 @@ public class EffectsManager : MonoBehaviour
         infoLblMan.ShowTextPopup(sender.vwpos, _strNoMergeMaxed);
       else if(sender.mergeType == Item.MergeType.RejectWrongType)
         infoLblMan.ShowTextPopup(sender.vwpos, _strNoMergeWrongType);
-    }    
+    }
     void OnItemShown(Item sender)
     {
       PlayFXAtPosition(fxWaterSplash, sender.gridPos, 0, false);
@@ -173,7 +173,7 @@ public class EffectsManager : MonoBehaviour
     void OnItemDropped(Item sender)
     {
       if(!sender.IsInMachine)
-        PlayFXAtPosition(fxWaterSplash, sender.gridPos, 0, false);
+        PlayFXAtPosition(fxWaterSplash, sender.vwpos, 0, false);
       else
         PlayFXAtPosition(fxWaterSplash, sender.vwpos, 0, false);
     }
@@ -227,7 +227,7 @@ public class EffectsManager : MonoBehaviour
       if(item.id.kind == Item.Kind.Stamina)
         str = UIDefaults.GetStaminaString(amount);
       else if(item.id.kind == Item.Kind.Coin)
-        str = UIDefaults.GetCoinsString(amount);  
+        str = UIDefaults.GetCoinsString(amount);
       else if(item.id.kind == Item.Kind.Gem)
         str = UIDefaults.GetGemsString(amount);
       var s = string.Format(_strCollected, str);
@@ -262,7 +262,7 @@ public class EffectsManager : MonoBehaviour
       if(clear)
         fxMagnet.Clear();
     }
-    void OnLevelFinished(Level lvl) 
+    void OnLevelFinished(Level lvl)
     {
       //cameraShakeContainer.Shake(objShakePresetHi);
     }

@@ -24,7 +24,7 @@ public class Level : MonoBehaviour
   [SerializeField] RewardChest    _rewardChest;
   [SerializeField] SplitMachine   _splitMachine;
   [SerializeField] FeedingMachine _feedingMachine;
-  
+  [SerializeField] Transform[]    _boundsNSWE;
   //[SerializeField] Transform[] _paths;
   //[SerializeField] Transform _poiLT;
   //[SerializeField] Transform _poiRB;
@@ -105,8 +105,8 @@ public class Level : MonoBehaviour
     }
     return solution;
   }
-  public Transform GetPrimaryAnimalContainer() => _animalContainers.FirstOrDefault();  
-  public int       GetUnderwaterGarbagesCnt() => _items2.Count((item) => !item.id.IsSpecial);  
+  public Transform GetPrimaryAnimalContainer() => _animalContainers.FirstOrDefault();
+  public int       GetUnderwaterGarbagesCnt() => _items2.Count((item) => !item.id.IsSpecial);
 
   public int      locationIdx {get; private set;} = -1;
   public bool     succeed {get; private set;}
@@ -120,7 +120,7 @@ public class Level : MonoBehaviour
   public List<Item> listItems => _items;
   public List<Item> listItems2 => _items2;
   public List<Animal> animals => _animals;
-  
+
   public bool isRegular => locationIdx < Location.SpecialLocBeg && !isPolluted;
   public bool isPolluted => GameState.Progress.Locations.GetLocationState(locationIdx) == Level.State.Polluted;
   public bool isFeedingMode => locationIdx == Location.FeedLocation;
@@ -134,7 +134,7 @@ public class Level : MonoBehaviour
     else if(isPolluted)
       return Mode.Polluted;
     else
-      return Mode.Standard;  
+      return Mode.Standard;
   }
   public int  visitsCnt => GameState.Progress.Locations.GetLocationVisits(locationIdx);
 
@@ -146,7 +146,7 @@ public class Level : MonoBehaviour
   Item        _itemSelected;
   Item        _itemHovered;
   Item        _itemTileSelected;
-  GridTile    _tileSelected;  
+  GridTile    _tileSelected;
   Animal      _animalHovered;
   List<Item>  _items = new List<Item>();
   List<Item>  _items2 = new List<Item>();
@@ -250,8 +250,8 @@ public class Level : MonoBehaviour
     locationIdx = GameState.Progress.locationIdx;
 
     Item.gridSpace = _gridSpace;
-    _uiSummary = FindObjectOfType<UISummary>(true);
-    _uiStatusBar = FindObjectOfType<UIStatusBar>(true); 
+    _uiSummary = FindFirstObjectByType<UISummary>(FindObjectsInactive.Include);
+    _uiStatusBar = FindFirstObjectByType<UIStatusBar>(FindObjectsInactive.Include);
 
     _mpb = new MaterialPropertyBlock();
     _mpb.SetColor("_BaseColor", _waterColor);
@@ -296,6 +296,7 @@ public class Level : MonoBehaviour
   {
     onHide?.Invoke(this);
   }
+
   void  Init()
   {
     List<int> levels_idx = new List<int>();
@@ -380,7 +381,7 @@ public class Level : MonoBehaviour
           {
             var spec_id = new Item.ID(0, 0, extras[q].kind).Validate();
             specIds.Add(spec_id);
-          } 
+          }
         }
         specIds.shuffle(100);
       }
@@ -453,7 +454,7 @@ public class Level : MonoBehaviour
     for(int q = 0; q < _lvlDescs.Length; ++q)
     {
       if(isFeedingMode)
-      { 
+      {
         if(!GameState.Animals.DidAnimalAppear(_lvlDescs[q].animal.type))
           continue;
       }
@@ -507,7 +508,7 @@ public class Level : MonoBehaviour
     item.MoveBack();
     if(!item.IsInMachine)
       _grid.set(item.vgrid, 1, item.id.kind);
-  }  
+  }
   void  DestroyItem(Item item)
   {
     _items.Remove(item);
@@ -522,11 +523,11 @@ public class Level : MonoBehaviour
     _animals.ForEach((animal) => requests += animal.requests);
     return (float)requests / _requestCnt;
   }
-  
+
   Item GetNearestItem(Item[] arr)
   {
     Item item = null;
-    
+
     if(arr.Length > 0)
     {
       item = System.Array.Find(arr, (it) => (_itemSelected.vwpos - it.vwpos).get_xz().magnitude < 1.0f);
@@ -550,14 +551,16 @@ public class Level : MonoBehaviour
     if(finished)
       return;
 
-    hoverItemMatch = false;  
+    hoverItemMatch = false;
     Item   nearestItem = null;
     Animal nearestAnimal = null;
     if(_itemSelected && tid.RaycastData.HasValue)
     {
       var vpt = tid.RaycastData.Value.point;
-      voffs.y = Mathf.Lerp(voffs.y, 2.0f, Time.deltaTime * 10);
-      _itemSelected.vwpos = Vector3.Lerp(_itemSelected.vwpos, vpt + voffs + _itemSelected.vbtmExtent, Time.deltaTime * 20);
+      vpt.x = Mathf.Clamp(vpt.x, _boundsNSWE[2].position.x, _boundsNSWE[3].position.x);
+      vpt.z = Mathf.Clamp(vpt.z, _boundsNSWE[1].position.z, _boundsNSWE[0].position.z);
+      voffs.y = Mathf.Lerp(voffs.y, 0.35f, Time.deltaTime * 10);
+      _itemSelected.MoveSelectedTo(vpt + voffs);
 
       //nearest item
       {
@@ -598,7 +601,7 @@ public class Level : MonoBehaviour
       {
         _grid.getTile(nearestItem.vgrid).Hover(true);
       }
-      else  
+      else
       {
         var tileHit = tid.GetClosestObjectInRange<GridTile>(_inputRad);
         tileHit?.Hover(true);
@@ -714,7 +717,7 @@ public class Level : MonoBehaviour
                 break;
               }
             }
-          } 
+          }
         }
         else
         {
@@ -746,7 +749,7 @@ public class Level : MonoBehaviour
                 else
                 {
                   DeselectTile();
-                  SelectTile(item);  
+                  SelectTile(item);
                 }
               }
               else
@@ -767,7 +770,7 @@ public class Level : MonoBehaviour
   void SelectTile(Item item)
   {
     _itemTileSelected = item;
-    _tileSelected = _grid.getTile(_itemTileSelected.vgrid);    
+    _tileSelected = _grid.getTile(_itemTileSelected.vgrid);
     _tileSelected.Hover(true);
   }
   void DeselectTile()
@@ -776,7 +779,7 @@ public class Level : MonoBehaviour
       _tileSelected.Hover(false);
     _tileSelected = null;
     _itemTileSelected = null;
-    
+
   }
   bool IsItemHit(TouchInputData tid)
   {
@@ -796,7 +799,7 @@ public class Level : MonoBehaviour
         GameState.Progress.Items.ItemAppears(newItem.id);
         SpawnItem(_itemSelected.vgrid);
         is_merged = true;
-        CacheLoc();  
+        CacheLoc();
       }
     }
     if(is_hit && !is_merged)
@@ -878,7 +881,7 @@ public class Level : MonoBehaviour
   bool IsTileHit(TouchInputData tid)
   {
     bool is_hit = false;
-    //if(_itemSelected.IsInMachine)
+    if(_itemSelected.IsInMachine)
     {
       var tileHit = tid.GetClosestObjectInRange<GridTile>(_inputRad);
       if(tileHit && _grid.get(tileHit.vgrid) == 0)
@@ -923,7 +926,7 @@ public class Level : MonoBehaviour
     var chest = tid.GetClosestObjectInRange<RewardChest>(_inputRad, RewardChest.layerMask);
     if(chest)
       chest.NoPush(_itemSelected.id);
-    
+
     return is_hit;
   }
   bool IsTutorial<T>() where T : TutorialSystem.TutorialStep
@@ -932,7 +935,7 @@ public class Level : MonoBehaviour
   }
   void CacheLoc()
   {
-    GameState.Progress.Locations.Cache(this);  
+    GameState.Progress.Locations.Cache(this);
   }
   void CacheClear()
   {
@@ -1019,7 +1022,7 @@ public class Level : MonoBehaviour
         StartCoroutine(coEnd());
       }
     }
-  #endif     
+  #endif
   }
 
   void OnDrawGizmos()

@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameLib;
 using GameLib.Utilities;
+using Unity.VisualScripting;
 
 public class Item : MonoBehaviour
 {
   [Header("Refs")]
   [SerializeField] GameObject         _modelContainer;
   [SerializeField] ActivatableObject  _activatable;
+  [SerializeField] Rigidbody          _rb;
   [SerializeField] SpringMove         _sm;
   [SerializeField] Transform          _fx;
   [SerializeField] GameObject         _tickIco;
@@ -66,9 +68,9 @@ public class Item : MonoBehaviour
     public static ID FromKind(Item.Kind kind, int idx, int lvl = 0)
     {
       int[] types = GameData.Prefabs.ItemTypesOfKind(kind);
-      var id = new ID(types[idx], lvl, kind); 
+      var id = new ID(types[idx], lvl, kind);
       return id.Validate();
-    } 
+    }
   }
 
   ID         _id = new ID();
@@ -145,7 +147,7 @@ public class Item : MonoBehaviour
     }
 
     return new_items;
-  } 
+  }
   public static Item   Upgrade(Item item, List<Item> _items)
   {
     Item new_item = null;
@@ -157,6 +159,11 @@ public class Item : MonoBehaviour
         new_item = GameData.Prefabs.CreateItem(item.id, item.transform.parent);
         item.Hide();
         new_item.Init(item.vgrid);
+        new_item._rb.velocity = Vector3.zero;
+        new_item._rb.MovePosition(item.vwpos);
+        new_item.transform.position = item.transform.position;
+        new_item._rb.AddForce(new Vector3(0, -5, 0));
+        new_item._ready = true;
 
         _items.Remove(item);
         _items.Add(new_item);
@@ -194,15 +201,16 @@ public class Item : MonoBehaviour
   public bool       IsUpgradable => id.lvl + 1 < levelsCnt;
   public bool       IsSplitable => id.lvl > 0;
   public bool       IsSelected {get; set;}
+  public bool       IsKinematic {get => _rb.isKinematic; set => _rb.isKinematic = value;}
   public bool       IsInMachine {get => _inMachine; set => _inMachine = value;}
   public void       incLvl(int amount = 1){_id.lvl = Mathf.Clamp(_id.lvl + amount, 0, _id.LevelsCnt-1);}
   public void       decLvl(){if(_id.lvl > 0) _id.lvl--;}
   public MergeType  mergeType {get; set;} = MergeType.Ok;
   public int        levelsCnt {get; private set;}
   public Transform  modelContainer => _modelContainer.transform;
-  public bool       tickIco 
+  public bool       tickIco
   {
-    get => _tickIco.activeInHierarchy; 
+    get => _tickIco.activeInHierarchy;
     set
     {
       _tickIco.SetActive(value);
@@ -217,7 +225,7 @@ public class Item : MonoBehaviour
 
     for(int q = 0; q < _modelContainer.transform.childCount; ++q)
       _models.Add(_modelContainer.transform.GetChild(q).gameObject);
-    
+
     _amplSpeed *= Random.Range(0.95f, 1.05f);
     _tickIco.SetActive(false);
   }
@@ -225,6 +233,9 @@ public class Item : MonoBehaviour
   {
     _activatable.ActivateObject();
     GetComponent<BoxCollider>().enabled = false;
+    Destroy(_rb);
+    _rb = null;
+
     var osir = GetComponentInChildren<ObjectSpinInRange>(true);
     if(osir)
     {
@@ -238,7 +249,7 @@ public class Item : MonoBehaviour
   public void Init(Vector2 grid)
   {
     vgrid = grid;
-    vlpos = Item.ToPos(vgrid);
+    vlpos = ToPos(vgrid);
     GetComponent<BoxCollider>().enabled = false;
     levelsCnt = Item.LevelsCnt(id);
     if(levelsAsModels) //id.kind == Kind.Garbage || id.kind == Kind.Food)
@@ -262,7 +273,7 @@ public class Item : MonoBehaviour
     _vdim = Vector3.zero;
     Renderer[] renderers = mdl.GetComponentsInChildren<Renderer>(true);
     var _center = Vector3.zero;
-    System.Array.ForEach(renderers, (rend) => 
+    System.Array.ForEach(renderers, (rend) =>
     {
       _center = rend.bounds.center;
       _vdim = Vector3.Max(_vdim, rend.bounds.size);
@@ -320,7 +331,7 @@ public class Item : MonoBehaviour
         onShown?.Invoke(this);
       yield return null;
     }
-    
+
     _sm.Touch(touch);
     _path = null;
     _ready = true;
@@ -340,13 +351,14 @@ public class Item : MonoBehaviour
   public void Select(bool sel)
   {
     var coll = GetComponent<Collider>();
-    if(coll)
-      coll.enabled = !sel;
+    //if(coll)
+    //  coll.enabled = !sel;
     IsSelected = sel;
+    //IsKinematic = sel;
     onSelect?.Invoke(this);
     if(sel)
     {
-      if(_coMoveHandle != null)      
+      if(_coMoveHandle != null)
         StopCoroutine(_coMoveHandle);
       _vBackPos = vlpos;
     }
@@ -357,15 +369,16 @@ public class Item : MonoBehaviour
   }
   IEnumerator coMoveToGrid()
   {
-    var vdst = Item.ToPos(vgrid);
-    float speed = Time.deltaTime * 20;
-    while(Vector3.Distance(vlpos, vdst) > 0.01f)
-    {
-      vlpos = vlpos = Vector3.MoveTowards(vlpos, vdst, speed); //Vector3.Lerp(vlpos, vdst, Time.deltaTime * 8);
-      speed *= 1 + Time.deltaTime * 6;
-      yield return null;
-    }
-    vlpos = vdst;
+    // float speed = Time.deltaTime * 20;
+    // while(Vector3.Distance(vlpos, vdst) > 0.01f)
+    // {
+    //   vlpos = vlpos = Vector3.MoveTowards(vlpos, vdst, speed); //Vector3.Lerp(vlpos, vdst, Time.deltaTime * 8);
+    //   speed *= 1 + Time.deltaTime * 6;
+    //   yield return null;
+    // }
+    // vlpos = vdst;
+    _rb.AddForce(Vector3.down * 5);
+    yield return null;
     _coMoveHandle = null;
     onDropped?.Invoke(this);
   }
@@ -375,22 +388,32 @@ public class Item : MonoBehaviour
   }
   IEnumerator coMoveBack()
   {
-    var vdst = (IsInMachine)? _vBackPos : Item.ToPos(vgrid);
-    float speed = Time.deltaTime * 20;
-    while(Vector3.Distance(vlpos, vdst) > 0.01f)
-    {
-      vlpos = Vector3.MoveTowards(vlpos, vdst, speed); //Vector3.Lerp(vlpos, vdst, Time.deltaTime * 8);
-      speed *= 1 + Time.deltaTime * 6;
-      yield return null;
-    }
-    vlpos = vdst;
+    // var vdst = (IsInMachine)? _vBackPos : Item.ToPos(vgrid);
+    // float speed = Time.deltaTime * 20;
+    // while(Vector3.Distance(vlpos, vdst) > 0.01f)
+    // {
+    //   vlpos = Vector3.MoveTowards(vlpos, vdst, speed); //Vector3.Lerp(vlpos, vdst, Time.deltaTime * 8);
+    //   speed *= 1 + Time.deltaTime * 6;
+    //   yield return null;
+    // }
+    // vlpos = vdst;
+    _rb.AddForce(Vector3.down * 5);
+    yield return null;
+    //_sm.Touch();
     _coMoveHandle = null;
     onDropped?.Invoke(this);
-  } 
+  }
   public void Hover(bool act)
   {
     if(act)
-      _sm.Touch(-0.25f);
+      _rb.AddForce(Vector3.down * 5);
+  }
+  public void MoveSelectedTo(Vector3 vdest)
+  {
+    if(Vector3.Distance(transform.position, vdest) > 0.1f)
+      _rb.MovePosition(Vector3.Lerp(transform.position, vdest, Time.deltaTime * 4));
+    else
+      _rb.velocity = Vector3.zero;
   }
   public void Throw(Vector3 item_vbeg, Vector2 item_vgrid)
   {
@@ -413,7 +436,7 @@ public class Item : MonoBehaviour
     vcps[1] = Vector3.Lerp(vcps[0], vcps[3], 0.45f) + new Vector3(0, 4, 0);
     vcps[2] = Vector3.Lerp(vcps[0], vcps[3], 0.55f) + new Vector3(0, 4, 0);
     StartCoroutine(coMovePathToAnim(vcps, endAction));
-  }  
+  }
   IEnumerator coMovePathToAnim(Vector3[] vcps, System.Action<Item> action)
   {
     float t = 0.0f;
@@ -439,12 +462,28 @@ public class Item : MonoBehaviour
       _vsink.y = Mathf.Sin(_sinkTimer) * Mathf.Min(_vextent.y * 0.25f, _ampl);
       _fx.transform.localPosition = _vsink;
     }
-    if(mdl)
+  //   if(mdl)
+  //   {
+  //     //if(IsSelected)
+  //     //  mdl.transform.localRotation = Quaternion.Lerp(mdl.transform.localRotation, Quaternion.identity, Time.deltaTime * 8);
+  //     //else
+  //     //  mdl.transform.localRotation = Quaternion.Lerp(mdl.transform.localRotation, _qinitial, Time.deltaTime * 8);
+  //   }
+  }
+  [SerializeField] float _buoyancy  = 1.0f;
+  [SerializeField] float _damp_over = 0.0f;
+  [SerializeField] float _damp_under = 0.5f;
+  void FixedUpdate()
+  {
+    if(IsReady && !IsSelected)
     {
-      if(IsSelected)
-        mdl.transform.localRotation = Quaternion.Lerp(mdl.transform.localRotation, Quaternion.identity, Time.deltaTime * 8);
-      else
-        mdl.transform.localRotation = Quaternion.Lerp(mdl.transform.localRotation, _qinitial, Time.deltaTime * 8);
+      var depth = transform.position.y;
+      Vector3 buoyantForce = new Vector3(0, _buoyancy * -depth * 50, 0);
+      _rb?.AddForce(buoyantForce);
+      _rb?.AddForce(-_rb.velocity * ((depth < 0)? _damp_under : _damp_over));
+
+      var posy = Mathf.Clamp(transform.position.y, - 1f, 1f);
+      transform.position = new Vector3(transform.position.x, posy, transform.position.z);
     }
   }
 }
