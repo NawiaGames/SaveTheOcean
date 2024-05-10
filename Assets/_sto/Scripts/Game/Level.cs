@@ -181,7 +181,7 @@ public class Level : MonoBehaviour
     public static Vector2 a2g(Vector2Int va, Vector2Int _dim)
     {
       Vector2 v = Vector2.zero;
-      v.y = ((-_dim.y + 1) * 0.5f + va.y);
+      v.y = (-_dim.y + 1) * 0.5f + va.y;
       v.x = (-_dim.x + 1) * 0.5f + va.x;
       return v;
     }
@@ -191,7 +191,7 @@ public class Level : MonoBehaviour
       _grid[va.y, va.x] = val;
       _tiles[va.y, va.x].Set((val!=0)? true : false, kind == Item.Kind.Garbage);
     }
-    public int get(Vector2 vgrid)
+    public int  get(Vector2 vgrid)
     {
       var va = g2a(vgrid, _dim);
       return _grid[va.y, va.x];
@@ -391,9 +391,10 @@ public class Level : MonoBehaviour
         var item = GameData.Prefabs.CreateItem(ids[q], _itemsContainer);
         if(vs.Count > 0)
         {
-          item.Init(vs.first());
+          //item.Init(vs.first());
+          item.Init(GetRandomGridPos());
           vs.RemoveAt(0);
-          item.Spawn(item.vgrid, null, 15, Random.Range(0.5f, 1.5f));
+          item.Spawn(item.vgrid, null, 15, Random.Range(0.5f, 1.5f), Random.Range(0, 3.0f));
           AddItem(item);
         }
         else
@@ -408,9 +409,9 @@ public class Level : MonoBehaviour
         var item = GameData.Prefabs.CreateItem(specIds[q], _itemsContainer);
         if(vs.Count > 0)
         {
-          item.Init(vs.first());
+          item.Init(GetRandomGridPos());// vs.first());
           vs.RemoveAt(0);
-          item.Spawn(item.vgrid, null, 15, Random.Range(0.5f, 1.5f));
+          item.Spawn(item.vgrid, null, 15, Random.Range(0.5f, 1.5f), Random.Range(0.0f, 3f));
           AddItem(item);
         }
         else
@@ -437,7 +438,7 @@ public class Level : MonoBehaviour
       var ic = locCache.items[q];
       var item = GameData.Prefabs.CreateItem(ic.id, _itemsContainer);
       item.Init(ic.vgrid);
-      item.Spawn(item.vgrid, null, 15, Random.Range(0.5f, 1.5f));
+      item.Spawn(item.vgrid, null, 15, Random.Range(0.5f, 1.5f), Random.Range(0.0f, 3.0f));
       AddItem(item);
     }
     for(int q = 0; q < locCache.items2.Count; ++q)
@@ -491,14 +492,18 @@ public class Level : MonoBehaviour
     _grid.set(item.vgrid, 1, item.id.kind);
     GameState.Progress.Items.ItemAppears(item.id);
   }
-  void  SpawnItem(Vector2 vgrid)
+  Vector2 GetRandomGridPos() => Grid.a2g(new Vector2Int(Random.Range(0, _dim.x), Random.Range(0, _dim.y)), _dim);
+  void  SpawnItem(Vector2 vgrid, bool useRandomGridPos = true)
   {
     if(_items2.Count > 0)
     {
       var item = _items2.first();
       _items2.RemoveAt(0);
       onUnderwaterSpawn?.Invoke(item);
-      item.Spawn(vgrid, null, 15, 1);
+      if(useRandomGridPos)
+        item.Spawn(GetRandomGridPos(), null, 15, 1);
+      else
+        item.Spawn(vgrid, null, 15, 1);
       AddItem(item);
     }
   }
@@ -644,7 +649,7 @@ public class Level : MonoBehaviour
       //if(Time.timeAsDouble - tapTime < 1.0f)
       {
         tapTime = 0;
-        Vector2? vg = _grid.getEmpty();
+        Vector2? vg = GetRandomGridPos();//_grid.getEmpty();
         Vector3  vbeg = Vector3.zero;
         if(vg != null)
         {

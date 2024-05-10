@@ -159,11 +159,12 @@ public class Item : MonoBehaviour
         new_item = GameData.Prefabs.CreateItem(item.id, item.transform.parent);
         item.Hide();
         new_item.Init(item.vgrid);
+        new_item.GetComponent<Collider>().enabled = true;
         new_item.transform.position = item.transform.position;
         new_item._rb.velocity = Vector3.zero;
         new_item._rb.MovePosition(item.vwpos);
         new_item._rb.AddForce(new Vector3(0, -50, 0));
-        new_item._rb.AddTorque(Random.rotation * (Vector3.right * Random.Range(130.0f, 250.0f)));
+        new_item._rb.AddTorque(Random.rotationUniform * (Vector3.right * Random.Range(5.0f, 10.0f)));
         new_item._ready = true;
 
         _items.Remove(item);
@@ -174,11 +175,13 @@ public class Item : MonoBehaviour
         new_item = item;
         item.incLvl();
         item.SetModel(item.id.lvl);
+        new_item._rb.AddForce(new Vector3(0, -50, 0));
+        new_item._rb.AddTorque(Random.rotationUniform * (Vector3.right * Random.Range(5.0f, 10.0f)));
       }
     }
     return new_item;
   }
-  public static Vector3 ToPos(Vector2 vgrid) => new Vector3(vgrid.x, 0, vgrid.y) * Item.gridSpace;
+  public static Vector3 ToPos(Vector2 vgrid) => new Vector3(vgrid.x, 0, vgrid.y) * Item.gridSpace + new Vector3(Random.Range(-0.125f, 0.125f), 0, Random.Range(-0.125f, 0.125f));
   public static bool    EqType(Item item0, Item item1)
   {
     return item0 != null && item1 != null && ID.Eq(item0.id, item1.id);
@@ -293,7 +296,7 @@ public class Item : MonoBehaviour
     this.Invoke(()=> GetComponent<Collider>().enabled = true, 0.5f);
     onShow?.Invoke(this);
   }
-  public void Spawn(Vector2 vgrid, Vector3[] vpath, float touch, float speed)
+  public void Spawn(Vector2 vgrid, Vector3[] vpath, float touch, float speed, float delay = 0)
   {
     Init(vgrid);
     gameObject.SetActive(true);
@@ -303,6 +306,9 @@ public class Item : MonoBehaviour
     {
       System.Array.Copy(vpath, _path, 3);
       _path[3] = ToPos(vgrid);
+      vwpos = _path[0];
+      _rb.MovePosition(vwpos);
+      StartCoroutine(MovePath(speed));
     }
     else
     {
@@ -313,30 +319,47 @@ public class Item : MonoBehaviour
 
       _path[1] = Vector3.Lerp(_path[0], _path[3], 0.25f);
       _path[2] = Vector3.Lerp(_path[0], _path[3], 0.75f);
-    }
 
-    vwpos = _path[0];
-    onShow?.Invoke(this);
-    StartCoroutine(MovePath(speed, touch));
+      vwpos = _path[0];
+      _rb.MovePosition(vwpos);
+      onShow?.Invoke(this);
+      StartCoroutine(SwimUp(delay));
+    }
   }
-  IEnumerator MovePath(float speed, float touch)
+  IEnumerator SwimUp(float delay)
+  {
+    yield return new WaitForSeconds(delay);
+
+    GetComponent<Collider>().enabled = true;
+    _rb.AddTorque(Random.rotationUniform * (Vector3.forward * Random.Range(150, 200)));
+    _rb.AddForce(Vector3.up * 250);
+
+    yield return new WaitUntil(() => vlpos.y > -0.5f);
+    onShown?.Invoke(this);
+    _ready = true;
+  }
+  IEnumerator MovePath(float speed)
   {
     float t = 0.0f;
+    _rb.MovePosition(Vector3Ex.bezier(_path, 0));
+    _rb.AddTorque(Random.rotationUniform * (Vector3.forward * Random.Range(150, 200)));
+    GetComponent<Collider>().enabled = false;
     while(t <= 1)
     {
       float prev_t = t;
       t += Time.deltaTime * speed;
       float tc = Mathf.Clamp01(t);
-      vwpos = Vector3Ex.bezier(_path, tc);
+      _rb.MovePosition(Vector3Ex.bezier(_path, tc));
+      if(prev_t < 0.5f && t >= 0.5f)
+        GetComponent<Collider>().enabled = true;
       if(prev_t < 0.95f && t >= 0.95f)
         onShown?.Invoke(this);
       yield return null;
     }
-
-    _sm.Touch(touch);
-    _path = null;
-    _ready = true;
     GetComponent<Collider>().enabled = true;
+    _path = null;
+    yield return new WaitForSeconds(0.125f);
+    _ready = true;
   }
   public void Hide(bool silent = false)
   {
@@ -352,10 +375,7 @@ public class Item : MonoBehaviour
   public void Select(bool sel)
   {
     var coll = GetComponent<Collider>();
-    //if(coll)
-    //  coll.enabled = !sel;
     IsSelected = sel;
-    //IsKinematic = sel;
     onSelect?.Invoke(this);
     if(sel)
     {
@@ -483,8 +503,12 @@ public class Item : MonoBehaviour
       _rb?.AddForce(buoyantForce);
       _rb?.AddForce(-_rb.velocity * ((depth < 0)? _damp_under : _damp_over));
 
-      var posy = Mathf.Clamp(transform.position.y, - 1f, 1f);
+      var posy = Mathf.Clamp(transform.position.y, - 2f, 1f);
       transform.position = new Vector3(transform.position.x, posy, transform.position.z);
+    }
+    else if(!IsReady && vwpos.y < 0.25f)
+    {
+      _rb.AddForce(Vector3.up * 2);
     }
   }
 }

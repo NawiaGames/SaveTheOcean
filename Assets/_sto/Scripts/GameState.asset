@@ -44,7 +44,7 @@ MonoBehaviour:
     level: 0
   events:
     tutStorageBoxDone: 0
-    popupNoStamina: 0
+    popupNoStamina: 7
   gameInfo:
     appQuitTime: 0
   animals:
