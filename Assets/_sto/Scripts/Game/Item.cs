@@ -159,10 +159,11 @@ public class Item : MonoBehaviour
         new_item = GameData.Prefabs.CreateItem(item.id, item.transform.parent);
         item.Hide();
         new_item.Init(item.vgrid);
+        new_item.transform.position = item.transform.position;
         new_item._rb.velocity = Vector3.zero;
         new_item._rb.MovePosition(item.vwpos);
-        new_item.transform.position = item.transform.position;
-        new_item._rb.AddForce(new Vector3(0, -5, 0));
+        new_item._rb.AddForce(new Vector3(0, -50, 0));
+        new_item._rb.AddTorque(Random.rotation * (Vector3.right * Random.Range(130.0f, 250.0f)));
         new_item._ready = true;
 
         _items.Remove(item);
@@ -382,11 +383,11 @@ public class Item : MonoBehaviour
     _coMoveHandle = null;
     onDropped?.Invoke(this);
   }
-  public void MoveBack()
+  public void MoveEnd()
   {
-    _coMoveHandle = StartCoroutine(coMoveBack());
+    _coMoveHandle = StartCoroutine(coMoveEnd());
   }
-  IEnumerator coMoveBack()
+  IEnumerator coMoveEnd()
   {
     // var vdst = (IsInMachine)? _vBackPos : Item.ToPos(vgrid);
     // float speed = Time.deltaTime * 20;
@@ -405,12 +406,12 @@ public class Item : MonoBehaviour
   }
   public void Hover(bool act)
   {
-    if(act)
+    if(act && !IsSelected)
       _rb.AddForce(Vector3.down * 5);
   }
   public void MoveSelectedTo(Vector3 vdest)
   {
-    if(Vector3.Distance(transform.position, vdest) > 0.1f)
+    if(Vector2.Distance(transform.position.get_xz(), vdest.get_xz()) > 0.1f)
       _rb.MovePosition(Vector3.Lerp(transform.position, vdest, Time.deltaTime * 4));
     else
       _rb.velocity = Vector3.zero;

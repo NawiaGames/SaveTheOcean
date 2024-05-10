@@ -502,10 +502,10 @@ public class Level : MonoBehaviour
       AddItem(item);
     }
   }
-  void  MoveItemBack(Item item)
+  void  EndMoveItem(Item item)
   {
     item.Select(false);
-    item.MoveBack();
+    item.MoveEnd();
     if(!item.IsInMachine)
       _grid.set(item.vgrid, 1, item.id.kind);
   }
@@ -530,8 +530,8 @@ public class Level : MonoBehaviour
 
     if(arr.Length > 0)
     {
-      item = System.Array.Find(arr, (it) => (_itemSelected.vwpos - it.vwpos).get_xz().magnitude < 1.0f);
-      var match = System.Array.Find(arr, (it) => Item.Mergeable(_itemSelected, it));
+      //item = System.Array.Find(arr, (it) => it != _itemSelected && (_itemSelected.vwpos - it.vwpos).get_xz().magnitude < 1.5f);
+      var match = System.Array.Find(arr, (it) => _itemSelected != it && Item.Mergeable(_itemSelected, it));
       if(match)
         item = match;
     }
@@ -558,8 +558,9 @@ public class Level : MonoBehaviour
     {
       var vpt = tid.RaycastData.Value.point;
       vpt.x = Mathf.Clamp(vpt.x, _boundsNSWE[2].position.x, _boundsNSWE[3].position.x);
+      //vpt.y = 0;
       vpt.z = Mathf.Clamp(vpt.z, _boundsNSWE[1].position.z, _boundsNSWE[0].position.z);
-      voffs.y = Mathf.Lerp(voffs.y, 0.35f, Time.deltaTime * 10);
+      voffs.y = Mathf.Lerp(voffs.y, 0.15f, Time.deltaTime * 10);
       _itemSelected.MoveSelectedTo(vpt + voffs);
 
       //nearest item
@@ -622,7 +623,7 @@ public class Level : MonoBehaviour
     bool is_hit = IsItemHit(tid) || IsAnimalHit(tid) || IsTileHit(tid) || IsSplitMachineHit(tid) || IsStorageHit(tid) || IsChestHit(tid);
     if(!is_hit)
     {
-      MoveItemBack(_itemSelected);
+      EndMoveItem(_itemSelected);
     }
     _itemSelected = null;
     _grid.hovers(false);
@@ -804,7 +805,7 @@ public class Level : MonoBehaviour
     }
     if(is_hit && !is_merged)
     {
-      MoveItemBack(_itemSelected);
+      EndMoveItem(_itemSelected);
     }
 
     return is_hit;

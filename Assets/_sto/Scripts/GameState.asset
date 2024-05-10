@@ -16,169 +16,25 @@ MonoBehaviour:
   dataPath: Data
   version: 0
   progress:
-    _location: 3
-    _locations:
-    - _idx: 0
-      _state: 3
-      _visits: 1
-      _passes: 1
-      _date: -8585364616740835200
-      _cache:
-        items: []
-        items2: []
-        requests: []
-    - _idx: 1
-      _state: 3
-      _visits: 1
-      _passes: 1
-      _date: -8585364615668770155
-      _cache:
-        items: []
-        items2: []
-        requests: []
-    - _idx: 2
-      _state: 3
-      _visits: 1
-      _passes: 1
-      _date: -8585364615369360952
-      _cache:
-        items: []
-        items2: []
-        requests: []
-    - _idx: 3
-      _state: 1
-      _visits: 2
-      _passes: 0
-      _date: 0
-      _cache:
-        items:
-        - id:
-            _type: 1
-            _lvl: 0
-            _kind: 1
-          vgrid: {x: 1.5, y: -0.5}
-        - id:
-            _type: 1
-            _lvl: 1
-            _kind: 1
-          vgrid: {x: 0.5, y: -0.5}
-        - id:
-            _type: 0
-            _lvl: 0
-            _kind: 1
-          vgrid: {x: 1.5, y: -1.5}
-        - id:
-            _type: 1
-            _lvl: 0
-            _kind: 1
-          vgrid: {x: 0.5, y: 1.5}
-        - id:
-            _type: 0
-            _lvl: 4
-            _kind: 1
-          vgrid: {x: -1.5, y: -0.5}
-        - id:
-            _type: 0
-            _lvl: 0
-            _kind: 1
-          vgrid: {x: -0.5, y: 1.5}
-        - id:
-            _type: 0
-            _lvl: 1
-            _kind: 1
-          vgrid: {x: -1.5, y: 1.5}
-        - id:
-            _type: 0
-            _lvl: 2
-            _kind: 1
-          vgrid: {x: -1.5, y: -1.5}
-        - id:
-            _type: 0
-            _lvl: 3
-            _kind: 1
-          vgrid: {x: -1.5, y: 0.5}
-        - id:
-            _type: 5
-            _lvl: 0
-            _kind: 3
-          vgrid: {x: 0.5, y: -1.5}
-        items2: []
-        requests:
-        - ids:
-          - _type: 0
-            _lvl: 5
-            _kind: 1
-          - _type: 1
-            _lvl: 2
-            _kind: 1
+    _location: -1
+    _locations: []
     _locationsSpec: []
     _locationsPassedTime: 0
-    _itemAppears:
-    - _type: 0
-      _lvl: 0
-      _kind: 1
-    - _type: 0
-      _lvl: 1
-      _kind: 1
-    - _type: 1
-      _lvl: 0
-      _kind: 1
-    - _type: 5
-      _lvl: 0
-      _kind: 3
-    - _type: 0
-      _lvl: 2
-      _kind: 1
-    - _type: 4
-      _lvl: 0
-      _kind: 2
-    - _type: 1
-      _lvl: 1
-      _kind: 1
-    - _type: 4
-      _lvl: 1
-      _kind: 2
-    - _type: 6
-      _lvl: 0
-      _kind: 4
-    - _type: 0
-      _lvl: 3
-      _kind: 1
-    - _type: 0
-      _lvl: 4
-      _kind: 1
-    - _type: 5
-      _lvl: 1
-      _kind: 3
-    - _type: 6
-      _lvl: 1
-      _kind: 4
+    _itemAppears: []
   economy:
-    stamina: 6
-    coins: 32
-    gems: 34
-    rewardPoints: 30
-    rewardLevel: 1
-    lastStamina: -8585364606666358827
+    stamina: 50
+    coins: 0
+    gems: 0
+    rewardPoints: 0
+    rewardLevel: 0
+    lastStamina: 0
   chest:
-    shown: 1
-    listStamina:
-    - _type: 0
-      _lvl: 0
-      _kind: 2
-    listCoins:
-    - _type: 0
-      _lvl: 0
-      _kind: 3
-    listGems:
-    - _type: 0
-      _lvl: 0
-      _kind: 4
-    - _type: 0
-      _lvl: 0
-      _kind: 4
+    shown: 0
+    listStamina: []
+    listCoins: []
+    listGems: []
   storage:
-    shown: 1
+    shown: 0
     listItems: []
   splitMachine:
     _capacity: 1
@@ -190,13 +46,7 @@ MonoBehaviour:
     tutStorageBoxDone: 0
     popupNoStamina: 0
   gameInfo:
-    appQuitTime: -8585364605252913719
+    appQuitTime: 0
   animals:
-    animals:
-    - type: 1
-      kcal: 0
-      lvl: 0
-    - type: 2
-      kcal: 0
-      lvl: 0
+    animals: []
   selectedTheme: 0

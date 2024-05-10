@@ -505,7 +505,7 @@ MonoBehaviour:
   _dim: {x: 4, y: 5}
   _gridSpace: 1.5
   _waterColor: {r: 0, g: 0.5647059, b: 1, a: 1}
-  _inputRad: 1.5
+  _inputRad: 0.7
   _inputAnimRad: 1.75
   _chanceToDowngradeItem:
   - 0
