@@ -40,8 +40,8 @@ public class Item : MonoBehaviour
   [System.Serializable]
   public struct ID
   {
-    [SerializeField] int   _type;
-    [SerializeField] int   _lvl;
+    [SerializeField] int  _type;
+    [SerializeField] int  _lvl;
     [SerializeField] Kind _kind;
 
     public ID(int item_type, int item_lvl, Kind item_kind, bool clampLevel = false)
@@ -89,6 +89,7 @@ public class Item : MonoBehaviour
   float      _sinkTimer = 0;
   bool       _ready = false;
   //bool       _staticItem = false;
+  bool       _levelFinished = false;
   Quaternion _qinitial;
 
   public static float gridSpace = 1.0f;
@@ -215,10 +216,7 @@ public class Item : MonoBehaviour
   public bool       tickIco
   {
     get => _tickIco.activeInHierarchy;
-    set
-    {
-      _tickIco.SetActive(value);
-    }
+    set => _tickIco.SetActive(value);
   }
   bool  levelsAsModels => id.IsSpecial;
 
@@ -370,6 +368,12 @@ public class Item : MonoBehaviour
   {
     _activatable.DeactivateObject();
   }
+  public void LevelOut()
+  {
+    _levelFinished = false;
+    _rb.isKinematic = true;
+    GetComponent<Collider>().enabled = false;
+  }
   Vector3   _vBackPos = Vector3.zero;
   Coroutine _coMoveHandle = null;
   public void Select(bool sel)
@@ -384,6 +388,7 @@ public class Item : MonoBehaviour
       _vBackPos = vlpos;
     }
   }
+  public void MoveTo(Vector3 dst) => _rb.MovePosition(dst);
   public void MoveToGrid()
   {
     _coMoveHandle = StartCoroutine(coMoveToGrid());
@@ -403,11 +408,11 @@ public class Item : MonoBehaviour
     _coMoveHandle = null;
     onDropped?.Invoke(this);
   }
-  public void MoveEnd()
+  public void DragEnd()
   {
-    _coMoveHandle = StartCoroutine(coMoveEnd());
+    _coMoveHandle = StartCoroutine(coDragEnd());
   }
-  IEnumerator coMoveEnd()
+  IEnumerator coDragEnd()
   {
     // var vdst = (IsInMachine)? _vBackPos : Item.ToPos(vgrid);
     // float speed = Time.deltaTime * 20;
@@ -476,6 +481,9 @@ public class Item : MonoBehaviour
   Vector3 _vsink = Vector3.zero;
   void Update()
   {
+    if(_levelFinished)
+      return;
+
     _lifetime += Time.deltaTime;
     if(IsReady && !IsSelected && _sm.IsIdle)
     {
@@ -496,6 +504,9 @@ public class Item : MonoBehaviour
   [SerializeField] float _damp_under = 0.5f;
   void FixedUpdate()
   {
+     if(_levelFinished)
+      return;
+
     if(IsReady && !IsSelected)
     {
       var depth = transform.position.y;

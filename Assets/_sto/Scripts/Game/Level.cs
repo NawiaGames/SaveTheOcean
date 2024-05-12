@@ -35,6 +35,8 @@ public class Level : MonoBehaviour
   [SerializeField] Color      _waterColor;
   [SerializeField] float      _inputRad = 1.5f;
   [SerializeField] float      _inputAnimRad = 2.0f;
+  [SerializeField] float      _inputStorageRad = 2.0f;
+  [SerializeField] bool       _inputAnimRadMatching = true;
   [Header("LvlDesc")]
   [SerializeField] float[]    _chanceToDowngradeItem = new float[6];
   [field:SerializeField] public int  _resItemPerItems {get; private set;}= 0;
@@ -231,12 +233,12 @@ public class Level : MonoBehaviour
       }
       return (vps.Count > 0)? vps.get_random() : null;
     }
-    public bool isInside(Vector2 vgrid) => Mathf.Abs(vgrid.x * 2) <= _dim.x && Mathf.Abs(vgrid.y*2) <= _dim.y;
-    public bool isOverAxisZ(Vector3 vpos)
-    {
-      Vector2 vdim = new Vector2(_dim.x, _dim.y) * _gridSpace;
-      return vpos.z <= vdim.y / 2;
-    }
+    // public bool isInside(Vector2 vgrid) => Mathf.Abs(vgrid.x * 2) <= _dim.x && Mathf.Abs(vgrid.y*2) <= _dim.y;
+    // public bool isOverAxisZ(Vector3 vpos)
+    // {
+    //   Vector2 vdim = new Vector2(_dim.x, _dim.y) * _gridSpace;
+    //   return vpos.z <= vdim.y / 2;
+    // }
     public float getMaxZ()
     {
       return _dim.y * 0.5f * _gridSpace;
@@ -297,7 +299,7 @@ public class Level : MonoBehaviour
     onHide?.Invoke(this);
   }
 
-  void  Init()
+  void Init()
   {
     List<int> levels_idx = new List<int>();
     levels_idx.Capacity = 1000;
@@ -510,7 +512,7 @@ public class Level : MonoBehaviour
   void  EndMoveItem(Item item)
   {
     item.Select(false);
-    item.MoveEnd();
+    item.DragEnd();
     if(!item.IsInMachine)
       _grid.set(item.vgrid, 1, item.id.kind);
   }
@@ -613,10 +615,12 @@ public class Level : MonoBehaviour
         tileHit?.Hover(true);
       }
     }
-    if(nearestAnimal && nearestAnimal.CanPut(_itemSelected))
+    if(nearestAnimal && (!_inputAnimRadMatching || nearestAnimal.CanPut(_itemSelected)))
       onMagnetBeg?.Invoke(nearestAnimal.transform.position);
     else if(nearestItem != null && Item.Mergeable(_itemSelected, nearestItem))
       onMagnetBeg?.Invoke(nearestItem.transform.position);
+    else if(_itemSelected && _itemSelected.id.IsSpecial && Vector2.Distance(_itemSelected.vwpos.get_xz(), _storageBox.transform.position.get_xz()) < _inputStorageRad)
+      onMagnetBeg?.Invoke(_storageBox.transform.position);
     else
       onMagnetEnd?.Invoke(false);
   }
@@ -908,7 +912,7 @@ public class Level : MonoBehaviour
   bool IsStorageHit(TouchInputData tid)
   {
     bool is_hit = false;
-    var storage = tid.GetClosestObjectInRange<StorageBox>(_inputRad, StorageBox.layerMask);
+    var storage = tid.GetClosestObjectInRange<StorageBox>(_inputStorageRad, StorageBox.layerMask);
     if(storage)
     {
       if(_itemSelected.id.IsSpecial)
@@ -953,14 +957,16 @@ public class Level : MonoBehaviour
   }
   IEnumerator coMoveToSB()
   {
+    _items.ForEach((it) => {it.LevelOut();});
+    System.Array.ForEach(_boundsNSWE, (tr) => tr.GetComponent<BoxCollider>().enabled = false);
     Vector3 vsbox = _storageBox.transform.position + new Vector3(0, 1, 0);
     List<Item> itms = _items.FindAll((Item item) => item.id.IsSpecial).ToList();
     while(itms.Count > 0)
     {
       for(int q = 0; q < itms.Count;)
       {
-        itms[q].vwpos = Vector3.Lerp(itms[q].vwpos, vsbox, Time.deltaTime * 4);
-        if(Vector3.Distance(itms[q].vwpos, vsbox) < 0.1f)
+        itms[q].MoveTo(Vector3.Lerp(itms[q].vwpos, vsbox, Time.deltaTime * 8));
+        if(Vector2.Distance(itms[q].vwpos.get_xz(), vsbox.get_xz()) < 0.5f)
         {
           _storageBox.Push(itms[q].id);
           DestroyItem(itms[q]);
@@ -1017,7 +1023,8 @@ public class Level : MonoBehaviour
   }
   void Update()
   {
-    Process();
+    if(finished)
+      Process();
 
   #if UNITY_EDITOR
     if(Input.GetKeyDown(KeyCode.E))

@@ -506,7 +506,9 @@ MonoBehaviour:
   _gridSpace: 1.5
   _waterColor: {r: 0, g: 0.5647059, b: 1, a: 1}
   _inputRad: 0.7
-  _inputAnimRad: 1.75
+  _inputAnimRad: 1
+  _inputStorageRad: 2
+  _inputAnimRadMatching: 1
   _chanceToDowngradeItem:
   - 0
   - 0
@@ -1060,7 +1062,7 @@ Transform:
   m_GameObject: {fileID: 8922531104429893038}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 6}
+  m_LocalPosition: {x: 0, y: 0, z: 7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
