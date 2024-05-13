@@ -11,7 +11,7 @@ public class Item : MonoBehaviour
   [SerializeField] GameObject         _modelContainer;
   [SerializeField] ActivatableObject  _activatable;
   [SerializeField] Rigidbody          _rb;
-  [SerializeField] SpringMove         _sm;
+  //[SerializeField] SpringMove         _sm;
   [SerializeField] Transform          _fx;
   [SerializeField] GameObject         _tickIco;
   [Header("Settings")]
@@ -425,7 +425,6 @@ public class Item : MonoBehaviour
     // vlpos = vdst;
     _rb.AddForce(Vector3.down * 5);
     yield return null;
-    //_sm.Touch();
     _coMoveHandle = null;
     onDropped?.Invoke(this);
   }
@@ -437,7 +436,7 @@ public class Item : MonoBehaviour
   public void MoveSelectedTo(Vector3 vdest)
   {
     if(Vector2.Distance(transform.position.get_xz(), vdest.get_xz()) > 0.1f)
-      _rb.MovePosition(Vector3.Lerp(transform.position, vdest, Time.deltaTime * 4));
+      _rb.MovePosition(Vector3.Lerp(transform.position, vdest, Time.deltaTime * 10));
     else
       _rb.velocity = Vector3.zero;
   }
@@ -478,26 +477,13 @@ public class Item : MonoBehaviour
     action?.Invoke(this);
   }
 
-  Vector3 _vsink = Vector3.zero;
+  //Vector3 _vsink = Vector3.zero;
   void Update()
   {
     if(_levelFinished)
       return;
 
     _lifetime += Time.deltaTime;
-    if(IsReady && !IsSelected && _sm.IsIdle)
-    {
-      _sinkTimer += Time.deltaTime;
-      _vsink.y = Mathf.Sin(_sinkTimer) * Mathf.Min(_vextent.y * 0.25f, _ampl);
-      _fx.transform.localPosition = _vsink;
-    }
-  //   if(mdl)
-  //   {
-  //     //if(IsSelected)
-  //     //  mdl.transform.localRotation = Quaternion.Lerp(mdl.transform.localRotation, Quaternion.identity, Time.deltaTime * 8);
-  //     //else
-  //     //  mdl.transform.localRotation = Quaternion.Lerp(mdl.transform.localRotation, _qinitial, Time.deltaTime * 8);
-  //   }
   }
   [SerializeField] float _buoyancy  = 1.0f;
   [SerializeField] float _damp_over = 0.0f;
@@ -521,5 +507,9 @@ public class Item : MonoBehaviour
     {
       _rb.AddForce(Vector3.up * 2);
     }
+  }
+  void LateUpdate()
+  {
+
   }
 }

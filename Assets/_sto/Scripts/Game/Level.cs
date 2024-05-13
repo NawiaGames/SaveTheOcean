@@ -564,9 +564,8 @@ public class Level : MonoBehaviour
     if(_itemSelected && tid.RaycastData.HasValue)
     {
       var vpt = tid.RaycastData.Value.point;
-      vpt.x = Mathf.Clamp(vpt.x, _boundsNSWE[2].position.x, _boundsNSWE[3].position.x);
-      //vpt.y = 0;
-      vpt.z = Mathf.Clamp(vpt.z, _boundsNSWE[1].position.z, _boundsNSWE[0].position.z);
+      vpt.x = Mathf.Clamp(vpt.x, _boundsNSWE[2].position.x + 0.1f, _boundsNSWE[3].position.x - 0.1f);
+      vpt.z = Mathf.Clamp(vpt.z, _boundsNSWE[1].position.z + 0.1f, _boundsNSWE[0].position.z - 0.1f);
       voffs.y = Mathf.Lerp(voffs.y, 0.15f, Time.deltaTime * 10);
       _itemSelected.MoveSelectedTo(vpt + voffs);
 

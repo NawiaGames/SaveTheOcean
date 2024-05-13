@@ -1,3 +1,4 @@
+#if false
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -28,28 +29,29 @@ public class SpringMove : MonoBehaviour
 
   public void Touch(float vvely = -0.25f)
   {
-    // _vvel += new Vector3(0, vvely, 0);
-    // _vvel = _vvel.clamp(_vminLimit * _velLimitFactor, _vmaxLimit * _velLimitFactor);
+    _vvel += new Vector3(0, vvely, 0);
+    _vvel = _vvel.clamp(_vminLimit * _velLimitFactor, _vmaxLimit * _velLimitFactor);
   }
   public bool IsIdle => _vvel.sqrMagnitude < 0.0001f * 0.0001f;
 
   void Update()
   {
-    // if(_vvel.sqrMagnitude > 0 || _vforce.sqrMagnitude > 0)
-    // {
-    //   var _voff = _vpos;
-    //   _vforce = -_stiffness * _voff;
-    //   _vvel += _vforce;
-    //   _vpos += _vvel * Time.deltaTime * _speedFactor;
-    //   _vpos = _vpos.clamp(_vminLimit, _vmaxLimit);
-    //   _vvel *=_damping;
-    //   if(_vvel.magnitude < 0.0001f)
-    //   {
-    //     _vvel.Set(0, 0, 0);
-    //     _vforce.Set(0, 0, 0);
-    //     _vpos.y = 0;
-    //   }
-    //   _obj.transform.localPosition = _vbase + _vpos;
-    // }
+    if(_vvel.sqrMagnitude > 0 || _vforce.sqrMagnitude > 0)
+    {
+      var _voff = _vpos;
+      _vforce = -_stiffness * _voff;
+      _vvel += _vforce;
+      _vpos += _vvel * Time.deltaTime * _speedFactor;
+      _vpos = _vpos.clamp(_vminLimit, _vmaxLimit);
+      _vvel *=_damping;
+      if(_vvel.magnitude < 0.0001f)
+      {
+        _vvel.Set(0, 0, 0);
+        _vforce.Set(0, 0, 0);
+        _vpos.y = 0;
+      }
+      _obj.transform.localPosition = _vbase + _vpos;
+    }
   }
 }
+#endif

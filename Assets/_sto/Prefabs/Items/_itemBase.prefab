@@ -115,7 +115,6 @@ GameObject:
   - component: {fileID: 7845557772794626158}
   - component: {fileID: 6752348163733698667}
   - component: {fileID: 7798136041665752175}
-  - component: {fileID: 2079218385271069147}
   - component: {fileID: 4908890458060838249}
   - component: {fileID: 6061897704520350776}
   m_Layer: 9
@@ -156,7 +155,7 @@ MonoBehaviour:
   _modelContainer: {fileID: 5137363068744547674}
   _activatable: {fileID: 7798136041665752175}
   _rb: {fileID: 6061897704520350776}
-  _sm: {fileID: 2079218385271069147}
+  _sm: {fileID: 0}
   _fx: {fileID: 4509933857829436113}
   _tickIco: {fileID: 6008361047508620854}
   _ampl: 0.1
@@ -178,25 +177,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <rb>k__BackingField: {fileID: 0}
   <animator>k__BackingField: {fileID: 3153182826125854873}
---- !u!114 &2079218385271069147
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4092142241397789765}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22463d347e17a364c8d1bb8466ff23f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _obj: {fileID: 5137363068744547674}
-  _stiffness: 0.15
-  _damping: 0.95
-  _vminLimit: {x: -1, y: -0.25, z: -1}
-  _vmaxLimit: {x: 1, y: 0.5, z: 1}
-  _velLimitFactor: 1
-  _speedFactor: 3
 --- !u!65 &4908890458060838249
 BoxCollider:
   m_ObjectHideFlags: 0
