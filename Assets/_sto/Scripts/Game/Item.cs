@@ -238,6 +238,7 @@ public class Item : MonoBehaviour
     Destroy(_rb);
     _rb = null;
 
+    transform.localScale = Vector2.one;
     var osir = GetComponentInChildren<ObjectSpinInRange>(true);
     if(osir)
     {
