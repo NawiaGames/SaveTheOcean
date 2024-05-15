@@ -131,7 +131,7 @@ public class UIStatusBar : MonoBehaviour
         moves.RemoveAt(q--);
       ++q;
     }
-  }  
+  }
   public void MoveCollectedUI(Item item, int amount)
   {
     Move move = new Move();
@@ -153,6 +153,7 @@ public class UIStatusBar : MonoBehaviour
       lbl.GetComponent<RectTransform>().anchorMin = UIManager.GetViewportPosition(item.vwpos);
       lbl.GetComponent<RectTransform>().anchorMax = UIManager.GetViewportPosition(item.vwpos);
       lbl.text = UIDefaults.GetResSymbol(item.id);
+      lbl.alpha = 0;
       move.objects.Add(lbl.gameObject);
       move.delays.Add(-_moveDelay * q);
     }
@@ -168,6 +169,7 @@ public class UIStatusBar : MonoBehaviour
         move.delays[o] += Time.deltaTime;
         if(move.delays[o] > 0)
         {
+          move.objects[o].GetComponent<TMPLbl>().alpha = 1;
           var rc = move.objects[o].GetComponent<RectTransform>();
           rc.anchorMin = Vector3.Lerp(rc.anchorMin, move.vdstUI, Time.deltaTime * _moveSpeed);
           rc.anchorMax = rc.anchorMin;
@@ -196,4 +198,3 @@ public class UIStatusBar : MonoBehaviour
     _stamina.progressVal = GameState.Econo.GetStaminaRefillPerc();
   }
 }
-

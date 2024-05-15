@@ -111,7 +111,7 @@ public class GameState : SavableScriptableObject
       if(loc_idx < Location.SpecialLocBeg)
         loc_state = _locations.Find((loc) => loc.idx == loc_idx);
       else
-        loc_state = _locationsSpec.Find((loc) => loc.idx == loc_idx);  
+        loc_state = _locationsSpec.Find((loc) => loc.idx == loc_idx);
       return loc_state;
     }
     public  bool        IsLocationUnlocked(int loc_idx)
@@ -200,8 +200,8 @@ public class GameState : SavableScriptableObject
       var loc = FindLocation(loc_idx);
       if(loc != null)
         visits = loc.visits;
-      
-      return visits;  
+
+      return visits;
     }
     public bool         ItemAppeared(Item.ID id)
     {
@@ -274,9 +274,9 @@ public class GameState : SavableScriptableObject
     {
       for(int q = 0; q < rew.stamina; ++q)
         listStamina.Add(new Item.ID(0, 0, Item.Kind.Stamina));
-      for(int q = 0; q < rew.coins; ++q)  
+      for(int q = 0; q < rew.coins; ++q)
         listCoins.Add(new Item.ID(0, 0, Item.Kind.Coin));
-      for(int q = 0; q < rew.gems; ++q)  
+      for(int q = 0; q < rew.gems; ++q)
         listGems.Add(new Item.ID(0, 0, Item.Kind.Gem));
     }
   }
@@ -364,7 +364,7 @@ public class GameState : SavableScriptableObject
     public bool DidAnimalAppear(Animal.Type type) => animals.Any((info) => type == info.type);
     public bool Feed(Animal.Type type, float kcal, int baseLevelUp)
     {
-      bool ret = false;  
+      bool ret = false;
       var ainf = GetInfo(type);
       if(ainf != null)
       {
@@ -470,10 +470,10 @@ public class GameState : SavableScriptableObject
     public static Action<int>   onGemsChanged;
     public static Action<float> onRewardProgressChanged;
 
-    public static int stamina 
-    { 
-      get => get().economy.stamina; 
-      set 
+    public static int stamina
+    {
+      get => get().economy.stamina;
+      set
       {
         var _prev_val = get().economy.stamina;
         get().economy.stamina = value; //Mathf.Clamp(value, 0, GameData.Econo.staminaMax);
@@ -481,11 +481,11 @@ public class GameState : SavableScriptableObject
           onStaminaChanged?.Invoke(value);
       }
     }
-    public static int coins 
-    { 
-      get => get().economy.coins; 
+    public static int coins
+    {
+      get => get().economy.coins;
       set
-      { 
+      {
         var _prev_val = get().economy.coins;
         get().economy.coins = Mathf.Clamp(value, 0, GameData.Econo.coinsMax);
         if(_prev_val != value)
@@ -494,8 +494,8 @@ public class GameState : SavableScriptableObject
     }
     public static int gems
     {
-      get => get().economy.gems; 
-      set 
+      get => get().economy.gems;
+      set
       {
         var _prev_val = get().economy.gems;
         get().economy.gems = Mathf.Clamp(value, 0, GameData.Econo.gemsMax);
@@ -529,9 +529,9 @@ public class GameState : SavableScriptableObject
 
       return perc;
     }
-    public static int   AddRes(Item.ID id) //without event
+    public static int   AddRes(Item.ID id, int count = 1) //without event
     {
-      int amount = GameData.Econo.GetResCount(id);
+      int amount = GameData.Econo.GetResCount(id) * count;
       if(id.kind == Item.Kind.Stamina)
         get().economy.stamina = Mathf.Clamp(get().economy.stamina + amount, 0, GameData.Econo.staminaMax);
       else if(id.kind == Item.Kind.Coin)
@@ -539,7 +539,7 @@ public class GameState : SavableScriptableObject
       else if(id.kind == Item.Kind.Gem)
         get().economy.gems = Mathf.Clamp(get().economy.gems + amount, 0, GameData.Econo.gemsMax);
 
-      return amount;  
+      return amount;
     }
 
     public static void  Process()
@@ -591,6 +591,12 @@ public class GameState : SavableScriptableObject
       }
       return id;
     }
+    public static void ResetRes()
+    {
+      get().chest.listStamina.Clear();
+      get().chest.listCoins.Clear();
+      get().chest.listGems.Clear();
+    }
     public static void AddRewards()
     {
       get().chest.AddReward(GameData.Econo.GetRewards());
@@ -603,7 +609,7 @@ public class GameState : SavableScriptableObject
   public static class StorageBox
   {
     public static Action onItemsCntChanged;
-    
+
     public static void PushItem(Item.ID id)
     {
       get().storage.listItems.Add(id);
@@ -645,7 +651,7 @@ public class GameState : SavableScriptableObject
     public static bool  AnimalAppears(Animal.Type type) => get().animals.AnimalAppeared(type);
     public static bool  DidAnimalAppear(Animal.Type type) => get().animals.DidAnimalAppear(type);
     public static float GetFoodCal(Item.ID id) => GameData.Econo.GetResCount(id) * GameData.Econo.GetFoodDesc(id).kcal;
-    public static bool  Feed(Animal.Type type, Item.ID id, int baseLevelUp) 
+    public static bool  Feed(Animal.Type type, Item.ID id, int baseLevelUp)
     {
       float kcal = GetFoodCal(id);
       return get().animals.Feed(type, kcal, baseLevelUp);

@@ -111,6 +111,7 @@ MonoBehaviour:
   _staminaRefillTime: 900
   _coinFeedCost: 1
   _coinsMax: 999
+  _gemsStaminaRefillCost: 10
   _gemsMax: 999
   _resouceItemsAmountFactor: 2
   _foodsDesc:
@@ -130,36 +131,36 @@ MonoBehaviour:
       stamina: 0
       coins: 0
       gems: 0
-  - points2Chest: 30
+  - points2Chest: 5
     _reward:
-      stamina: 1
-      coins: 1
+      stamina: 4
+      coins: 5
       gems: 2
-  - points2Chest: 64
+  - points2Chest: 10
     _reward:
       stamina: 2
       coins: 4
       gems: 2
-  - points2Chest: 176
+  - points2Chest: 30
     _reward:
       stamina: 2
       coins: 6
       gems: 2
-  - points2Chest: 336
+  - points2Chest: 88
     _reward:
       stamina: 1
       coins: 8
       gems: 1
-  - points2Chest: 464
+  - points2Chest: 90
     _reward:
-      stamina: 1
-      coins: 10
-      gems: 1
-  - points2Chest: 624
+      stamina: 10
+      coins: 20
+      gems: 10
+  - points2Chest: 99
     _reward:
-      stamina: 1
-      coins: 12
-      gems: 1
+      stamina: 100
+      coins: 100
+      gems: 100
   - points2Chest: 816
     _reward:
       stamina: 1
@@ -187,6 +188,8 @@ MonoBehaviour:
       gems: 1
   _feedingAvailLoc: 6
   _clearingAvailLoc: 20
+  _disableStorageBox: 1
+  _disableRewardChest: 1
   themeColors:
   - {r: 0.78, g: 0.7532353, b: 0.7532353, a: 1}
   - {r: 0.1882353, g: 0.17254902, b: 0.17254902, a: 1}

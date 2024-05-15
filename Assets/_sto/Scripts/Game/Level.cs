@@ -22,6 +22,7 @@ public class Level : MonoBehaviour
   [SerializeField] Transform[]    _animalContainers;
   [SerializeField] Renderer       _waterRenderer;
   [SerializeField] RewardChest    _rewardChest;
+  [SerializeField] RewardChest2   _rewardChest2Prefab;
   [SerializeField] SplitMachine   _splitMachine;
   [SerializeField] FeedingMachine _feedingMachine;
   [SerializeField] Transform[]    _boundsNSWE;
@@ -267,6 +268,9 @@ public class Level : MonoBehaviour
 
     _storageBox = GetComponentInChildren<StorageBox>();
 
+    Item.onMerged += OnItemMerged;
+    GameState.Econo.onRewardProgressChanged += OnRewardChanged;
+
     onCreate?.Invoke(this);
   }
   void OnDestroy()
@@ -365,28 +369,28 @@ public class Level : MonoBehaviour
       }
       ids.shuffle(ids.Count * 5);
 
-      List<Item.ID> specIds = new List<Item.ID>();
-      if(_resItemPerItems > 0)
-      {
-        int resItems = ids.Count / _resItemPerItems;
-        var extras = new (Item.Kind kind, float weight)[]
-        {
-          new (Item.Kind.Stamina, _resStaminaPart),
-          new (Item.Kind.Coin, _resCoinsPart),
-          new (Item.Kind.Gem, _resGemsPart),
-        };
+      // List<Item.ID> specIds = new List<Item.ID>();
+      // if(_resItemPerItems > 0)
+      // {
+      //   int resItems = ids.Count / _resItemPerItems;
+      //   var extras = new (Item.Kind kind, float weight)[]
+      //   {
+      //     new (Item.Kind.Stamina, _resStaminaPart),
+      //     new (Item.Kind.Coin, _resCoinsPart),
+      //     new (Item.Kind.Gem, _resGemsPart),
+      //   };
 
-        for(int q = 0; q < extras.Length; ++q)
-        {
-          int cnt = Mathf.RoundToInt(resItems * extras[q].weight);
-          for(int i = 0; i < cnt ; ++i)
-          {
-            var spec_id = new Item.ID(0, 0, extras[q].kind).Validate();
-            specIds.Add(spec_id);
-          }
-        }
-        specIds.shuffle(100);
-      }
+      //   for(int q = 0; q < extras.Length; ++q)
+      //   {
+      //     int cnt = Mathf.RoundToInt(resItems * extras[q].weight);
+      //     for(int i = 0; i < cnt ; ++i)
+      //     {
+      //       var spec_id = new Item.ID(0, 0, extras[q].kind).Validate();
+      //       specIds.Add(spec_id);
+      //     }
+      //   }
+      //   specIds.shuffle(100);
+      // }
 
       for(int q = 0; q < ids.Count; ++q)
       {
@@ -406,23 +410,23 @@ public class Level : MonoBehaviour
           item.gameObject.SetActive(false);
         }
       }
-      for(int q = 0; q < specIds.Count; ++q)
-      {
-        var item = GameData.Prefabs.CreateItem(specIds[q], _itemsContainer);
-        if(vs.Count > 0)
-        {
-          item.Init(GetRandomGridPos());// vs.first());
-          vs.RemoveAt(0);
-          item.Spawn(item.vgrid, null, 15, Random.Range(0.5f, 1.5f), Random.Range(0.0f, 3f));
-          AddItem(item);
-        }
-        else
-        {
-          item.Init(Vector2.zero);
-          _items2.Add(item);
-          item.gameObject.SetActive(false);
-        }
-      }
+      // for(int q = 0; q < specIds.Count; ++q)
+      // {
+      //   var item = GameData.Prefabs.CreateItem(specIds[q], _itemsContainer);
+      //   if(vs.Count > 0)
+      //   {
+      //     item.Init(GetRandomGridPos());// vs.first());
+      //     vs.RemoveAt(0);
+      //     item.Spawn(item.vgrid, null, 15, Random.Range(0.5f, 1.5f), Random.Range(0.0f, 3f));
+      //     AddItem(item);
+      //   }
+      //   else
+      //   {
+      //     item.Init(Vector2.zero);
+      //     _items2.Add(item);
+      //     item.gameObject.SetActive(false);
+      //   }
+      // }
       _items2.shuffle(_items2.Count * 5);
     }
     else
@@ -657,11 +661,31 @@ public class Level : MonoBehaviour
         if(vg != null)
         {
           Item.ID? id = null;
-          var chest = box.GetComponent<RewardChest>();
+          var chest = box.GetComponent<RewardChest2>();
           if(chest)
           {
-            id = chest.Pop();
-            vbeg = chest.transform.position;
+            if(!chest.isOpen)
+            {
+              chest.OpenLid();
+            }
+            else if(!chest.rewardClaimed)
+            {
+              int[] counts = {GameState.Chest.staminaCnt, GameState.Chest.coinsCnt, GameState.Chest.gemsCnt};
+              Item.ID[] ids = {Item.ID.FromKind(Item.Kind.Stamina, 0, 0), Item.ID.FromKind(Item.Kind.Coin, 0, 0), Item.ID.FromKind(Item.Kind.Gem, 0, 0)};
+              for(int q = 0; q < 3; ++q)
+              {
+                var cid = ids[q];
+                var item = GameData.Prefabs.CreateItem(cid, _itemsContainer);
+                item.vwpos = chest.transform.position;
+                int amount = GameState.Econo.AddRes(cid, counts[q]);
+                _uiStatusBar.MoveCollectedUI(item, amount);
+                onItemCollected?.Invoke(item);
+                item.Hide();
+              }
+              chest.Hide();
+              GameState.Chest.ResetRes();
+              return;
+            }
           }
           else
           {
@@ -932,9 +956,9 @@ public class Level : MonoBehaviour
   bool IsChestHit(TouchInputData tid)
   {
     bool is_hit = false;
-    var chest = tid.GetClosestObjectInRange<RewardChest>(_inputRad, RewardChest.layerMask);
-    if(chest)
-      chest.NoPush(_itemSelected.id);
+    //var chest = tid.GetClosestObjectInRange<RewardChest2>(_inputRad, RewardChest.layerMask);
+    // if(chest)
+    //   chest.NoPush(_itemSelected.id);
 
     return is_hit;
   }
@@ -1012,6 +1036,26 @@ public class Level : MonoBehaviour
     _animals.ForEach((anim) => req_items.AddRange(anim.garbagesView));
     req_items.ForEach((reqit) => reqit.tickIco = _items.Any((it) => Item.EqType(it, reqit)));
   }
+  void OnItemMerged(Item item)
+  {
+    if(locationIdx > 0)
+      GameState.Econo.rewards += 1;
+  }
+  void OnRewardChanged(float rewardPoints)
+  {
+    var rewardProgress = GameData.Econo.GetRewardProgress(rewardPoints);
+    if(rewardProgress.lvl > GameState.Chest.rewardLevel)
+    {
+      GameState.Chest.rewardLevel = rewardProgress.lvl;
+      GameState.Chest.AddRewards();
+      CreateRewardChest(new Vector3(Random.Range(-dim.x * 0.5f + 0.5f, dim.x * 0.5f - 0.5f), -4, Random.Range(-dim.y * 0.5f + 0.5f, dim.y * 0.5f - 0.5f)));
+    }
+  }
+  void CreateRewardChest(Vector3 v)
+  {
+    var chest = Instantiate(_rewardChest2Prefab, v, Quaternion.identity, _itemsContainer);
+    chest.Show();
+  }
   void Process()
   {
     foreach(var _item in _items)
@@ -1033,6 +1077,10 @@ public class Level : MonoBehaviour
         finished = true;
         StartCoroutine(coEnd());
       }
+    }
+    if(Input.GetKeyDown(KeyCode.Q))
+    {
+      CreateRewardChest(new Vector3(Random.Range(-dim.x * 0.5f, dim.x * 0.5f), -4, Random.Range(-dim.y * 0.5f, dim.y * 0.5f)));
     }
   #endif
   }

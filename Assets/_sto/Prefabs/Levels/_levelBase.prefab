@@ -495,6 +495,7 @@ MonoBehaviour:
   - {fileID: 7930286490525139754}
   _waterRenderer: {fileID: 6418255281977202600}
   _rewardChest: {fileID: 6260663843842504207}
+  _rewardChest2Prefab: {fileID: 7416641606986900465, guid: da652096cebacb049b9468c9318fdd03, type: 3}
   _splitMachine: {fileID: 5136744024670335667}
   _feedingMachine: {fileID: 6140517189162651774}
   _boundsNSWE:

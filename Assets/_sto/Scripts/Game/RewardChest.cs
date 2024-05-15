@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPLbl = TMPro.TextMeshProUGUI;
 using GameLib;
 using GameLib.Utilities;
+using Unity.VisualScripting;
 
 public class RewardChest : MonoBehaviour
 {
@@ -29,6 +30,11 @@ public class RewardChest : MonoBehaviour
   void Awake()
   {
     layerMask = LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer));
+    if(GameData.Settings.GetDisableRewardChest())
+    {
+      this.gameObject.SetActive(false);
+      return;
+    }
 
     Item.onMerged += OnItemMerged;
     GameState.Econo.onRewardProgressChanged += OnRewardChanged;
@@ -38,6 +44,9 @@ public class RewardChest : MonoBehaviour
 
     _content.SetActive(false);
     GetComponent<Collider>().enabled = false;
+
+    if(GameData.Settings.GetDisableRewardChest())
+      this.gameObject.SetActive(false);
   }
   void OnDestroy()
   {
@@ -47,6 +56,9 @@ public class RewardChest : MonoBehaviour
 
   public void Show()
   {
+    if(GameData.Settings.GetDisableRewardChest())
+      return;
+
     _lidAngle = (_resCnt == 0) ? 0 : 90;
     _content.SetActive(true);
     GetComponent<Collider>().enabled = true;
@@ -85,7 +97,7 @@ public class RewardChest : MonoBehaviour
   {
     UpdateSlider();
     UpdateInfo();
-    
+
     var rewardProgress = GameData.Econo.GetRewardProgress(rewardPoints);
     if(rewardProgress.lvl > GameState.Chest.rewardLevel)
     {
@@ -106,17 +118,17 @@ public class RewardChest : MonoBehaviour
   public Item.ID? Pop()
   {
     var id = GameState.Chest.PopRes();
-    _shake.Shake();    
+    _shake.Shake();
     UpdateInfo();
     if(id != null)
       onPoped?.Invoke(this);
     else
       onNotPoped?.Invoke(this);
-    return id;  
+    return id;
   }
   void Update()
   {
-    if(_content.activeSelf)  
+    if(_content.activeSelf)
     {
       _rewardPointsMov = Mathf.Lerp(_rewardPointsMov, GameState.Econo.rewards, Time.deltaTime * 4);
       UpdateSlider();

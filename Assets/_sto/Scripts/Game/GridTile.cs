@@ -38,14 +38,14 @@ public class GridTile : MonoBehaviour
     {
       if(garbage)
       {
-        this.Invoke(() => 
-        {
-          if(_dirty)
-            _ps.Play();
-        }, 1);
+      //   this.Invoke(() =>
+      //   {
+      //     if(_dirty)
+      //       _ps.Play();
+      //   }, 1);
       }
       else
-        _ps.Stop();  
+        _ps.Stop();
     }
     else
     {

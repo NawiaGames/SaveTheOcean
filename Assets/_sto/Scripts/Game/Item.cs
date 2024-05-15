@@ -11,12 +11,9 @@ public class Item : MonoBehaviour
   [SerializeField] GameObject         _modelContainer;
   [SerializeField] ActivatableObject  _activatable;
   [SerializeField] Rigidbody          _rb;
-  //[SerializeField] SpringMove         _sm;
   [SerializeField] Transform          _fx;
   [SerializeField] GameObject         _tickIco;
   [Header("Settings")]
-  [SerializeField] float              _ampl = 0;
-  [SerializeField] float              _amplSpeed = 3;
 
   List<GameObject> _models = new List<GameObject>();
 
@@ -228,7 +225,6 @@ public class Item : MonoBehaviour
     for(int q = 0; q < _modelContainer.transform.childCount; ++q)
       _models.Add(_modelContainer.transform.GetChild(q).gameObject);
 
-    _amplSpeed *= Random.Range(0.95f, 1.05f);
     _tickIco.SetActive(false);
   }
   public void SetAsStatic()
@@ -489,19 +485,30 @@ public class Item : MonoBehaviour
   [SerializeField] float _buoyancy  = 1.0f;
   [SerializeField] float _damp_over = 0.0f;
   [SerializeField] float _damp_under = 0.5f;
+  [SerializeField] float _sinkAmp = 0.25f;
+  [SerializeField] float _sinkTime = 10f;
+  float _sink = 0;
+  float _sinkTimeOffs = 0;
   void FixedUpdate()
   {
      if(_levelFinished)
       return;
 
+    if(_sinkTimeOffs == 0)
+    {
+      _sinkTimeOffs += Random.Range(1.0f, 60.0f);
+      _sinkAmp *= Random.Range(0.9f, 1.1f);
+      _sinkTime *= Random.Range(0.9f, 1.1f);
+    }
     if(IsReady && !IsSelected)
     {
-      var depth = transform.position.y;
+      _sink = Mathf.Sin((Time.time + _sinkTimeOffs) * Mathf.Deg2Rad * _sinkTime) * _sinkAmp + 0.25f;
+      var depth = _sink + transform.position.y;
       Vector3 buoyantForce = new Vector3(0, _buoyancy * -depth * 50, 0);
       _rb?.AddForce(buoyantForce);
       _rb?.AddForce(-_rb.velocity * ((depth < 0)? _damp_under : _damp_over));
 
-      var posy = Mathf.Clamp(transform.position.y, - 2f, 1f);
+      var posy = Mathf.Clamp(transform.position.y, - 3f, 1.5f);
       transform.position = new Vector3(transform.position.x, posy, transform.position.z);
     }
     else if(!IsReady && vwpos.y < 0.25f)

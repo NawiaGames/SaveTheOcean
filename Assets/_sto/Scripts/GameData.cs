@@ -89,15 +89,15 @@ public class GameData : ScriptableObject
     }
     public Reward _reward;
   }
-  
+
   [System.Serializable]
   public struct FoodDesc
   {
     [SerializeField] string  name;
-    
+
     public float foodChance;
     public float kcal;
-  }  
+  }
 
   [Header("--Prefabs--")]
   [SerializeField] Items[]  _items;
@@ -127,6 +127,8 @@ public class GameData : ScriptableObject
   [Header("--Settings--")]
   [SerializeField] int        _feedingAvailLoc = 3;
   [SerializeField] int        _clearingAvailLoc = 4;
+  [SerializeField] bool       _disableStorageBox = true;
+  [SerializeField] bool       _disableRewardChest = true;
 
   [SerializeField] Color[]    themeColors;
   public static Color[]       GetThemeColors() => get().themeColors;
@@ -142,9 +144,9 @@ public class GameData : ScriptableObject
       int garb_type = Mathf.Clamp((int)cat / 10, 0, garbage_items.Length-1);
       return garbage_items[garb_type].Get((int)cat % 10);
     }
-    public static GridTile CreateGridElem(Transform parent) 
-    { 
-      return Instantiate(get()._gridTile, parent); 
+    public static GridTile CreateGridElem(Transform parent)
+    {
+      return Instantiate(get()._gridTile, parent);
     }
     public static Item CreateItem(Item.ID id, Transform parent)
     {
@@ -224,7 +226,7 @@ public class GameData : ScriptableObject
     {
       return Mathf.Clamp(loc_idx + 1, 0, Earth.locationsCnt - 1);
     }
-  }  
+  }
   public static class Econo
   {
     public static int   staminaPlayCost => get()._staminaPlayCost;
@@ -267,7 +269,7 @@ public class GameData : ScriptableObject
     {
       return get()._rewards[Mathf.Clamp(lvl, 0, get()._rewards.last_idx())].points2Chest;
     }
-    //public static int 
+    //public static int
     public static RewardProgress GetRewardProgress(float rewardPoints)
     {
       int rewardIdx = Array.FindLastIndex(get()._rewards, (Rewards rewards) => rewardPoints >= rewards.points2Chest);
@@ -291,5 +293,7 @@ public class GameData : ScriptableObject
 
   public static class Settings
   {
+    public static bool GetDisableStorageBox() => get()._disableStorageBox;
+    public static bool GetDisableRewardChest() => get()._disableRewardChest;
   }
 }

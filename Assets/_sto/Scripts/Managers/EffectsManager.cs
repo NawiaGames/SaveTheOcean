@@ -71,6 +71,8 @@ public class EffectsManager : MonoBehaviour
 
       RewardChest.onPoped += OnItemPoped;
       RewardChest.onNotPoped += OnItemNotPoped;
+      RewardChest2.onPoped += OnItemPoped;
+      RewardChest2.onDropped += OnDropped;
       StorageBox.onPoped += OnItemPoped;
       StorageBox.onNotPoped += OnItemNotPoped;
       StorageBox.onPushed += OnItemPushed;
@@ -104,6 +106,8 @@ public class EffectsManager : MonoBehaviour
 
       RewardChest.onPoped -= OnItemPoped;
       RewardChest.onNotPoped -= OnItemNotPoped;
+      RewardChest2.onPoped -= OnItemPoped;
+      RewardChest2.onDropped -= OnDropped;
       StorageBox.onPoped -= OnItemPoped;
       StorageBox.onNotPoped -= OnItemNotPoped;
       StorageBox.onPushed -= OnItemPushed;
@@ -170,6 +174,10 @@ public class EffectsManager : MonoBehaviour
     {
       infoLblMan.ShowTextPopup(sender.vwpos, _strAnimalWrongItem);
     }
+    void OnDropped(MonoBehaviour sender)
+    {
+      PlayFXAtPosition(fxWaterSplash, sender.transform.position, 0, false);
+    }
     void OnItemDropped(Item sender)
     {
       if(!sender.IsInMachine)
@@ -222,16 +230,16 @@ public class EffectsManager : MonoBehaviour
     }
     void OnItemCollected(Item item)
     {
-      string str = "";
-      int amount = GameData.Econo.GetResCount(item.id);
-      if(item.id.kind == Item.Kind.Stamina)
-        str = UIDefaults.GetStaminaString(amount);
-      else if(item.id.kind == Item.Kind.Coin)
-        str = UIDefaults.GetCoinsString(amount);
-      else if(item.id.kind == Item.Kind.Gem)
-        str = UIDefaults.GetGemsString(amount);
-      var s = string.Format(_strCollected, str);
-      infoLblMan.ShowTextPopup(item.transform.position + new Vector3(0, 1.0f, 0), s);
+      // string str = "";
+      // int amount = GameData.Econo.GetResCount(item.id);
+      // if(item.id.kind == Item.Kind.Stamina)
+      //   str = UIDefaults.GetStaminaString(amount);
+      // else if(item.id.kind == Item.Kind.Coin)
+      //   str = UIDefaults.GetCoinsString(amount);
+      // else if(item.id.kind == Item.Kind.Gem)
+      //   str = UIDefaults.GetGemsString(amount);
+      // var s = string.Format(_strCollected, str);
+      // infoLblMan.ShowTextPopup(item.transform.position + new Vector3(0, 1.0f, 0), s);
   }
     void OnLevelNoGridRoom(Level sender)
     {

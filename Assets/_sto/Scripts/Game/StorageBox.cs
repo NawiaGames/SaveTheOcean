@@ -9,7 +9,7 @@ using GameLib.Utilities;
 public class StorageBox : MonoBehaviour
 {
   [SerializeField] GameObject   _content;
-  [SerializeField] GameObject   _infoContainer; 
+  [SerializeField] GameObject   _infoContainer;
   [SerializeField] TMPLbl       _lblCnt;
   [SerializeField] Collider     _collider;
   [SerializeField] ObjectShake  _shake;
@@ -31,9 +31,14 @@ public class StorageBox : MonoBehaviour
 
   void Awake()
   {
-    Level.onItemCollected += OnItemCollected;
     layerMask = LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer));
+    if(GameData.Settings.GetDisableStorageBox())
+    {
+      this.gameObject.SetActive(false);
+      return;
+    }
 
+    Level.onItemCollected += OnItemCollected;
     _content.SetActive(false);
     GetComponent<Collider>().enabled = false;
     if(GameState.StorageBox.shown)
@@ -46,6 +51,8 @@ public class StorageBox : MonoBehaviour
   public bool visible => _content.activeSelf;
   public void Show(float delay)
   {
+    if(GameData.Settings.GetDisableStorageBox())
+      return;
     UpdateInfo();
     _content.SetActive(true);
     GetComponent<Collider>().enabled = true;
@@ -94,7 +101,7 @@ public class StorageBox : MonoBehaviour
       _shake.Shake();
       onNotPoped?.Invoke(this);
     }
-      
+
     return id;
   }
 }
