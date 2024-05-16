@@ -20,8 +20,8 @@ public class Level : MonoBehaviour
   [SerializeField] Transform      _tilesContainer;
   //[SerializeField] Transform      _animalsContainer;
   [SerializeField] Transform[]    _animalContainers;
+  [SerializeField] Transform      _specContainer;
   [SerializeField] Renderer       _waterRenderer;
-  [SerializeField] RewardChest    _rewardChest;
   [SerializeField] RewardChest2   _rewardChest2Prefab;
   [SerializeField] SplitMachine   _splitMachine;
   [SerializeField] FeedingMachine _feedingMachine;
@@ -275,6 +275,8 @@ public class Level : MonoBehaviour
   }
   void OnDestroy()
   {
+    Item.onMerged -= OnItemMerged;
+    GameState.Econo.onRewardProgressChanged -= OnRewardChanged;
     onDestroy?.Invoke(this);
   }
   IEnumerator Start()
@@ -291,9 +293,6 @@ public class Level : MonoBehaviour
       RestoreAnimals();
 
     onStart?.Invoke(this);
-
-    if(GameState.Chest.shown)
-      _rewardChest.Show();
 
     CheckMatchingItems();
     CacheLoc();
@@ -647,7 +646,7 @@ public class Level : MonoBehaviour
   double tapTime = 0;
   public void OnInputTapped(TouchInputData tid)
   {
-    int layers = RewardChest.layerMask | StorageBox.layerMask;
+    int layers = RewardChest2.layerMask | StorageBox.layerMask;
     if(_feedingMachine.gameObject.activeInHierarchy)
       layers |= FeedingMachine.layerMask;
     var box = tid.GetClosestCollider(_inputRad, layers);
@@ -670,7 +669,7 @@ public class Level : MonoBehaviour
             }
             else if(!chest.rewardClaimed)
             {
-              int[] counts = {GameState.Chest.staminaCnt, GameState.Chest.coinsCnt, GameState.Chest.gemsCnt};
+              int[] counts = {chest.rewardStamina, chest.rewardCoins, chest.rewardGems};
               Item.ID[] ids = {Item.ID.FromKind(Item.Kind.Stamina, 0, 0), Item.ID.FromKind(Item.Kind.Coin, 0, 0), Item.ID.FromKind(Item.Kind.Gem, 0, 0)};
               for(int q = 0; q < 3; ++q)
               {
@@ -678,12 +677,11 @@ public class Level : MonoBehaviour
                 var item = GameData.Prefabs.CreateItem(cid, _itemsContainer);
                 item.vwpos = chest.transform.position;
                 int amount = GameState.Econo.AddRes(cid, counts[q]);
-                _uiStatusBar.MoveCollectedUI(item, amount);
+                _uiStatusBar.MoveCollectedUI(item, Mathf.Min(amount, 10));
                 onItemCollected?.Invoke(item);
                 item.Hide();
               }
               chest.Hide();
-              GameState.Chest.ResetRes();
               return;
             }
           }
@@ -978,32 +976,32 @@ public class Level : MonoBehaviour
   {
     CacheLoc();
   }
-  IEnumerator coMoveToSB()
-  {
-    _items.ForEach((it) => {it.LevelOut();});
-    System.Array.ForEach(_boundsNSWE, (tr) => tr.GetComponent<BoxCollider>().enabled = false);
-    Vector3 vsbox = _storageBox.transform.position + new Vector3(0, 1, 0);
-    List<Item> itms = _items.FindAll((Item item) => item.id.IsSpecial).ToList();
-    while(itms.Count > 0)
-    {
-      for(int q = 0; q < itms.Count;)
-      {
-        itms[q].MoveTo(Vector3.Lerp(itms[q].vwpos, vsbox, Time.deltaTime * 8));
-        if(Vector2.Distance(itms[q].vwpos.get_xz(), vsbox.get_xz()) < 0.5f)
-        {
-          _storageBox.Push(itms[q].id);
-          DestroyItem(itms[q]);
-          itms.RemoveAt(q);
-          --q;
-        }
-        ++q;
-      }
-      yield return null;
-    }
-  }
+  // IEnumerator coMoveToSB()
+  // {
+  //   _items.ForEach((it) => {it.LevelOut();});
+  //   System.Array.ForEach(_boundsNSWE, (tr) => tr.GetComponent<BoxCollider>().enabled = false);
+  //   Vector3 vsbox = _storageBox.transform.position + new Vector3(0, 1, 0);
+  //   List<Item> itms = _items.FindAll((Item item) => item.id.IsSpecial).ToList();
+  //   while(itms.Count > 0)
+  //   {
+  //     for(int q = 0; q < itms.Count;)
+  //     {
+  //       itms[q].MoveTo(Vector3.Lerp(itms[q].vwpos, vsbox, Time.deltaTime * 8));
+  //       if(Vector2.Distance(itms[q].vwpos.get_xz(), vsbox.get_xz()) < 0.5f)
+  //       {
+  //         _storageBox.Push(itms[q].id);
+  //         DestroyItem(itms[q]);
+  //         itms.RemoveAt(q);
+  //         --q;
+  //       }
+  //       ++q;
+  //     }
+  //     yield return null;
+  //   }
+  // }
   IEnumerator coEnd()
   {
-    yield return StartCoroutine(coMoveToSB());
+    //yield return StartCoroutine(coMoveToSB());
 
     yield return new WaitForSeconds(2.5f);
     succeed = true;
@@ -1047,14 +1045,13 @@ public class Level : MonoBehaviour
     if(rewardProgress.lvl > GameState.Chest.rewardLevel)
     {
       GameState.Chest.rewardLevel = rewardProgress.lvl;
-      GameState.Chest.AddRewards();
       CreateRewardChest(new Vector3(Random.Range(-dim.x * 0.5f + 0.5f, dim.x * 0.5f - 0.5f), -4, Random.Range(-dim.y * 0.5f + 0.5f, dim.y * 0.5f - 0.5f)));
     }
   }
   void CreateRewardChest(Vector3 v)
   {
-    var chest = Instantiate(_rewardChest2Prefab, v, Quaternion.identity, _itemsContainer);
-    chest.Show();
+    var chest = Instantiate(_rewardChest2Prefab, v, Quaternion.identity, _specContainer);
+    chest.Show(GameState.Chest.GetReward());
   }
   void Process()
   {

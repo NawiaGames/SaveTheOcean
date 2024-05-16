@@ -4,7 +4,7 @@ using UnityEngine;
 using GameLib.Haptics;
 
 public class HapticManager : MonoBehaviour
-{ 
+{
   private void Awake() {
     if (GameLib.Haptics.HapticsSystem.Instance == null) this.enabled = false;
   }
@@ -20,9 +20,9 @@ public class HapticManager : MonoBehaviour
     Item.onNoPut += VibMed;
     Animal.onFeed += VibMed;
 
-    RewardChest.onPoped += VibMed;
-    RewardChest.onNotPoped += VibMed;
-    RewardChest.onNotPushed += VibMed;
+    //RewardChest.onPoped += VibMed;
+    //RewardChest.onNotPoped += VibMed;
+    //RewardChest.onNotPushed += VibMed;
     StorageBox.onPoped += VibMed;
     StorageBox.onNotPoped += VibMed;
     StorageBox.onPushed += VibMed;
@@ -42,20 +42,20 @@ public class HapticManager : MonoBehaviour
     Item.onNoPut -= VibMed;
     Animal.onFeed -= VibMed;
 
-    RewardChest.onPoped -= VibMed;
-    RewardChest.onNotPoped -= VibMed;
-    RewardChest.onNotPushed -= VibMed;
+    //RewardChest.onPoped -= VibMed;
+    //RewardChest.onNotPoped -= VibMed;
+    //RewardChest.onNotPushed -= VibMed;
     StorageBox.onPoped -= VibMed;
     StorageBox.onNotPoped -= VibMed;
     StorageBox.onPushed -= VibMed;
     StorageBox.onNotPushed -= VibMed;
     FeedingMachine.onPoped -= VibMed;
-    FeedingMachine.onNotPoped -= VibMed; 
+    FeedingMachine.onNotPoped -= VibMed;
   }
 
   void OnItemsHovered(Level lvl)
   {
-    if(lvl.hoverItemMatch) 
+    if(lvl.hoverItemMatch)
       VibMed(null);
     else
       VibLo(null);

@@ -5,14 +5,14 @@ using GameLib;
 public class LevelFXManger : MonoBehaviour
 {
     [SerializeField] ParticleSystem confettiEmitter = null;
-    [SerializeField] ParticleSystem[] levelSummaryConfetti = new ParticleSystem[]{}; 
+    [SerializeField] ParticleSystem[] levelSummaryConfetti = new ParticleSystem[]{};
 
     private void OnEnable() {
-        RewardChest.onReward += ThrowConfetti;
+        //RewardChest.onReward += ThrowConfetti;
         Level.onFinished += ThrowLevelConfetti;
     }
     private void OnDisable() {
-        RewardChest.onReward -= ThrowConfetti; 
+        //RewardChest.onReward -= ThrowConfetti;
         Level.onFinished -= ThrowLevelConfetti;
     }
 

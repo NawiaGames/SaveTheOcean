@@ -568,43 +568,10 @@ public class GameState : SavableScriptableObject
   public static class Chest
   {
     public static int rewardLevel { get => get().economy.rewardLevel; set => get().economy.rewardLevel = value; }
-    public static int staminaCnt => get().chest.listStamina.Count;
-    public static int coinsCnt => get().chest.listCoins.Count;
-    public static int gemsCnt => get().chest.listGems.Count;
-    public static Item.ID? PopRes()
-    {
-      Item.ID? id = null;
-      if(staminaCnt > 0)
-      {
-        id = get().chest.listStamina.last().Validate();
-        get().chest.listStamina.RemoveAt(get().chest.listStamina.last_idx());
-      }
-      else if(coinsCnt > 0)
-      {
-        id = get().chest.listCoins.last().Validate();
-        get().chest.listCoins.RemoveAt(get().chest.listCoins.last_idx());
-      }
-      else if(gemsCnt > 0)
-      {
-        id = get().chest.listGems.last().Validate();
-        get().chest.listGems.RemoveAt(get().chest.listGems.last_idx());
-      }
-      return id;
-    }
-    public static void ResetRes()
-    {
-      get().chest.listStamina.Clear();
-      get().chest.listCoins.Clear();
-      get().chest.listGems.Clear();
-    }
-    public static void AddRewards()
-    {
-      get().chest.AddReward(GameData.Econo.GetRewards());
-    }
+    public static GameData.Rewards.Reward GetReward() => GameData.Econo.GetRewards();
     public static bool shown { get => get().chest.shown; set => get().chest.shown = value;}
-    public static int  itemsCnt => staminaCnt + coinsCnt + gemsCnt;
     public static bool ShouldShow() => shown;
-    public static bool IsFirstShow() => !shown && itemsCnt > 0;
+    public static bool IsFirstShow() => !shown;
   }
   public static class StorageBox
   {

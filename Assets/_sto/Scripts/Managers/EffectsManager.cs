@@ -69,8 +69,8 @@ public class EffectsManager : MonoBehaviour
       SplitMachine.onSplitted += OnSplitMachineSplitted;
       SplitMachine.onDropped += OnSplitMachineDrop;
 
-      RewardChest.onPoped += OnItemPoped;
-      RewardChest.onNotPoped += OnItemNotPoped;
+      //RewardChest.onPoped += OnItemPoped;
+      //RewardChest.onNotPoped += OnItemNotPoped;
       RewardChest2.onPoped += OnItemPoped;
       RewardChest2.onDropped += OnDropped;
       StorageBox.onPoped += OnItemPoped;
@@ -104,8 +104,8 @@ public class EffectsManager : MonoBehaviour
       SplitMachine.onSplitted -= OnSplitMachineSplitted;
       SplitMachine.onDropped -= OnSplitMachineDrop;
 
-      RewardChest.onPoped -= OnItemPoped;
-      RewardChest.onNotPoped -= OnItemNotPoped;
+      //RewardChest.onPoped -= OnItemPoped;
+      //RewardChest.onNotPoped -= OnItemNotPoped;
       RewardChest2.onPoped -= OnItemPoped;
       RewardChest2.onDropped -= OnDropped;
       StorageBox.onPoped -= OnItemPoped;
@@ -240,7 +240,7 @@ public class EffectsManager : MonoBehaviour
       //   str = UIDefaults.GetGemsString(amount);
       // var s = string.Format(_strCollected, str);
       // infoLblMan.ShowTextPopup(item.transform.position + new Vector3(0, 1.0f, 0), s);
-  }
+    }
     void OnLevelNoGridRoom(Level sender)
     {
       infoLblMan.ShowTextPopup(Vector3.zero, _strNoRoomOnGrid);

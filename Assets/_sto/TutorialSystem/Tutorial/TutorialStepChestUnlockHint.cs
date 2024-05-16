@@ -8,10 +8,10 @@ namespace TutorialSystem
     public class TutorialStepChestUnlockHint : TutorialStep
     {
         protected override void OnEnabled(){
-            RewardChest.onReward += MoveToNextStep;
+            //RewardChest2.onReward += MoveToNextStep;
         }
         protected override void OnDisabled(){
-            RewardChest.onReward -= MoveToNextStep;
+            //RewardChest2.onReward -= MoveToNextStep;
         }
     }
 }

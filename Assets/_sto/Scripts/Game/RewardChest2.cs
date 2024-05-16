@@ -19,12 +19,15 @@ public class RewardChest2 : MonoBehaviour
 
   float      _lidAngle = 0;
   bool       _opened = false;
-  int        _resCnt => GameState.Chest.staminaCnt + GameState.Chest.coinsCnt + GameState.Chest.gemsCnt;
+GameData.Rewards.Reward _reward = new();
 
   public int  level => GameState.Chest.rewardLevel;
   public bool isActive => _content.activeInHierarchy;
   public bool isOpen => isActive && _opened;
-  public bool rewardClaimed {get;set;} = false;
+  public bool rewardClaimed => rewardStamina + rewardCoins + rewardGems == 0;
+  public int  rewardStamina => _reward.stamina;
+  public int  rewardCoins => _reward.coins;
+  public int  rewardGems => _reward.gems;
 
   void Awake()
   {
@@ -37,8 +40,9 @@ public class RewardChest2 : MonoBehaviour
 
   }
 
-  public void Show()
+  public void Show(GameData.Rewards.Reward reward)
   {
+    _reward = reward;
     _lidAngle = 0;
     _content.SetActive(true);
     GetComponent<Collider>().enabled = true;
@@ -69,7 +73,7 @@ public class RewardChest2 : MonoBehaviour
   {
     if(_opened && !rewardClaimed)
       StartCoroutine(coCloseLid());
-    rewardClaimed = true;
+    _reward.stamina = _reward.coins = _reward.gems = 0;
   }
   IEnumerator coCloseLid()
   {

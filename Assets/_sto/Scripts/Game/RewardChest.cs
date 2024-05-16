@@ -20,6 +20,7 @@ public class RewardChest : MonoBehaviour
 
   public static int layerMask = 0;
 
+#if false
   float      _rewardPointsMov = 0;
   float      _lidAngle = 0;
   int        _resCnt => GameState.Chest.staminaCnt + GameState.Chest.coinsCnt + GameState.Chest.gemsCnt;
@@ -135,4 +136,5 @@ public class RewardChest : MonoBehaviour
       UpdateLid();
     }
   }
+#endif
 }

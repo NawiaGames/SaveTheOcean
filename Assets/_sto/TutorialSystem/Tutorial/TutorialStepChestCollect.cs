@@ -6,12 +6,13 @@ namespace TutorialSystem
 {
     public class TutorialStepChestCollect : TutorialStep
     {
-        protected override void OnEnabled(){
-            RewardChest.onPoped += MoveToNextStep;
+        protected override void OnEnabled()
+        {
+            //RewardChest.onPoped += MoveToNextStep;
         }
-        protected override void OnDisabled(){
-            RewardChest.onPoped -= MoveToNextStep;
+        protected override void OnDisabled()
+        {
+            //RewardChest.onPoped -= MoveToNextStep;
         }
     }
 }
-

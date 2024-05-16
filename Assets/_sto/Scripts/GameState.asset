@@ -16,13 +16,13 @@ MonoBehaviour:
   dataPath: Data
   version: 0
   progress:
-    _location: 3
+    _location: 2
     _locations:
     - _idx: 0
       _state: 3
       _visits: 1
       _passes: 1
-      _date: -8584858097643481804
+      _date: -8584857456785010471
       _cache:
         items: []
         items2: []
@@ -31,150 +31,66 @@ MonoBehaviour:
       _state: 3
       _visits: 1
       _passes: 1
-      _date: -8584858097412031571
+      _date: -8584857456472597779
       _cache:
         items: []
         items2: []
         requests: []
     - _idx: 2
-      _state: 3
-      _visits: 1
-      _passes: 1
-      _date: -8584858096808597640
-      _cache:
-        items: []
-        items2: []
-        requests: []
-    - _idx: 3
       _state: 1
-      _visits: 1
+      _visits: 3
       _passes: 0
       _date: 0
       _cache:
         items:
         - id:
-            _type: 1
-            _lvl: 0
-            _kind: 1
-          vgrid: {x: -1.5, y: 0.5}
-        - id:
-            _type: 4
-            _lvl: 0
-            _kind: 2
-          vgrid: {x: 1.5, y: -0.5}
-        - id:
-            _type: 5
-            _lvl: 1
-            _kind: 3
-          vgrid: {x: -1.5, y: -0.5}
-        - id:
-            _type: 0
-            _lvl: 1
-            _kind: 1
-          vgrid: {x: 1.5, y: 0.5}
-        - id:
-            _type: 1
-            _lvl: 1
-            _kind: 1
-          vgrid: {x: 0.5, y: 1.5}
-        - id:
-            _type: 0
-            _lvl: 1
-            _kind: 1
-          vgrid: {x: 1.5, y: 1.5}
-        - id:
             _type: 0
             _lvl: 1
             _kind: 1
           vgrid: {x: -0.5, y: 1.5}
         - id:
             _type: 0
-            _lvl: 0
-            _kind: 1
-          vgrid: {x: 1.5, y: 1.5}
-        - id:
-            _type: 0
-            _lvl: 2
-            _kind: 1
-          vgrid: {x: -0.5, y: 1.5}
-        - id:
-            _type: 0
-            _lvl: 2
-            _kind: 1
-          vgrid: {x: 1.5, y: 0.5}
-        - id:
-            _type: 1
-            _lvl: 0
-            _kind: 1
-          vgrid: {x: 1.5, y: 0.5}
-        - id:
-            _type: 0
-            _lvl: 0
+            _lvl: 1
             _kind: 1
           vgrid: {x: -1.5, y: 0.5}
-        - id:
-            _type: 5
-            _lvl: 0
-            _kind: 3
-          vgrid: {x: -1.5, y: 1.5}
         - id:
             _type: 0
             _lvl: 2
             _kind: 1
           vgrid: {x: -1.5, y: -1.5}
         - id:
-            _type: 4
-            _lvl: 0
-            _kind: 2
-          vgrid: {x: 1.5, y: -0.5}
+            _type: 0
+            _lvl: 1
+            _kind: 1
+          vgrid: {x: -1.5, y: 1.5}
         - id:
             _type: 0
-            _lvl: 3
+            _lvl: 1
             _kind: 1
           vgrid: {x: -0.5, y: -1.5}
         - id:
             _type: 0
-            _lvl: 0
+            _lvl: 2
             _kind: 1
-          vgrid: {x: -0.5, y: 0.5}
-        items2:
+          vgrid: {x: 0.5, y: -0.5}
         - id:
             _type: 0
-            _lvl: 0
+            _lvl: 2
             _kind: 1
-          vgrid: {x: 0, y: 0}
+          vgrid: {x: 1.5, y: -0.5}
         - id:
             _type: 0
-            _lvl: 0
+            _lvl: 2
             _kind: 1
-          vgrid: {x: 0, y: 0}
-        - id:
-            _type: 0
-            _lvl: 0
-            _kind: 1
-          vgrid: {x: 0, y: 0}
-        - id:
-            _type: 6
-            _lvl: 0
-            _kind: 4
-          vgrid: {x: 0, y: 0}
-        - id:
-            _type: 0
-            _lvl: 0
-            _kind: 1
-          vgrid: {x: 0, y: 0}
-        - id:
-            _type: 5
-            _lvl: 0
-            _kind: 3
-          vgrid: {x: 0, y: 0}
+          vgrid: {x: 1.5, y: 1.5}
+        items2: []
         requests:
         - ids:
           - _type: 0
-            _lvl: 5
+            _lvl: 3
             _kind: 1
-          - _type: 1
-            _lvl: 2
+          - _type: 0
+            _lvl: 4
             _kind: 1
     _locationsSpec: []
     _locationsPassedTime: 0
@@ -188,41 +104,29 @@ MonoBehaviour:
     - _type: 1
       _lvl: 0
       _kind: 1
+    - _type: 1
+      _lvl: 1
+      _kind: 1
     - _type: 0
       _lvl: 2
       _kind: 1
     - _type: 0
       _lvl: 3
       _kind: 1
-    - _type: 1
-      _lvl: 1
-      _kind: 1
-    - _type: 5
-      _lvl: 0
-      _kind: 3
-    - _type: 0
-      _lvl: 4
-      _kind: 1
-    - _type: 4
-      _lvl: 0
-      _kind: 2
-    - _type: 5
-      _lvl: 1
-      _kind: 3
   economy:
-    stamina: 30
-    coins: 1
-    gems: 0
-    rewardPoints: 0
-    rewardLevel: 0
-    lastStamina: -8584858097828738070
+    stamina: 50
+    coins: 77
+    gems: 36
+    rewardPoints: 94
+    rewardLevel: 5
+    lastStamina: -8584857456934699285
   chest:
     shown: 1
     listStamina: []
     listCoins: []
     listGems: []
   storage:
-    shown: 1
+    shown: 0
     listItems: []
   splitMachine:
     _capacity: 1
@@ -234,7 +138,7 @@ MonoBehaviour:
     tutStorageBoxDone: 0
     popupNoStamina: 7
   gameInfo:
-    appQuitTime: -8584858095256797687
+    appQuitTime: -8584857455217925988
   animals:
     animals:
     - type: 1
