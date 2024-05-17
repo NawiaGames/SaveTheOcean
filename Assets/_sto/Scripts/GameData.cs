@@ -101,7 +101,7 @@ public class GameData : ScriptableObject
 
   [Header("--Prefabs--")]
   [SerializeField] Items[]  _items;
-  [SerializeField] GridTile _gridTile;
+  //[SerializeField] GridTile _gridTile;
   [SerializeField] Location _locationPrefab;
   //[SerializeField] Earth    _earthPrefab;
   //[Header("Levels")]
@@ -144,10 +144,10 @@ public class GameData : ScriptableObject
       int garb_type = Mathf.Clamp((int)cat / 10, 0, garbage_items.Length-1);
       return garbage_items[garb_type].Get((int)cat % 10);
     }
-    public static GridTile CreateGridElem(Transform parent)
-    {
-      return Instantiate(get()._gridTile, parent);
-    }
+    // public static GridTile CreateGridElem(Transform parent)
+    // {
+    //   return Instantiate(get()._gridTile, parent);
+    // }
     public static Item CreateItem(Item.ID id, Transform parent)
     {
       Item item = null;

@@ -19,7 +19,7 @@ public class RewardChest2 : MonoBehaviour
 
   float      _lidAngle = 0;
   bool       _opened = false;
-GameData.Rewards.Reward _reward = new();
+  GameData.Rewards.Reward _reward = new();
 
   public int  level => GameState.Chest.rewardLevel;
   public bool isActive => _content.activeInHierarchy;
@@ -31,7 +31,7 @@ GameData.Rewards.Reward _reward = new();
 
   void Awake()
   {
-    layerMask = LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer));
+    layerMask = gameObject.layer;
     _content.SetActive(false);
     GetComponent<Collider>().enabled = false;
   }
@@ -39,7 +39,6 @@ GameData.Rewards.Reward _reward = new();
   {
 
   }
-
   public void Show(GameData.Rewards.Reward reward)
   {
     _reward = reward;

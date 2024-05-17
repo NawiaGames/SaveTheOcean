@@ -149,7 +149,6 @@ public class Level : MonoBehaviour
   Item        _itemSelected;
   Item        _itemHovered;
   Item        _itemTileSelected;
-  GridTile    _tileSelected;
   Animal      _animalHovered;
   List<Item>  _items = new List<Item>();
   List<Item>  _items2 = new List<Item>();
@@ -158,95 +157,6 @@ public class Level : MonoBehaviour
 
   //float       _pollutionRate = 1.0f;
   float       _pollutionDest = 1.0f;
-
-  StorageBox _storageBox;
-
-  public class Grid
-  {
-    Vector2Int  _dim;
-    float       _gridSpace;
-    int[,]      _grid;
-    GridTile[,] _tiles;
-    public void Init(Vector2Int dim, float grid_space)
-    {
-      _dim = dim;
-      _gridSpace = grid_space;
-      _grid = new int[dim.y, dim.x];
-      _tiles = new GridTile[dim.y, dim.x];
-      System.Array.Clear(_grid, 0, _grid.Length);
-    }
-    public static Vector2Int g2a(Vector2 vgrid, Vector2Int _dim)
-    {
-      int ax = (int)System.Math.Round(vgrid.x + _dim.x * 0.5f - 0.1f, System.MidpointRounding.AwayFromZero);
-      int ay = (int)System.Math.Round(vgrid.y + _dim.y * 0.5f - 0.1f, System.MidpointRounding.AwayFromZero);
-      return new Vector2Int(ax, ay);
-    }
-    public static Vector2 a2g(Vector2Int va, Vector2Int _dim)
-    {
-      Vector2 v = Vector2.zero;
-      v.y = (-_dim.y + 1) * 0.5f + va.y;
-      v.x = (-_dim.x + 1) * 0.5f + va.x;
-      return v;
-    }
-    public void set(Vector2 vgrid, int val, Item.Kind kind = Item.Kind.None)
-    {
-      var va = g2a(vgrid, _dim);
-      _grid[va.y, va.x] = val;
-      _tiles[va.y, va.x].Set((val!=0)? true : false, kind == Item.Kind.Garbage);
-    }
-    public int  get(Vector2 vgrid)
-    {
-      var va = g2a(vgrid, _dim);
-      return _grid[va.y, va.x];
-    }
-    public GridTile getTile(Vector2 vgrid)
-    {
-      var va = g2a(vgrid, _dim);
-      return _tiles[va.y, va.x];
-    }
-    public void tile(GridTile gt, Vector2 vgrid)
-    {
-      var va = g2a(vgrid, _dim);
-      _tiles[va.y, va.x] = gt;
-      gt.vgrid = vgrid;
-      gt.Set(false);
-    }
-    public void hovers(bool hov)
-    {
-      for(int y = 0; y < _dim.y; ++y)
-      {
-        for(int x = 0; x < _dim.x; ++x)
-        {
-          _tiles[y,x].Hover(hov);
-        }
-      }
-    }
-    public Vector2? getEmpty()
-    {
-      List<Vector2> vps = new List<Vector2>();
-      for(int y = 0; y < _dim.y; ++y)
-      {
-        for(int x = 0; x < _dim.x; ++x)
-        {
-          if(_grid[y, x] == 0)
-            vps.Add(a2g(new Vector2Int(x, y), _dim));
-        }
-      }
-      return (vps.Count > 0)? vps.get_random() : null;
-    }
-    // public bool isInside(Vector2 vgrid) => Mathf.Abs(vgrid.x * 2) <= _dim.x && Mathf.Abs(vgrid.y*2) <= _dim.y;
-    // public bool isOverAxisZ(Vector3 vpos)
-    // {
-    //   Vector2 vdim = new Vector2(_dim.x, _dim.y) * _gridSpace;
-    //   return vpos.z <= vdim.y / 2;
-    // }
-    public float getMaxZ()
-    {
-      return _dim.y * 0.5f * _gridSpace;
-    }
-  }
-
-  Grid _grid = new Grid();
 
   void Awake()
   {
@@ -265,8 +175,6 @@ public class Level : MonoBehaviour
     _splitMachine.Init(_items);
     _splitMachine.gameObject.SetActive(false);
     _feedingMachine.gameObject.SetActive(isFeedingMode);
-
-    _storageBox = GetComponentInChildren<StorageBox>();
 
     Item.onMerged += OnItemMerged;
     GameState.Econo.onRewardProgressChanged += OnRewardChanged;
@@ -314,8 +222,6 @@ public class Level : MonoBehaviour
     }
     levels_idx.shuffle(2000);
 
-    _grid.Init(dim, _gridSpace);
-
     List<Vector2> vs = new List<Vector2>();
     Vector2 v = Vector2.zero;
     for(int y = 0; y < dim.y; ++y)
@@ -325,9 +231,6 @@ public class Level : MonoBehaviour
       {
         v.x = (-dim.x + 1) * 0.5f + x;
         vs.Add(v);
-        var tile = GameData.Prefabs.CreateGridElem(_tilesContainer);
-        tile.transform.localPosition = Item.ToPos(v);
-        _grid.tile(tile, v);
       }
     }
     vs.shuffle(100);
@@ -494,10 +397,9 @@ public class Level : MonoBehaviour
   void  AddItem(Item item)
   {
     _items.Add(item);
-    _grid.set(item.vgrid, 1, item.id.kind);
     GameState.Progress.Items.ItemAppears(item.id);
   }
-  Vector2 GetRandomGridPos() => Grid.a2g(new Vector2Int(Random.Range(0, _dim.x), Random.Range(0, _dim.y)), _dim);
+  Vector2 GetRandomGridPos() => new Vector2(Random.Range(-_dim.x/2, _dim.x/2), Random.Range(-dim.y/2, _dim.y));
   void  SpawnItem(Vector2 vgrid, bool useRandomGridPos = true)
   {
     if(_items2.Count > 0)
@@ -516,13 +418,13 @@ public class Level : MonoBehaviour
   {
     item.Select(false);
     item.DragEnd();
-    if(!item.IsInMachine)
-      _grid.set(item.vgrid, 1, item.id.kind);
+    // if(!item.IsInMachine)
+    //   _grid.set(item.vgrid, 1, item.id.kind);
   }
   void  DestroyItem(Item item)
   {
     _items.Remove(item);
-    _grid.set(item.vgrid, 0);
+    //_grid.set(item.vgrid, 0);
     onItemCleared?.Invoke(item);
     item.Hide();
   }
@@ -604,25 +506,10 @@ public class Level : MonoBehaviour
       }
     }
 
-    _grid.hovers(false);
-    if(_itemSelected)
-    {
-      if(nearestItem)
-      {
-        _grid.getTile(nearestItem.vgrid).Hover(true);
-      }
-      else
-      {
-        var tileHit = tid.GetClosestObjectInRange<GridTile>(_inputRad);
-        tileHit?.Hover(true);
-      }
-    }
     if(nearestAnimal && (!_inputAnimRadMatching || nearestAnimal.CanPut(_itemSelected)))
       onMagnetBeg?.Invoke(nearestAnimal.transform.position);
     else if(nearestItem != null && Item.Mergeable(_itemSelected, nearestItem))
       onMagnetBeg?.Invoke(nearestItem.transform.position);
-    else if(_itemSelected && _itemSelected.id.IsSpecial && Vector2.Distance(_itemSelected.vwpos.get_xz(), _storageBox.transform.position.get_xz()) < _inputStorageRad)
-      onMagnetBeg?.Invoke(_storageBox.transform.position);
     else
       onMagnetEnd?.Invoke(false);
   }
@@ -631,13 +518,13 @@ public class Level : MonoBehaviour
     if(!_itemSelected)
       return;
 
-    bool is_hit = IsItemHit(tid) || IsAnimalHit(tid) || IsTileHit(tid) || IsSplitMachineHit(tid) || IsStorageHit(tid) || IsChestHit(tid);
+    bool is_hit = IsItemHit(tid) || IsAnimalHit(tid) || IsSplitMachineHit(tid);
     if(!is_hit)
     {
       EndMoveItem(_itemSelected);
     }
     _itemSelected = null;
-    _grid.hovers(false);
+    //_grid.hovers(false);
     _itemHovered = null;
     CheckMatchingItems();
     onMagnetEnd?.Invoke(false);
@@ -646,7 +533,7 @@ public class Level : MonoBehaviour
   double tapTime = 0;
   public void OnInputTapped(TouchInputData tid)
   {
-    int layers = RewardChest2.layerMask | StorageBox.layerMask;
+    int layers = 1<<_rewardChest2Prefab.gameObject.layer;
     if(_feedingMachine.gameObject.activeInHierarchy)
       layers |= FeedingMachine.layerMask;
     var box = tid.GetClosestCollider(_inputRad, layers);
@@ -715,7 +602,7 @@ public class Level : MonoBehaviour
         else
           onNoRoomOnGrid?.Invoke(this);
       }
-      //else
+      // else
       //  tapTime = Time.timeAsDouble;
     }
     else
@@ -730,7 +617,6 @@ public class Level : MonoBehaviour
             tapTime = 0;
             int amount = GameState.Econo.AddRes(item.id);
             _items.Remove(item);
-            _grid.set(item.vgrid, 0);
             _uiStatusBar.MoveCollectedUI(item, amount);
             onItemCollected?.Invoke(item);
             item.Hide();
@@ -739,6 +625,7 @@ public class Level : MonoBehaviour
           }
           else if(item.id.kind == Item.Kind.Garbage)
           {
+            tapTime = 0;
             for(int q = 0; q < _animals.Count; ++q)
             {
               var animal = _animals[q];
@@ -753,64 +640,9 @@ public class Level : MonoBehaviour
         else
         {
           tapTime = Time.timeAsDouble;
-          if(_itemTileSelected == null)
-          {
-            SelectTile(item);
-          }
-          else
-          {
-            if(_itemTileSelected == item)
-              DeselectTile();
-            else
-            {
-              if(Item.Mergeable(_itemTileSelected, item))
-              {
-                var newItem = Item.Merge(_itemTileSelected, item, _items);
-                if(newItem)
-                {
-                  _grid.set(_itemTileSelected.vgrid, 0);
-                  _splitMachine.RemoveFromSplitSlot(_itemTileSelected);
-                  onItemCleared?.Invoke(_itemTileSelected);
-                  newItem.Show();
-                  GameState.Progress.Items.ItemAppears(newItem.id);
-                  SpawnItem(_itemTileSelected.vgrid);
-                  CacheLoc();
-                  DeselectTile();
-                }
-                else
-                {
-                  DeselectTile();
-                  SelectTile(item);
-                }
-              }
-              else
-              {
-                DeselectTile();
-                SelectTile(item);
-              }
-            }
-          }
         }
       }
-      else
-      {
-        DeselectTile();
-      }
     }
-  }
-  void SelectTile(Item item)
-  {
-    _itemTileSelected = item;
-    _tileSelected = _grid.getTile(_itemTileSelected.vgrid);
-    _tileSelected.Hover(true);
-  }
-  void DeselectTile()
-  {
-    if(_tileSelected)
-      _tileSelected.Hover(false);
-    _tileSelected = null;
-    _itemTileSelected = null;
-
   }
   bool IsItemHit(TouchInputData tid)
   {
@@ -823,7 +655,6 @@ public class Level : MonoBehaviour
       var newItem = Item.Merge(_itemSelected, itemHit, _items);
       if(newItem)
       {
-        _grid.set(_itemSelected.vgrid, 0);
         _splitMachine.RemoveFromSplitSlot(_itemSelected);
         onItemCleared?.Invoke(_itemSelected);
         newItem.Show();
@@ -848,7 +679,6 @@ public class Level : MonoBehaviour
     else
       animalHit.Feed(item);
     onItemCleared?.Invoke(item);
-    _grid.set(item.vgrid, 0);
     _items.Remove(item);
     if(item.IsInMachine)
       _splitMachine.RemoveFromSplitSlot(item);
@@ -895,7 +725,6 @@ public class Level : MonoBehaviour
           if(itemFromSplitMachine)
             _splitMachine.RemoveFromSplitSlot(_itemSelected);
           _splitMachine.DropDone();
-          _grid.set(_itemSelected.vgrid, 0);
           _splitMachine.AddToDropSlot(_itemSelected);
           is_hit = true;
         }
@@ -907,48 +736,6 @@ public class Level : MonoBehaviour
 
       SplitMachine.onDropped?.Invoke(_splitMachine);
     }
-    return is_hit;
-  }
-  bool IsTileHit(TouchInputData tid)
-  {
-    bool is_hit = false;
-    if(_itemSelected.IsInMachine)
-    {
-      var tileHit = tid.GetClosestObjectInRange<GridTile>(_inputRad);
-      if(tileHit && _grid.get(tileHit.vgrid) == 0)
-      {
-        _grid.set(_itemSelected.vgrid, 0);
-        _itemSelected.vgrid = tileHit.vgrid;
-        _grid.set(_itemSelected.vgrid, 1, _itemSelected.id.kind);
-        _itemSelected.Select(false);
-        _splitMachine.RemoveFromSplitSlot(_itemSelected);
-        _itemSelected.MoveToGrid();
-        is_hit = true;
-        _grid.hovers(false);
-        CacheLoc();
-      }
-    }
-    return is_hit;
-  }
-  bool IsStorageHit(TouchInputData tid)
-  {
-    bool is_hit = false;
-    var storage = tid.GetClosestObjectInRange<StorageBox>(_inputStorageRad, StorageBox.layerMask);
-    if(storage)
-    {
-      if(_itemSelected.id.IsSpecial)
-      {
-        storage.Push(_itemSelected.id);
-        _items.Remove(_itemSelected);
-        _grid.set(_itemSelected.vgrid, 0);
-        _itemSelected.Hide();
-        is_hit = true;
-        SpawnItem(_itemSelected.vgrid);
-      }
-      else
-        storage.NoPush(_itemSelected.id);
-    }
-
     return is_hit;
   }
   bool IsChestHit(TouchInputData tid)
@@ -976,33 +763,8 @@ public class Level : MonoBehaviour
   {
     CacheLoc();
   }
-  // IEnumerator coMoveToSB()
-  // {
-  //   _items.ForEach((it) => {it.LevelOut();});
-  //   System.Array.ForEach(_boundsNSWE, (tr) => tr.GetComponent<BoxCollider>().enabled = false);
-  //   Vector3 vsbox = _storageBox.transform.position + new Vector3(0, 1, 0);
-  //   List<Item> itms = _items.FindAll((Item item) => item.id.IsSpecial).ToList();
-  //   while(itms.Count > 0)
-  //   {
-  //     for(int q = 0; q < itms.Count;)
-  //     {
-  //       itms[q].MoveTo(Vector3.Lerp(itms[q].vwpos, vsbox, Time.deltaTime * 8));
-  //       if(Vector2.Distance(itms[q].vwpos.get_xz(), vsbox.get_xz()) < 0.5f)
-  //       {
-  //         _storageBox.Push(itms[q].id);
-  //         DestroyItem(itms[q]);
-  //         itms.RemoveAt(q);
-  //         --q;
-  //       }
-  //       ++q;
-  //     }
-  //     yield return null;
-  //   }
-  // }
   IEnumerator coEnd()
   {
-    //yield return StartCoroutine(coMoveToSB());
-
     yield return new WaitForSeconds(2.5f);
     succeed = true;
     onFinished?.Invoke(this);
