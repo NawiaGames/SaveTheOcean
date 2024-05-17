@@ -91,7 +91,7 @@ public class Item : MonoBehaviour
 
   public static float gridSpace = 1.0f;
   public static System.Action<Item> onShow, onShown, onMerged, onPut, onNoPut, onHide, onNoMerged, onSelect, onDropped, onSpawn;
-  public static Item Merge(Item item0, Item item1, List<Item> _items)
+  public static Item Merge(Item item0, Item item1, List<Item> _items, List<Item.ID> required)
   {
     Item newItem = null;
     MergeType mergeType = MergeType.Ok;
@@ -104,7 +104,7 @@ public class Item : MonoBehaviour
         item0.Hide();
         _items.Remove(item0);
         onMerged?.Invoke(item1);
-        newItem = Upgrade(item1, _items);
+        newItem = Upgrade(item1, _items, required);
       }
       else
         mergeType = MergeType.RejectMaxed;
@@ -146,7 +146,7 @@ public class Item : MonoBehaviour
 
     return new_items;
   }
-  public static Item   Upgrade(Item item, List<Item> _items)
+  public static Item   Upgrade(Item item, List<Item> _items, List<Item.ID> req)
   {
     Item new_item = null;
     if(item.IsUpgradable)
@@ -154,7 +154,10 @@ public class Item : MonoBehaviour
       if(item.id.kind == Item.Kind.Garbage || item.id.kind == Item.Kind.Food)
       {
         item.incLvl();
-        new_item = GameData.Prefabs.CreateItem(item.id, item.transform.parent);
+        if(item.id.kind == Kind.Garbage && req.FindIndex((r) => ID.Eq(r, item.id)) >= 0)
+          new_item = GameData.Prefabs.CreateBagItem(item.id, item.transform.parent);
+        else
+          new_item = GameData.Prefabs.CreateItem(item.id, item.transform.parent);
         item.Hide();
         new_item.Init(item.vgrid);
         new_item.GetComponent<Collider>().enabled = true;
@@ -180,10 +183,7 @@ public class Item : MonoBehaviour
     return new_item;
   }
   public static Vector3 ToPos(Vector2 vgrid) => new Vector3(vgrid.x, 0, vgrid.y) * Item.gridSpace + new Vector3(Random.Range(-0.125f, 0.125f), 0, Random.Range(-0.125f, 0.125f));
-  public static bool    EqType(Item item0, Item item1)
-  {
-    return item0 != null && item1 != null && ID.Eq(item0.id, item1.id);
-  }
+  public static bool    EqType(Item item0, Item item1) => item0 != null && item1 != null && ID.Eq(item0.id, item1.id);
   public static int     LevelsCnt(Item.ID id) => GameData.Prefabs.ItemLevelsCnt(id);
 
   static public int layer = 0;

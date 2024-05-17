@@ -6,7 +6,7 @@ using GameLib;
 
 public class Animal : MonoBehaviour
 {
-  [field: SerializeField] public string DisplayName { get; private set; } = ""; 
+  [field: SerializeField] public string DisplayName { get; private set; } = "";
   [Header("Refs")]
   [SerializeField] Animator     _animator;
   [SerializeField] Transform    _garbageContainer;
@@ -62,7 +62,7 @@ public class Animal : MonoBehaviour
     if(!feedingMode)
       _garbageInfo.Show(garbagesView);
     else
-      _feedingInfo.Show(this);  
+      _feedingInfo.Show(this);
   }
   public void Init(GameData.GarbCats[] garbCats)
   {
@@ -100,7 +100,7 @@ public class Animal : MonoBehaviour
   }
 
   public void Activate(bool show_info)
-  { 
+  {
     isActive = true;
     _animator.SetTrigger("activate");
     GetComponent<Collider>().enabled = true;
@@ -151,13 +151,15 @@ public class Animal : MonoBehaviour
     {
       if(!feedingMode)
         ret = IsReq(item);
-      else  
+      else
         ret = item.id.kind == Item.Kind.Food;
     }
     return ret;
   }
   public Item GetReq(Item item) => garbagesView.Find((garbage) => Item.EqType(item, garbage));
+  public Item GetReq(Item.ID id) => garbagesView.Find((garbage) => Item.ID.Eq(id, garbage.id));
   public bool IsReq(Item item) => (!feedingMode)? GetReq(item) != null : item.id.kind == Item.Kind.Food;
+  public bool IsReq(Item.ID id) => (!feedingMode)? GetReq(id) != null : id.kind == Item.Kind.Food;
   public void Feed(Item item)
   {
     bool next_lvl = GameState.Animals.Feed(type, item.id, _baseLevelUp);
@@ -165,7 +167,7 @@ public class Animal : MonoBehaviour
     lastkCal = GameState.Animals.GetFoodCal(item.id);
     onFeed?.Invoke(this);
     if(next_lvl)
-      onLevelUp?.Invoke(this);    
+      onLevelUp?.Invoke(this);
     isReady = true;
     item.gameObject.SetActive(false);
     if(!next_lvl)
@@ -199,7 +201,7 @@ public class Animal : MonoBehaviour
           if(isReady)
           {
             AnimThrow();
-            StartCoroutine(_animator.InvokeForAnimStateEnd("itemPush", ()=> 
+            StartCoroutine(_animator.InvokeForAnimStateEnd("itemPush", ()=>
             {
               isReady = true;
               model.SetActive(false);

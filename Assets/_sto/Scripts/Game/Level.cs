@@ -652,7 +652,7 @@ public class Level : MonoBehaviour
     if(itemHit && itemHit != _itemSelected && !itemHit.IsInMachine)
     {
       is_hit = true;
-      var newItem = Item.Merge(_itemSelected, itemHit, _items);
+      var newItem = Item.Merge(_itemSelected, itemHit, _items, GetReqList());
       if(newItem)
       {
         _splitMachine.RemoveFromSplitSlot(_itemSelected);
@@ -796,6 +796,12 @@ public class Level : MonoBehaviour
     _animals.ForEach((anim) => req_items.AddRange(anim.garbagesView));
     req_items.ForEach((reqit) => reqit.tickIco = _items.Any((it) => Item.EqType(it, reqit)));
   }
+  List<Item.ID> GetReqList()
+  {
+    List<Item.ID> ids = new();
+    _animals.ForEach((anim) => ids.AddRange(anim.garbagesView.Select((g) => g.id)));
+    return ids;
+  }
   void OnItemMerged(Item item)
   {
     if(locationIdx > 0)
@@ -847,8 +853,8 @@ public class Level : MonoBehaviour
   void OnDrawGizmos()
   {
     Gizmos.color = Color.red;
-    Vector3 vLB = new Vector3(-dim.x * 0.5f, 0, -dim.y * 0.5f);
-    Vector3 vRT = new Vector3( dim.x * 0.5f, 0, dim.y * 0.5f);
+    Vector3 vLB = new Vector3(-dim.x * 0.5f - 0.25f, 0, -dim.y * 0.5f - 0.25f);
+    Vector3 vRT = new Vector3( dim.x * 0.5f + 0.25f, 0,  dim.y * 0.5f + 0.25f);
     var v1 = Vector3.zero;
     v1.x = vLB.x;
     v1.z = vRT.z;

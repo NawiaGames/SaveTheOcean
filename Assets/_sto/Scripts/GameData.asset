@@ -78,7 +78,7 @@ MonoBehaviour:
     - {fileID: 6445466529311080229, guid: c750ac0c263edaf41b4b411affc5e405, type: 3}
     - {fileID: 6445466529311080229, guid: 5e4e8bfeec6e9104388d956ab16b8b48, type: 3}
     - {fileID: 6445466529311080229, guid: 8d75cefea946e3b44896139ecec61750, type: 3}
-  _gridTile: {fileID: 8178171026830446907, guid: 764369db777a63a4d9a3efac1f67b645, type: 3}
+  _itemBag: {fileID: 6445466529311080229, guid: d1a24abd45b8b894bb16da6b54721ad5, type: 3}
   _locationPrefab: {fileID: 4694188858287188799, guid: 7e2dc7caea333c54a97c83e5d2ddcc26, type: 3}
   _listLevels:
   - {fileID: 2229698086017596401, guid: c01b6befe631c5b44bf560095e70ab39, type: 3}

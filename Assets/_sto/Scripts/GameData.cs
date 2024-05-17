@@ -101,6 +101,7 @@ public class GameData : ScriptableObject
 
   [Header("--Prefabs--")]
   [SerializeField] Items[]  _items;
+  [SerializeField] Item     _itemBag;
   //[SerializeField] GridTile _gridTile;
   [SerializeField] Location _locationPrefab;
   //[SerializeField] Earth    _earthPrefab;
@@ -176,6 +177,12 @@ public class GameData : ScriptableObject
       Destroy(item.gameObject);
 
       return models;
+    }
+    public static Item CreateBagItem(Item.ID id, Transform parent)
+    {
+      var item = Instantiate(get()._itemBag, parent);
+      item.id = id;
+      return item;
     }
     public  static int ItemLevelsCnt(Item.ID id)
     {
