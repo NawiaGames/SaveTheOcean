@@ -24,39 +24,40 @@ public class GarbageInfo : MonoBehaviour
   public static System.Action<GarbageInfo> onShow, onHide;
 
   public Transform itemContainer => requestContainer.transform;
-  List<Item> _requestedItems = new List<Item>();
-  
+  //List<Item> _requestedItems = new List<Item>();
+  List<Item> _bags = new();
+
   void Awake()
   {
   }
   public void Show(List<Item> requests)
   {
-    _requestedItems.AddRange(requests);
-    _requestedItems.ForEach((request) => request.transform.parent = requestContainer.transform);
+    _bags.AddRange(requests);
+    _bags.ForEach((request) => request.transform.parent = requestContainer.transform);
     UpdateLayout();
     _actObj.ActivateObject();
     onShow?.Invoke(this);
   }
   public void Remove(Item.ID id)
   {
-    Item item = _requestedItems.Find((req) => Item.ID.Eq(req.id, id));
+    Item item = _bags.Find((req) => Item.ID.Eq(req.id, id));
     if(item)
     {
-      _requestedItems.Remove(item);
+      _bags.Remove(item);
       item.gameObject.SetActive(false);
     }
     UpdateLayout();
   }
   void UpdateLayout()
   {
-    for(int q = 0; q < _requestedItems.Count; ++q)
+    for(int q = 0; q < _bags.Count; ++q)
     {
-      float x = (-_requestedItems.Count + 1) * 0.5f + q;
-      _requestedItems[q].transform.localPosition = new Vector3(x * _itemSpacing, 0, 0);
+      float x = (-_bags.Count + 1) * 0.5f + q;
+      _bags[q].transform.localPosition = new Vector3(x * _itemSpacing, 0, 0);
     }
-    _popupRect.sizeDelta = new Vector2(88 + (_requestedItems.Count * 80 * _itemSpacing), _popupRect.sizeDelta.y);
+    _popupRect.sizeDelta = new Vector2(88 + (_bags.Count * 80 * _itemSpacing), _popupRect.sizeDelta.y);
 
-    _requestedItems.ForEach((Item item) => item.transform.localScale = Vector3.one * _itemScale);
+    _bags.ForEach((Item item) => item.transform.localScale = Vector3.one * _itemScale);
   }
   public void Hide()
   {

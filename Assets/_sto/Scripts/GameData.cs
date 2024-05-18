@@ -184,6 +184,13 @@ public class GameData : ScriptableObject
       item.id = id;
       return item;
     }
+    public static Item CreateBagStaticItem(Item.ID id, Transform parent)
+    {
+      Item item = CreateBagItem(id, parent);
+      item.SetAsStatic();
+      item.enabled = false;
+      return item;
+    }
     public  static int ItemLevelsCnt(Item.ID id)
     {
       int levels = 0;

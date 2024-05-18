@@ -78,9 +78,10 @@ public class Animal : MonoBehaviour
         _garbagesIds.Add(item.id);
       }
       _garbages.AddRange(_garbagesIds);
+      garbagesView.Clear();
       foreach(var id in _garbagesIds)
       {
-        garbagesView.Add(GameData.Prefabs.CreateStaticItem(id, _garbageInfo.itemContainer));
+        garbagesView.Add(GameData.Prefabs.CreateBagStaticItem(id, _garbageInfo.itemContainer));
       }
     }
   }
@@ -91,9 +92,10 @@ public class Animal : MonoBehaviour
     if(!feedingMode)
     {
       _garbagesIds.AddRange(ids);
+      garbagesView.Clear();
       foreach(var id in _garbagesIds)
       {
-        garbagesView.Add(GameData.Prefabs.CreateStaticItem(id, _garbageInfo.itemContainer));
+        garbagesView.Add(GameData.Prefabs.CreateBagStaticItem(id, _garbageInfo.itemContainer));
       }
       _garbages.AddRange(_garbagesIds);
     }
