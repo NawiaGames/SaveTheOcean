@@ -792,14 +792,14 @@ public class Level : MonoBehaviour
   }
   void CheckMatchingItems()
   {
-    List<Item> req_items = new List<Item>();
-    _animals.ForEach((anim) => req_items.AddRange(anim.garbagesView));
-    req_items.ForEach((reqit) => reqit.tickIco = _items.Any((it) => Item.EqType(it, reqit)));
+    //List<Item.ID> req_items = new();
+    //_animals.ForEach((anim) => req_items.AddRange(anim.garbages));
+    //req_items.ForEach((reqit) => reqit.tickIco = _items.Any((it) => Item.EqType(it, reqit)));
   }
   List<Item.ID> GetReqList()
   {
     List<Item.ID> ids = new();
-    _animals.ForEach((anim) => ids.AddRange(anim.garbagesView.Select((g) => g.id)));
+    _animals.ForEach((anim) => ids.AddRange(anim.garbages));
     return ids;
   }
   void OnItemMerged(Item item)

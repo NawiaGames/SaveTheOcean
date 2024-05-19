@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using GameLib;
+using TMPLbl = TMPro.TextMeshProUGUI;
 
 public class Animal : MonoBehaviour
 {
@@ -12,6 +12,7 @@ public class Animal : MonoBehaviour
   [SerializeField] Transform    _garbageContainer;
   [SerializeField] FeedInfo     _feedingInfo;
   [SerializeField] GarbageInfo  _garbageInfo;
+  [SerializeField] TMPLbl       _lbl;
 
   [Header("Props")]
   [SerializeField] Type _type;
@@ -31,18 +32,16 @@ public class Animal : MonoBehaviour
 
   List<Item.ID>    _garbagesIds = new List<Item.ID>(); //initial garbages
   List<Item.ID>    _garbages = new List<Item.ID>(); //garbages left
-  List<Item>       _garbagesCleared = new List<Item>();
+  List<Item.ID>    _garbagesCleared = new List<Item.ID>();
 
-  public Type          type => _type;
-  public int           baseLevelUp => _baseLevelUp;
-  public List<Item>    garbagesView {get; private set;} = new List<Item>();
-  public bool          isActive  {get; private set;} = false;
-  public bool          isReady  {get; private set;} = false;
-  public int           requests => garbagesView.Count;
-  public List<Item.ID> garbages => _garbages;
-  public List<Item.ID> garbagesIds => _garbagesIds;
-  //public Vector3       garbagePos => _garbageContainer.transform.position;
-  public float         lastkCal {get; private set;} = 0;
+  public  Type          type => _type;
+  public  int           baseLevelUp => _baseLevelUp;
+  //public  List<Item>    garbagesView {get; private set;} = new List<Item>();
+  public  bool          isActive  {get; private set;} = false;
+  public  bool          isReady  {get; private set;} = false;
+  public  int           requests => garbages.Count;
+  public  List<Item.ID> garbages => _garbages;
+  public  float         lastkCal {get; private set;} = 0;
 
   static public int layer = 0;
   static public int layerMask = 0;
@@ -60,7 +59,10 @@ public class Animal : MonoBehaviour
     yield return _animator.WaitForAnimState("_active");
     isReady = true;
     if(!feedingMode)
-      _garbageInfo.Show(garbagesView);
+    {
+      _garbageInfo.Show(garbages);
+      UpdateText();
+    }
     else
       _feedingInfo.Show(this);
   }
@@ -78,11 +80,6 @@ public class Animal : MonoBehaviour
         _garbagesIds.Add(item.id);
       }
       _garbages.AddRange(_garbagesIds);
-      garbagesView.Clear();
-      foreach(var id in _garbagesIds)
-      {
-        garbagesView.Add(GameData.Prefabs.CreateBagStaticItem(id, _garbageInfo.itemContainer));
-      }
     }
   }
   public void Init(List<Item.ID> ids)
@@ -92,11 +89,6 @@ public class Animal : MonoBehaviour
     if(!feedingMode)
     {
       _garbagesIds.AddRange(ids);
-      garbagesView.Clear();
-      foreach(var id in _garbagesIds)
-      {
-        garbagesView.Add(GameData.Prefabs.CreateBagStaticItem(id, _garbageInfo.itemContainer));
-      }
       _garbages.AddRange(_garbagesIds);
     }
   }
@@ -158,10 +150,10 @@ public class Animal : MonoBehaviour
     }
     return ret;
   }
-  public Item GetReq(Item item) => garbagesView.Find((garbage) => Item.EqType(item, garbage));
-  public Item GetReq(Item.ID id) => garbagesView.Find((garbage) => Item.ID.Eq(id, garbage.id));
-  public bool IsReq(Item item) => (!feedingMode)? GetReq(item) != null : item.id.kind == Item.Kind.Food;
-  public bool IsReq(Item.ID id) => (!feedingMode)? GetReq(id) != null : id.kind == Item.Kind.Food;
+  //public Item GetReq(Item item) => _garbagesView.Find((garbage) => Item.EqType(item, garbage));
+  public Item.ID GetReq(Item.ID id) => _garbages.FirstOrDefault((garbage_id) => Item.ID.Eq(id, garbage_id));
+  public bool IsReq(Item item) => (!feedingMode)? GetReq(item.id).kind != Item.Kind.None : item.id.kind == Item.Kind.Food;
+  public bool IsReq(Item.ID id) => (!feedingMode)? GetReq(id).kind != Item.Kind.None : id.kind == Item.Kind.Food;
   public void Feed(Item item)
   {
     bool next_lvl = GameState.Animals.Feed(type, item.id, _baseLevelUp);
@@ -181,13 +173,14 @@ public class Animal : MonoBehaviour
   {
     //if(isReady)
     {
-      Item it = garbagesView.Find((garbage) => Item.EqType(garbage, item));
-      if(it)
+      Item.ID id = garbages.FirstOrDefault((garbage) => Item.ID.Eq(garbage, item.id));
+      if(id.kind != Item.Kind.None)
       {
-        _garbageInfo.Remove(it.id);
-        _garbagesCleared.Add(it);
-        _garbages.Remove(it.id);
-        garbagesView.Remove(it);
+        _garbageInfo.Remove(id);
+        _garbagesCleared.Add(id);
+        _garbages.Remove(id);
+        UpdateText();
+        //garbagesView.Remove(it);
         item.gameObject.SetActive(false);
         GameObject model = null;
         if(isReady)
@@ -218,5 +211,9 @@ public class Animal : MonoBehaviour
         }
       }
     }
+  }
+  void UpdateText()
+  {
+    _lbl.text = $"x{_garbages.Count}";
   }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameLib;
 using GameLib.Utilities;
-using Unity.VisualScripting;
 
 public class Item : MonoBehaviour
 {
@@ -234,7 +233,7 @@ public class Item : MonoBehaviour
     Destroy(_rb);
     _rb = null;
 
-    transform.localScale = Vector2.one;
+    transform.localScale = Vector3.one;
     var osir = GetComponentInChildren<ObjectSpinInRange>(true);
     if(osir)
     {
