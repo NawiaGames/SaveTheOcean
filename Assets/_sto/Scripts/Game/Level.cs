@@ -649,10 +649,12 @@ public class Level : MonoBehaviour
     bool is_hit = false;
     var itemHit = GetNearestItem(tid.GetObjectsInRange<Item>(_inputRad, Item.layerMask, true));//     tid.GetClosestCollider(_inputRad, Item.layerMask)?.GetComponent<Item>() ?? null;
     bool is_merged = false;
-    if(itemHit && itemHit != _itemSelected && !itemHit.IsInMachine)
+    if(itemHit && itemHit != _itemSelected && !itemHit.IsInMachine &&  Item.EqType(itemHit, _itemSelected) && itemHit.IsUpgradable)
     {
       is_hit = true;
-      var newItem = Item.Merge(_itemSelected, itemHit, _items, GetReqList());
+      var next_id = Item.ChgLvl(itemHit.id);
+      bool makeBag = GetReqList().FindIndex((ri) => Item.ID.Eq(ri, next_id)) >= 0 && _items.FindIndex((it) => Item.ID.Eq(it.id, next_id)) < 0;
+      var newItem = Item.Merge(_itemSelected, itemHit, _items, makeBag);
       if(newItem)
       {
         _splitMachine.RemoveFromSplitSlot(_itemSelected);

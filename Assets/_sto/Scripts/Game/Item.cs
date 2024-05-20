@@ -90,7 +90,7 @@ public class Item : MonoBehaviour
 
   public static float gridSpace = 1.0f;
   public static System.Action<Item> onShow, onShown, onMerged, onPut, onNoPut, onHide, onNoMerged, onSelect, onDropped, onSpawn;
-  public static Item Merge(Item item0, Item item1, List<Item> _items, List<Item.ID> required)
+  public static Item Merge(Item item0, Item item1, List<Item> _items, bool makeBag)
   {
     Item newItem = null;
     MergeType mergeType = MergeType.Ok;
@@ -103,7 +103,7 @@ public class Item : MonoBehaviour
         item0.Hide();
         _items.Remove(item0);
         onMerged?.Invoke(item1);
-        newItem = Upgrade(item1, _items, required);
+        newItem = Upgrade(item1, _items, makeBag);
       }
       else
         mergeType = MergeType.RejectMaxed;
@@ -145,7 +145,7 @@ public class Item : MonoBehaviour
 
     return new_items;
   }
-  public static Item   Upgrade(Item item, List<Item> _items, List<Item.ID> req)
+  public static Item   Upgrade(Item item, List<Item> _items, bool makeBag)
   {
     Item new_item = null;
     if(item.IsUpgradable)
@@ -153,7 +153,7 @@ public class Item : MonoBehaviour
       if(item.id.kind == Item.Kind.Garbage || item.id.kind == Item.Kind.Food)
       {
         item.incLvl();
-        if(item.id.kind == Kind.Garbage && req.FindIndex((r) => ID.Eq(r, item.id)) >= 0)
+        if(makeBag)
           new_item = GameData.Prefabs.CreateBagItem(item.id, item.transform.parent);
         else
           new_item = GameData.Prefabs.CreateItem(item.id, item.transform.parent);
@@ -184,6 +184,7 @@ public class Item : MonoBehaviour
   public static Vector3 ToPos(Vector2 vgrid) => new Vector3(vgrid.x, 0, vgrid.y) * Item.gridSpace + new Vector3(Random.Range(-0.125f, 0.125f), 0, Random.Range(-0.125f, 0.125f));
   public static bool    EqType(Item item0, Item item1) => item0 != null && item1 != null && ID.Eq(item0.id, item1.id);
   public static int     LevelsCnt(Item.ID id) => GameData.Prefabs.ItemLevelsCnt(id);
+  public static ID      ChgLvl(Item.ID id, int amount = 1) => new ID(id.type, Mathf.Clamp(id.lvl + amount, 0, id.LevelsCnt-1), id.kind);
 
   static public int layer = 0;
   static public int layerMask = 0;
@@ -204,8 +205,8 @@ public class Item : MonoBehaviour
   public bool       IsSelected {get; set;}
   public bool       IsKinematic {get => _rb.isKinematic; set => _rb.isKinematic = value;}
   public bool       IsInMachine {get => _inMachine; set => _inMachine = value;}
-  public void       incLvl(int amount = 1){_id.lvl = Mathf.Clamp(_id.lvl + amount, 0, _id.LevelsCnt-1);}
-  public void       decLvl(){if(_id.lvl > 0) _id.lvl--;}
+  public void       incLvl(int amount = 1){_id = ChgLvl(_id, amount);} //{_id.lvl = Mathf.Clamp(_id.lvl + amount, 0, _id.LevelsCnt-1);}
+  public void       decLvl() {_id = ChgLvl(_id, -1);} //{if(_id.lvl > 0) _id.lvl--;}
   public MergeType  mergeType {get; set;} = MergeType.Ok;
   public int        levelsCnt {get; private set;}
   public Transform  modelContainer => _modelContainer.transform;
