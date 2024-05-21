@@ -14,6 +14,7 @@ public class HapticManager : MonoBehaviour
     Level.onFinished += VibMed;
     Level.onItemHovered += OnItemsHovered;
     Level.onAnimalHovered += OnAnimalHovered;
+    Level.onShipHovered += OnShipHovered;
     Item.onMerged += VibMed;
     Item.onNoMerged += VibMed;
     Item.onPut += VibMed;
@@ -36,6 +37,7 @@ public class HapticManager : MonoBehaviour
     Level.onFinished -= VibMed;
     Level.onItemHovered -= OnItemsHovered;
     Level.onAnimalHovered -= OnAnimalHovered;
+    Level.onShipHovered -= OnShipHovered;
     Item.onMerged -= VibMed;
     Item.onNoMerged -= VibMed;
     Item.onPut -= VibMed;
@@ -61,6 +63,13 @@ public class HapticManager : MonoBehaviour
       VibLo(null);
   }
   void OnAnimalHovered(Level lvl)
+  {
+    if(lvl.hoverItemMatch)
+      VibMed(null);
+    else
+      VibLo(null);
+  }
+  void OnShipHovered(Level lvl)
   {
     if(lvl.hoverItemMatch)
       VibMed(null);

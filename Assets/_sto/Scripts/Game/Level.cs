@@ -9,7 +9,7 @@ using GarbCats = GameData.GarbCats;
 
 public class Level : MonoBehaviour
 {
-  public static System.Action<Level>   onCreate, onStart, onGarbageOut, onNoRoomOnGrid, onItemHovered, onAnimalHovered;
+  public static System.Action<Level>   onCreate, onStart, onGarbageOut, onNoRoomOnGrid, onItemHovered, onAnimalHovered, onShipHovered;
   public static System.Action<Level>   onDone, onFinished, onHide, onDestroy;
   public static System.Action<Vector3> onMagnetBeg;
   public static System.Action<bool>    onMagnetEnd;
@@ -18,7 +18,7 @@ public class Level : MonoBehaviour
   [Header("Refs")]
   [SerializeField] Transform      _itemsContainer;
   [SerializeField] Transform      _tilesContainer;
-  //[SerializeField] Transform      _animalsContainer;
+  [SerializeField] Transform      _animalsContainer;
   [SerializeField] Transform[]    _animalContainers;
   [SerializeField] Transform      _specContainer;
   [SerializeField] Renderer       _waterRenderer;
@@ -26,6 +26,7 @@ public class Level : MonoBehaviour
   [SerializeField] SplitMachine   _splitMachine;
   [SerializeField] FeedingMachine _feedingMachine;
   [SerializeField] Transform[]    _boundsNSWE;
+  [SerializeField] Ship           _ship;
   //[SerializeField] Transform[] _paths;
   //[SerializeField] Transform _poiLT;
   //[SerializeField] Transform _poiRB;
@@ -36,6 +37,7 @@ public class Level : MonoBehaviour
   [SerializeField] Color      _waterColor;
   [SerializeField] float      _inputRad = 1.5f;
   [SerializeField] float      _inputAnimRad = 2.0f;
+  [SerializeField] float      _inputShipRad = 2.5f;
   [SerializeField] float      _inputStorageRad = 2.0f;
   [SerializeField] bool       _inputAnimRadMatching = true;
   [Header("LvlDesc")]
@@ -143,13 +145,14 @@ public class Level : MonoBehaviour
 
   UISummary    _uiSummary = null;
   UIStatusBar  _uiStatusBar = null;
-  List<Animal> _animals = new List<Animal>();
+  List<Animal> _animals = new();
+
   MaterialPropertyBlock _mpb = null;
 
   Item        _itemSelected;
   Item        _itemHovered;
-  Item        _itemTileSelected;
   Animal      _animalHovered;
+  Ship        _shipHovered;
   List<Item>  _items = new List<Item>();
   List<Item>  _items2 = new List<Item>();
   int         _requestCnt = 0;
@@ -196,9 +199,19 @@ public class Level : MonoBehaviour
     yield return null;
 
     if(!GameState.Progress.Locations.IsCache(locationIdx))
-      InitAnimals();
+    {
+      if(!isFeedingMode)
+        InitShip();
+      else
+        InitAnimals();
+    }
     else
-      RestoreAnimals();
+    {
+      if(!isFeedingMode)
+        RestoreShip();
+      else
+        RestoreAnimals();
+    }
 
     onStart?.Invoke(this);
 
@@ -212,7 +225,7 @@ public class Level : MonoBehaviour
 
   void Init()
   {
-    List<int> levels_idx = new List<int>();
+    List<int> levels_idx = new();
     levels_idx.Capacity = 1000;
     for(int q = 0; q < _chanceToDowngradeItem.Length; ++q)
     {
@@ -393,7 +406,36 @@ public class Level : MonoBehaviour
     else
       InitAnimals();
   }
-  //bool  firstPremium = false;
+  void InitShip()
+  {
+    List<Item.ID> ids = new();
+    for(int q = 0; q < _lvlDescs.Length; ++q)
+    {
+      foreach(var ictg in _lvlDescs[q].itemsCats)
+      {
+        var item = GameData.Prefabs.GetGarbagePrefab(ictg);
+        ids.Add(item.id);
+      }
+    }
+    _ship.Init(ids);
+    _ship.Activate(true);
+  }
+  void RestoreShip()
+  {
+    var cache = GameState.Progress.Locations.GetCache(locationIdx);
+    if(!isFeedingMode)
+    {
+      List<Item.ID> ids = new();
+      foreach(var req in cache.requests)
+      {
+        ids.AddRange(req.ids);
+      }
+      _ship.Init(ids);
+      _ship.Activate(true);
+    }
+    else
+      InitAnimals();
+  }
   void  AddItem(Item item)
   {
     _items.Add(item);
@@ -432,7 +474,10 @@ public class Level : MonoBehaviour
   public float PollutionRate()
   {
     int requests = 0;
-    _animals.ForEach((animal) => requests += animal.requests);
+    if(isFeedingMode)
+      _animals.ForEach((animal) => requests += animal.requests);
+    else
+      requests = _ship.requests;
     return (float)requests / _requestCnt;
   }
 
@@ -466,6 +511,8 @@ public class Level : MonoBehaviour
     hoverItemMatch = false;
     Item   nearestItem = null;
     Animal nearestAnimal = null;
+    Ship   nearestShip = null;
+
     if(_itemSelected && tid.RaycastData.HasValue)
     {
       var vpt = tid.RaycastData.Value.point;
@@ -488,7 +535,19 @@ public class Level : MonoBehaviour
         }
         _itemHovered = nearestItem;
       }
-
+      //nearest ship
+      {
+        nearestShip = tid.GetClosestObjectInRange<Ship>(_inputShipRad, Ship.layerMask);
+        if(nearestShip)
+        {
+          if(nearestShip != _shipHovered)
+          {
+            hoverItemMatch = nearestShip.CanPut(_itemSelected);
+            onShipHovered?.Invoke(this);
+          }
+        }
+        _shipHovered = nearestShip;
+      }
       //nearest animal
       {
         nearestAnimal = tid.GetClosestObjectInRange<Animal>(_inputAnimRad, Animal.layerMask);
@@ -505,8 +564,9 @@ public class Level : MonoBehaviour
         _animalHovered = nearestAnimal;
       }
     }
-
-    if(nearestAnimal && (!_inputAnimRadMatching || nearestAnimal.CanPut(_itemSelected)))
+    if(nearestShip && _ship.CanPut(_itemSelected))
+      onMagnetBeg?.Invoke(_ship.transform.position);
+    else if(nearestAnimal && (!_inputAnimRadMatching || nearestAnimal.CanPut(_itemSelected)))
       onMagnetBeg?.Invoke(nearestAnimal.transform.position);
     else if(nearestItem != null && Item.Mergeable(_itemSelected, nearestItem))
       onMagnetBeg?.Invoke(nearestItem.transform.position);
@@ -518,7 +578,7 @@ public class Level : MonoBehaviour
     if(!_itemSelected)
       return;
 
-    bool is_hit = IsItemHit(tid) || IsAnimalHit(tid) || IsSplitMachineHit(tid);
+    bool is_hit = IsItemHit(tid) || IsShipHit(tid) || IsAnimalHit(tid) || IsSplitMachineHit(tid);
     if(!is_hit)
     {
       EndMoveItem(_itemSelected);
@@ -626,14 +686,9 @@ public class Level : MonoBehaviour
           else if(item.id.kind == Item.Kind.Garbage)
           {
             tapTime = 0;
-            for(int q = 0; q < _animals.Count; ++q)
+            if(_ship && _ship.IsReq(item))
             {
-              var animal = _animals[q];
-              if(animal.isActive && animal.IsReq(item))
-              {
-                item.ThrowToAnimal(animal.transform.position + new Vector3(0,0.5f, 0), (Item item) => {PutItemToAnim(animal, item); CacheLoc(); CheckEnd();});
-                break;
-              }
+              item.ThrowToAnimal(_ship.transform.position + new Vector3(0,0.5f, 0), (Item item) => {PutItemToShip(_ship, item); CacheLoc(); CheckEnd();});
             }
           }
         }
@@ -653,7 +708,7 @@ public class Level : MonoBehaviour
     {
       is_hit = true;
       var next_id = Item.ChgLvl(itemHit.id);
-      bool makeBag = GetReqList().FindIndex((ri) => Item.ID.Eq(ri, next_id)) >= 0 && _items.FindIndex((it) => Item.ID.Eq(it.id, next_id)) < 0;
+      bool makeBag = _ship._garbages.FindIndex((ri) => Item.ID.Eq(ri, next_id)) >= 0 && _items.FindIndex((it) => Item.ID.Eq(it.id, next_id)) < 0;
       var newItem = Item.Merge(_itemSelected, itemHit, _items, makeBag);
       if(newItem)
       {
@@ -673,6 +728,20 @@ public class Level : MonoBehaviour
 
     return is_hit;
   }
+  void PutItemToShip(Ship shipHit, Item item)
+  {
+    Item.onPut?.Invoke(item);
+    shipHit.Put(item);
+    onItemCleared?.Invoke(item);
+    _items.Remove(item);
+    if(item.IsInMachine)
+      _splitMachine.RemoveFromSplitSlot(item);
+
+    _pollutionDest = PollutionRate();
+    onGarbageOut?.Invoke(this);
+    SpawnItem(item.vgrid);
+    CacheLoc();
+  }
   void PutItemToAnim(Animal animalHit, Item item)
   {
     Item.onPut?.Invoke(item);
@@ -689,6 +758,28 @@ public class Level : MonoBehaviour
     onGarbageOut?.Invoke(this);
     SpawnItem(item.vgrid);
     CacheLoc();
+  }
+  bool IsShipHit(TouchInputData tid)
+  {
+    bool is_hit = false;
+    var shipHit = tid.GetClosestCollider(_inputShipRad, Ship.layerMask)?.GetComponent<Ship>() ?? null;
+    if(shipHit)
+    {
+      if(shipHit.IsReq(_itemSelected)) //CanPut(_itemSelected))
+      {
+        PutItemToShip(shipHit, _itemSelected);
+        CheckEnd();
+        is_hit = true;
+        CacheLoc();
+      }
+      else
+      {
+        if(!shipHit.IsReq(_itemSelected))
+          Item.onNoPut?.Invoke(_itemSelected);
+      }
+    }
+
+    return is_hit;
   }
   bool IsAnimalHit(TouchInputData tid)
   {
@@ -740,15 +831,6 @@ public class Level : MonoBehaviour
     }
     return is_hit;
   }
-  bool IsChestHit(TouchInputData tid)
-  {
-    bool is_hit = false;
-    //var chest = tid.GetClosestObjectInRange<RewardChest2>(_inputRad, RewardChest.layerMask);
-    // if(chest)
-    //   chest.NoPush(_itemSelected.id);
-
-    return is_hit;
-  }
   bool IsTutorial<T>() where T : TutorialSystem.TutorialStep
   {
     return GetComponentInChildren<T>(true) != null;
@@ -767,7 +849,7 @@ public class Level : MonoBehaviour
   }
   IEnumerator coEnd()
   {
-    yield return new WaitForSeconds(2.5f);
+    yield return new WaitForSeconds(1.0f);
     succeed = true;
     onFinished?.Invoke(this);
     if(!isFeedingMode)
@@ -785,8 +867,7 @@ public class Level : MonoBehaviour
     if(isFeedingMode)
       return;
 
-    int activeAnimals = _animals.Count((animal) => animal.isActive);
-    if(!finished && activeAnimals == 0)
+    if(_ship.requests == 0)
     {
       finished = true;
       StartCoroutine(coEnd());
@@ -797,12 +878,6 @@ public class Level : MonoBehaviour
     //List<Item.ID> req_items = new();
     //_animals.ForEach((anim) => req_items.AddRange(anim.garbages));
     //req_items.ForEach((reqit) => reqit.tickIco = _items.Any((it) => Item.EqType(it, reqit)));
-  }
-  List<Item.ID> GetReqList()
-  {
-    List<Item.ID> ids = new();
-    _animals.ForEach((anim) => ids.AddRange(anim.garbages));
-    return ids;
   }
   void OnItemMerged(Item item)
   {
@@ -855,8 +930,8 @@ public class Level : MonoBehaviour
   void OnDrawGizmos()
   {
     Gizmos.color = Color.red;
-    Vector3 vLB = new Vector3(-dim.x * 0.5f - 0.25f, 0, -dim.y * 0.5f - 0.25f);
-    Vector3 vRT = new Vector3( dim.x * 0.5f + 0.25f, 0,  dim.y * 0.5f + 0.25f);
+    Vector3 vLB = new(-dim.x * 0.5f - 0.25f, 0, -dim.y * 0.5f - 0.25f);
+    Vector3 vRT = new( dim.x * 0.5f + 0.25f, 0,  dim.y * 0.5f + 0.25f);
     var v1 = Vector3.zero;
     v1.x = vLB.x;
     v1.z = vRT.z;

@@ -260,7 +260,7 @@ public class EffectsManager : MonoBehaviour
     }
     void OnMagnetBeg(Vector3 vpos)
     {
-      fxMagnet.transform.position = vpos;
+      fxMagnet.transform.position = GetFxPosition(vpos);
       if(fxMagnet.isStopped)
         PlayFXAtPosition(fxMagnet, vpos, 0, false);
     }

@@ -25,6 +25,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8108016443953103888}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -37,7 +38,6 @@ Transform:
   - {fileID: 676225068606840201}
   - {fileID: 973462670153670733}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8108016443953103902
 MonoBehaviour:
@@ -54,7 +54,7 @@ MonoBehaviour:
   objShakePreset: {fileID: 11400000, guid: e507e33c375fd9c4a9f7dc2edd4e770f, type: 2}
   objShakePresetLo: {fileID: 11400000, guid: fb6db08f6b431a848ab3894142ffb394, type: 2}
   objShakePresetHi: {fileID: 11400000, guid: 96a47d80e34fc7d4fa5b769b38c123e6, type: 2}
-  offsetToCamera: 1
+  offsetToCamera: 2
   fxWaterSplash: {fileID: 7477516348104327770}
   fxHit: {fileID: 676225068606840202}
   fxMagnet: {fileID: 973462670153670735}
@@ -69,6 +69,8 @@ MonoBehaviour:
   _strNotPushedGarbage: Unable to store!
   _strNotPushedFood: Unable to store!
   _strCollected: +{0}
+  _strAnimalFeed: +{0}
+  _strAnimalLevelUp: Level Up!
 --- !u!114 &8108016443953103903
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,6 +88,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 8108016443953103889}
     m_Modifications:
     - target: {fileID: 494785399947823482, guid: 2c8ce3d862983784b85653bd3ceb3bd7, type: 3}
@@ -137,6 +140,9 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2c8ce3d862983784b85653bd3ceb3bd7, type: 3}
 --- !u!4 &973462670153670733 stripped
 Transform:
@@ -153,6 +159,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 8108016443953103889}
     m_Modifications:
     - target: {fileID: 1914060182912627729, guid: dc40a591ca5af1644a974a271dc6776b, type: 3}
@@ -204,6 +211,9 @@ PrefabInstance:
       value: fxHit
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dc40a591ca5af1644a974a271dc6776b, type: 3}
 --- !u!4 &676225068606840201 stripped
 Transform:
@@ -220,6 +230,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 8108016443953103889}
     m_Modifications:
     - target: {fileID: 6419327746377031608, guid: 4c2eae6da7076ec4bb6176b714fa10c0, type: 3}
@@ -271,6 +282,9 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4c2eae6da7076ec4bb6176b714fa10c0, type: 3}
 --- !u!4 &5654794271917263830 stripped
 Transform:
@@ -282,6 +296,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 8108016443953103889}
     m_Modifications:
     - target: {fileID: 1923186895308541040, guid: 87505af8af9bbe24ba38247b63223c77, type: 3}
@@ -333,6 +348,9 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 87505af8af9bbe24ba38247b63223c77, type: 3}
 --- !u!4 &7043892403703522438 stripped
 Transform:
@@ -344,6 +362,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 8108016443953103889}
     m_Modifications:
     - target: {fileID: 5746853022206544130, guid: 8ff27a2a59d474245a1cb08200c76447, type: 3}
@@ -395,6 +414,9 @@ PrefabInstance:
       value: fxWaterSplash
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8ff27a2a59d474245a1cb08200c76447, type: 3}
 --- !u!4 &7477516348104327769 stripped
 Transform:
@@ -411,6 +433,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 8108016443953103889}
     m_Modifications:
     - target: {fileID: 4428706457753291949, guid: 60535307b3b012a4980d741c7aa60fcc, type: 3}
@@ -462,6 +485,9 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 60535307b3b012a4980d741c7aa60fcc, type: 3}
 --- !u!4 &3113611648289725410 stripped
 Transform:

@@ -7,6 +7,13 @@
       "dependencies": {},
       "hash": "40935669246b4ef9fad3c295b36b23659e07d84d"
     },
+    "com.ms.gamelibtools": {
+      "version": "https://github.com/theunspokenterror/GameLibTools.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "93ab6e0ac79fe4fb6306c2ba736583a7e2e6572c"
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
