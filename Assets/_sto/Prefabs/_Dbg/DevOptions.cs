@@ -30,10 +30,10 @@ public class DevOptions : MonoBehaviour
   public void on_btn_reset_progress()
   {
     GameLib.DataSystem.DataManager.ResetProgress();
-  }  
+  }
   public void on_btn_cycle_theme()
   {
-    FindObjectOfType<GameLib.UI.UIColorThemeManager>().ApplyThemeColorToAllSubComponents(colorThemes[(int)Mathf.Repeat(++colorTheme, colorThemes.Length)]);
+    FindFirstObjectByType<GameLib.UI.UIColorThemeManager>().ApplyThemeColorToAllSubComponents(colorThemes[(int)Mathf.Repeat(++colorTheme, colorThemes.Length)]);
   }
   [SerializeField] GameLib.UI.UIColorTheme[] colorThemes = new GameLib.UI.UIColorTheme[]{};
   [SerializeField] int colorTheme = 0;

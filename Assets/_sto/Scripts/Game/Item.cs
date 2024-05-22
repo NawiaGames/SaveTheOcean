@@ -249,8 +249,7 @@ public class Item : MonoBehaviour
   }
   public void Init(Vector3 vpos)
   {
-    //vgrid = grid;
-    vlpos = vpos;//ToPos(vgrid);
+    vwpos = vpos;
     GetComponent<BoxCollider>().enabled = false;
     levelsCnt = Item.LevelsCnt(id);
     if(levelsAsModels) //id.kind == Kind.Garbage || id.kind == Kind.Food)

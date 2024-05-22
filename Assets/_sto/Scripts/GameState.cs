@@ -44,17 +44,34 @@ public class GameState : SavableScriptableObject
     }
   }
   [System.Serializable]
+  public struct ChestCache
+  {
+    public Vector3 vpos;
+    public int     rewStamina;
+    public int     rewCoins;
+    public int     rewGems;
+    public ChestCache(RewardChest2 rewChest)
+    {
+      vpos = rewChest.transform.position;
+      rewStamina = rewChest.rewardStamina;
+      rewCoins = rewChest.rewardCoins;
+      rewGems = rewChest.rewardGems;
+    }
+  }
+  [System.Serializable]
   public class LocationCache
   {
-    public List<ItemCache>    items = new List<ItemCache>();
-    public List<ItemCache>    items2 = new List<ItemCache>();
-    public List<RequestCache> requests = new List<RequestCache>();
+    public List<ItemCache>    items = new();
+    public List<ItemCache>    items2 = new();
+    public List<RequestCache> requests = new();
+    public List<ChestCache>   chests = new();
 
     public void Clear()
     {
       items.Clear();
       items2.Clear();
       requests.Clear();
+      chests.Clear();
     }
   }
 
@@ -244,10 +261,12 @@ public class GameState : SavableScriptableObject
       listItems2.ForEach((item) => loc.cache.items2.Add(new ItemCache(item)));
       loc.cache.requests.Clear();
       loc.cache.requests.Add(new RequestCache(lvl.requestsList));
-      // for(int q = 0; q < lvl.animals.Count; ++q)
-      // {
-      //   loc.cache.requests.Add(new RequestCache(lvl.animals[q].garbages));
-      // }
+      loc.cache.chests.Clear();
+      lvl.rewardChests.ForEach((chest) =>
+      {
+        if(!chest.rewardClaimed)
+          loc.cache.chests.Add(new ChestCache(chest));
+      });
     }
     public void         ClearLocCache(int loc_idx) => FindLocation(loc_idx)?.cache.Clear();
   }
@@ -269,19 +288,6 @@ public class GameState : SavableScriptableObject
   class ChestState
   {
     public bool shown = false;
-    public List<Item.ID> listStamina = new List<Item.ID>();
-    public List<Item.ID> listCoins = new List<Item.ID>();
-    public List<Item.ID> listGems = new List<Item.ID>();
-
-    public void AddReward(GameData.Rewards.Reward rew)
-    {
-      for(int q = 0; q < rew.stamina; ++q)
-        listStamina.Add(new Item.ID(0, 0, Item.Kind.Stamina));
-      for(int q = 0; q < rew.coins; ++q)
-        listCoins.Add(new Item.ID(0, 0, Item.Kind.Coin));
-      for(int q = 0; q < rew.gems; ++q)
-        listGems.Add(new Item.ID(0, 0, Item.Kind.Gem));
-    }
   }
   [SerializeField] ChestState chest;
 
