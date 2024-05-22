@@ -515,7 +515,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <DisplayName>k__BackingField: 
   _animator: {fileID: 1989187476241295117}
-  _garbageContainer: {fileID: 4616879407267190240}
+  _garbageContainer: {fileID: 774742889544151051}
+  _itemsContainer: {fileID: 774742889544151051}
   _garbageInfo: {fileID: 6244366224420105627}
   _lbl: {fileID: 5601713847109466928}
   _type: 0

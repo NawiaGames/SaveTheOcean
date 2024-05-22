@@ -24,11 +24,13 @@ public class GameState : SavableScriptableObject
   public struct ItemCache
   {
     public Item.ID id;
-    public Vector2 vgrid;
+    public Vector3 vpos;
+    public bool    bag;
     public ItemCache(Item item)
     {
       id = item.id;
-      vgrid = item.vgrid;
+      vpos = item.vwpos;
+      bag = item.IsBag;
     }
   }
   [System.Serializable]
@@ -241,10 +243,11 @@ public class GameState : SavableScriptableObject
       loc.cache.items2.Clear();
       listItems2.ForEach((item) => loc.cache.items2.Add(new ItemCache(item)));
       loc.cache.requests.Clear();
-      for(int q = 0; q < lvl.animals.Count; ++q)
-      {
-        loc.cache.requests.Add(new RequestCache(lvl.animals[q].garbages));
-      }
+      loc.cache.requests.Add(new RequestCache(lvl.requestsList));
+      // for(int q = 0; q < lvl.animals.Count; ++q)
+      // {
+      //   loc.cache.requests.Add(new RequestCache(lvl.animals[q].garbages));
+      // }
     }
     public void         ClearLocCache(int loc_idx) => FindLocation(loc_idx)?.cache.Clear();
   }

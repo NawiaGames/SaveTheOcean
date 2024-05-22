@@ -160,7 +160,7 @@ public class EffectsManager : MonoBehaviour
     }
     void OnItemShown(Item sender)
     {
-      PlayFXAtPosition(fxWaterSplash, sender.gridPos, 0, false);
+      PlayFXAtPosition(fxWaterSplash, sender.vwpos, 0, false);
     }
     void OnItemHide(Item sender)
     {
@@ -168,7 +168,7 @@ public class EffectsManager : MonoBehaviour
     }
     void OnItemPut(Item sender)
     {
-      PlayFXAtPosition(fxHit, sender.transform.position, 0, false);
+      PlayFXAtPosition(fxHit, new Vector3(sender.vwpos.x, 0, sender.vwpos.z), 0, false);
     }
     void OnItemNoPut(Item sender)
     {

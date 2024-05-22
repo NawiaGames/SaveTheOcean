@@ -91,9 +91,10 @@ public class Level : MonoBehaviour
       }
     }
 
-    public int GetSolutionMoveCount() {
+    public int GetSolutionMoveCount()
+    {
       var solution = 0;
-      for (int i = 0; i <_itemsCats.Length ; i++)
+      for(int i = 0; i < _itemsCats.Length; i++)
         solution += (int)Mathf.Pow(2, (int)_itemsCats[i]%10);
       return solution;
     }
@@ -125,6 +126,7 @@ public class Level : MonoBehaviour
   public List<Item> listItems => _items;
   public List<Item> listItems2 => _items2;
   public List<Animal> animals => _animals;
+  public List<Item.ID> requestsList => _ship._garbages;
 
   public bool isRegular => locationIdx < Location.SpecialLocBeg && !isPolluted;
   public bool isPolluted => GameState.Progress.Locations.GetLocationState(locationIdx) == Level.State.Polluted;
@@ -225,9 +227,8 @@ public class Level : MonoBehaviour
 
   void Init()
   {
-    List<int> levels_idx = new();
-    levels_idx.Capacity = 1000;
-    for(int q = 0; q < _chanceToDowngradeItem.Length; ++q)
+    List<int> levels_idx = new(){Capacity = 1000};
+    for (int q = 0; q < _chanceToDowngradeItem.Length; ++q)
     {
       int cnt = (int)(1000 * _chanceToDowngradeItem[q]);
       for(int w = 0; w < cnt; ++w)
@@ -235,19 +236,19 @@ public class Level : MonoBehaviour
     }
     levels_idx.shuffle(2000);
 
-    List<Vector2> vs = new List<Vector2>();
-    Vector2 v = Vector2.zero;
-    for(int y = 0; y < dim.y; ++y)
-    {
-      v.y = -((-dim.y + 1) * 0.5f + y);
-      for(int x = 0; x < dim.x; ++x)
-      {
-        v.x = (-dim.x + 1) * 0.5f + x;
-        vs.Add(v);
-      }
-    }
-    vs.shuffle(100);
-    vs.Reverse();
+    // List<Vector2> vs = new List<Vector2>();
+    // Vector2 v = Vector2.zero;
+    // for(int y = 0; y < dim.y; ++y)
+    // {
+    //   v.y = -((-dim.y + 1) * 0.5f + y);
+    //   for(int x = 0; x < dim.x; ++x)
+    //   {
+    //     v.x = (-dim.x + 1) * 0.5f + x;
+    //     vs.Add(v);
+    //   }
+    // }
+    // vs.shuffle(100);
+    // vs.Reverse();
 
     if(!GameState.Progress.Locations.IsCache(locationIdx))
     {
@@ -306,21 +307,21 @@ public class Level : MonoBehaviour
       //   }
       //   specIds.shuffle(100);
       // }
-
+      int itemsCnt = dim.x * dim.y;
       for(int q = 0; q < ids.Count; ++q)
       {
         var item = GameData.Prefabs.CreateItem(ids[q], _itemsContainer);
-        if(vs.Count > 0)
+        if(itemsCnt > 0)
         {
           //item.Init(vs.first());
           item.Init(GetRandomGridPos());
-          vs.RemoveAt(0);
-          item.Spawn(item.vgrid, null, 15, Random.Range(0.5f, 1.5f), Random.Range(0, 3.0f));
+          itemsCnt--;
+          item.Spawn(item.vwpos, null, 15, Random.Range(0.5f, 1.5f), Random.Range(0, 3.0f));
           AddItem(item);
         }
         else
         {
-          item.Init(Vector2.zero);
+          item.Init(Vector3.zero);
           _items2.Add(item);
           item.gameObject.SetActive(false);
         }
@@ -357,16 +358,16 @@ public class Level : MonoBehaviour
     for(int q = 0; q < locCache.items.Count; ++q)
     {
       var ic = locCache.items[q];
-      var item = GameData.Prefabs.CreateItem(ic.id, _itemsContainer);
-      item.Init(ic.vgrid);
-      item.Spawn(item.vgrid, null, 15, Random.Range(0.5f, 1.5f), Random.Range(0.0f, 3.0f));
+      var item = (!ic.bag)? GameData.Prefabs.CreateItem(ic.id, _itemsContainer) : GameData.Prefabs.CreateBagItem(ic.id, _itemsContainer);
+      item.Init(ic.vpos);
+      item.Spawn(ic.vpos, null, 15, Random.Range(0.5f, 1.5f), Random.Range(0.0f, 3.0f));
       AddItem(item);
     }
     for(int q = 0; q < locCache.items2.Count; ++q)
     {
       var ic = locCache.items2[q];
       var item = GameData.Prefabs.CreateItem(ic.id, _itemsContainer);
-      item.Init(ic.vgrid);
+      item.Init(ic.vpos);
       _items2.Add(item);
       item.gameObject.SetActive(false);
     }
@@ -442,17 +443,14 @@ public class Level : MonoBehaviour
     GameState.Progress.Items.ItemAppears(item.id);
   }
   Vector2 GetRandomGridPos() => new Vector2(Random.Range(-_dim.x/2, _dim.x/2), Random.Range(-dim.y/2, _dim.y));
-  void  SpawnItem(Vector2 vgrid, bool useRandomGridPos = true)
+  void  SpawnItem(Vector3 vpos)
   {
     if(_items2.Count > 0)
     {
       var item = _items2.first();
       _items2.RemoveAt(0);
+      item.Spawn(vpos, null, 15, 1);
       onUnderwaterSpawn?.Invoke(item);
-      if(useRandomGridPos)
-        item.Spawn(GetRandomGridPos(), null, 15, 1);
-      else
-        item.Spawn(vgrid, null, 15, 1);
       AddItem(item);
     }
   }
@@ -516,8 +514,8 @@ public class Level : MonoBehaviour
     if(_itemSelected && tid.RaycastData.HasValue)
     {
       var vpt = tid.RaycastData.Value.point;
-      vpt.x = Mathf.Clamp(vpt.x, _boundsNSWE[2].position.x + 0.1f, _boundsNSWE[3].position.x - 0.1f);
-      vpt.z = Mathf.Clamp(vpt.z, _boundsNSWE[1].position.z + 0.1f, _boundsNSWE[0].position.z - 0.1f);
+      vpt.x = Mathf.Clamp(vpt.x, _boundsNSWE[2].position.x + 1f, _boundsNSWE[3].position.x - 1f);
+      vpt.z = Mathf.Clamp(vpt.z, _boundsNSWE[1].position.z + 1f, _boundsNSWE[0].position.z - 1f);
       voffs.y = Mathf.Lerp(voffs.y, 0.15f, Time.deltaTime * 10);
       _itemSelected.MoveSelectedTo(vpt + voffs);
 
@@ -653,9 +651,9 @@ public class Level : MonoBehaviour
           if(id != null)
           {
             var item = GameData.Prefabs.CreateItem(id.Value, _itemsContainer);
-            item.vgrid = vg.Value;
+            item.vwpos = vbeg;
             AddItem(item);
-            item.Throw(vbeg, item.vgrid);
+            item.Throw(vbeg, vg.Value);
             CacheLoc();
           }
         }
@@ -680,7 +678,7 @@ public class Level : MonoBehaviour
             _uiStatusBar.MoveCollectedUI(item, amount);
             onItemCollected?.Invoke(item);
             item.Hide();
-            SpawnItem(item.vgrid);
+            SpawnItem(item.vwpos);
             CacheLoc();
           }
           else if(item.id.kind == Item.Kind.Garbage)
@@ -688,7 +686,7 @@ public class Level : MonoBehaviour
             tapTime = 0;
             if(_ship && _ship.IsReq(item))
             {
-              item.ThrowToAnimal(_ship.transform.position + new Vector3(0,0.5f, 0), (Item item) => {PutItemToShip(_ship, item); CacheLoc(); CheckEnd();});
+              item.ThrowToShip(_ship.transform.position + new Vector3(0,0.5f, 0), (Item item) => {PutItemToShip(_ship, item); CacheLoc(); CheckEnd();});
             }
           }
         }
@@ -716,7 +714,7 @@ public class Level : MonoBehaviour
         onItemCleared?.Invoke(_itemSelected);
         newItem.Show();
         GameState.Progress.Items.ItemAppears(newItem.id);
-        SpawnItem(_itemSelected.vgrid);
+        SpawnItem(_itemSelected.vwpos);
         is_merged = true;
         CacheLoc();
       }
@@ -739,7 +737,7 @@ public class Level : MonoBehaviour
 
     _pollutionDest = PollutionRate();
     onGarbageOut?.Invoke(this);
-    SpawnItem(item.vgrid);
+    SpawnItem(item.vwpos);
     CacheLoc();
   }
   void PutItemToAnim(Animal animalHit, Item item)
@@ -756,7 +754,7 @@ public class Level : MonoBehaviour
 
     _pollutionDest = PollutionRate();
     onGarbageOut?.Invoke(this);
-    SpawnItem(item.vgrid);
+    SpawnItem(item.vwpos);
     CacheLoc();
   }
   bool IsShipHit(TouchInputData tid)
@@ -887,7 +885,7 @@ public class Level : MonoBehaviour
   void OnRewardChanged(float rewardPoints)
   {
     var rewardProgress = GameData.Econo.GetRewardProgress(rewardPoints);
-    if(rewardProgress.lvl > GameState.Chest.rewardLevel)
+    if(rewardProgress.lvl > GameState.Chest.rewardLevel && itemsCount > 1)
     {
       GameState.Chest.rewardLevel = rewardProgress.lvl;
       CreateRewardChest(new Vector3(Random.Range(-dim.x * 0.5f + 0.5f, dim.x * 0.5f - 0.5f), -4, Random.Range(-dim.y * 0.5f + 0.5f, dim.y * 0.5f - 0.5f)));
@@ -925,6 +923,15 @@ public class Level : MonoBehaviour
       CreateRewardChest(new Vector3(Random.Range(-dim.x * 0.5f, dim.x * 0.5f), -4, Random.Range(-dim.y * 0.5f, dim.y * 0.5f)));
     }
   #endif
+  }
+  void LateUpdate()
+  {
+    if(_itemSelected)
+    {
+      // var x = Mathf.Clamp(_itemSelected.transform.position.x, _boundsNSWE[2].position.x + 1f, _boundsNSWE[3].position.x - 1f);
+      // var z = Mathf.Clamp(_itemSelected.transform.position.z, _boundsNSWE[1].position.z + 1f, _boundsNSWE[0].position.z - 1f);
+      // _itemSelected.transform.position = new Vector3(x, _itemSelected.transform.position.y, z);
+    }
   }
 
   void OnDrawGizmos()

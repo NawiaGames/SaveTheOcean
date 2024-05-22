@@ -182,6 +182,7 @@ public class GameData : ScriptableObject
     {
       var item = Instantiate(get()._itemBag, parent);
       item.id = id;
+      item.IsBag = true;
       return item;
     }
     public static Item CreateBagStaticItem(Item.ID id, Transform parent)

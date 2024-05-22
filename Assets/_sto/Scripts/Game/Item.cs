@@ -84,6 +84,7 @@ public class Item : MonoBehaviour
   bool       _inMachine = false;
   float      _sinkTimer = 0;
   bool       _ready = false;
+  bool       _isBag = false;
   //bool       _staticItem = false;
   bool       _levelFinished = false;
   Quaternion _qinitial;
@@ -158,7 +159,7 @@ public class Item : MonoBehaviour
         else
           new_item = GameData.Prefabs.CreateItem(item.id, item.transform.parent);
         item.Hide();
-        new_item.Init(item.vgrid);
+        new_item.Init(item.vwpos);
         new_item.GetComponent<Collider>().enabled = true;
         new_item.transform.position = item.transform.position;
         new_item._rb.velocity = Vector3.zero;
@@ -181,7 +182,7 @@ public class Item : MonoBehaviour
     }
     return new_item;
   }
-  public static Vector3 ToPos(Vector2 vgrid) => new Vector3(vgrid.x, 0, vgrid.y) * Item.gridSpace + new Vector3(Random.Range(-0.125f, 0.125f), 0, Random.Range(-0.125f, 0.125f));
+  //public static Vector3 ToPos(Vector2 vgrid) => new Vector3(vgrid.x, 0, vgrid.y) * Item.gridSpace + new Vector3(Random.Range(-0.125f, 0.125f), 0, Random.Range(-0.125f, 0.125f));
   public static bool    EqType(Item item0, Item item1) => item0 != null && item1 != null && ID.Eq(item0.id, item1.id);
   public static int     LevelsCnt(Item.ID id) => GameData.Prefabs.ItemLevelsCnt(id);
   public static ID      ChgLvl(Item.ID id, int amount = 1) => new ID(id.type, Mathf.Clamp(id.lvl + amount, 0, id.LevelsCnt-1), id.kind);
@@ -193,18 +194,19 @@ public class Item : MonoBehaviour
   public GameObject mdl {get; private set;}
   public Vector3    vdim => _vdim;
   public Vector3    vbtmExtent => _vbtmExtent;
-  public Vector2    vgrid {get => _grid; set => _grid = value;}
-  public Vector2Int agrid {get => _agrid; set => _agrid = value;}
+  //public Vector2    vgrid {get => _grid; set => _grid = value;}
+  //public Vector2Int agrid {get => _agrid; set => _agrid = value;}
   public Vector3    vlpos {get => transform.localPosition; set => transform.localPosition = value;}
   public Vector3    vwpos { get => transform.position; set => transform.position = value;}
   public Vector3?   vdstPos {get=> _vdstPos; set => _vdstPos = value;}
-  public Vector3    gridPos => Item.ToPos(vgrid);
+  //public Vector3    gridPos => Item.ToPos(vgrid);
   public bool       IsMaxLevel => id.lvl + 1 == levelsCnt;
   public bool       IsUpgradable => id.lvl + 1 < levelsCnt;
   public bool       IsSplitable => id.lvl > 0;
   public bool       IsSelected {get; set;}
   public bool       IsKinematic {get => _rb.isKinematic; set => _rb.isKinematic = value;}
   public bool       IsInMachine {get => _inMachine; set => _inMachine = value;}
+  public bool       IsBag {get => _isBag; set => _isBag = value;}
   public void       incLvl(int amount = 1){_id = ChgLvl(_id, amount);} //{_id.lvl = Mathf.Clamp(_id.lvl + amount, 0, _id.LevelsCnt-1);}
   public void       decLvl() {_id = ChgLvl(_id, -1);} //{if(_id.lvl > 0) _id.lvl--;}
   public MergeType  mergeType {get; set;} = MergeType.Ok;
@@ -245,10 +247,10 @@ public class Item : MonoBehaviour
     mdl = _models[0];
     SetModel(0);
   }
-  public void Init(Vector2 grid)
+  public void Init(Vector3 vpos)
   {
-    vgrid = grid;
-    vlpos = ToPos(vgrid);
+    //vgrid = grid;
+    vlpos = vpos;//ToPos(vgrid);
     GetComponent<BoxCollider>().enabled = false;
     levelsCnt = Item.LevelsCnt(id);
     if(levelsAsModels) //id.kind == Kind.Garbage || id.kind == Kind.Food)
@@ -291,16 +293,16 @@ public class Item : MonoBehaviour
     this.Invoke(()=> GetComponent<Collider>().enabled = true, 0.5f);
     onShow?.Invoke(this);
   }
-  public void Spawn(Vector2 vgrid, Vector3[] vpath, float touch, float speed, float delay = 0)
+  public void Spawn(Vector3 vpos, Vector3[] vpath, float touch, float speed, float delay = 0)
   {
-    Init(vgrid);
+    Init(vpos);
     gameObject.SetActive(true);
     GetComponent<Collider>().enabled = false;
     _activatable.ActivateObject();
     if(vpath != null)
     {
       System.Array.Copy(vpath, _path, 3);
-      _path[3] = ToPos(vgrid);
+      _path[3] = vpos;//ToPos(vgrid);
       vwpos = _path[0];
       _rb.MovePosition(vwpos);
       StartCoroutine(MovePath(speed));
@@ -308,9 +310,9 @@ public class Item : MonoBehaviour
     else
     {
       float immers = -6;
-      _path[0] = ToPos(vgrid);
+      _path[0] = vpos;//ToPos(vgrid);
       _path[0].y = immers;
-      _path[3] = ToPos(vgrid);
+      _path[3] = vpos;//ToPos(vgrid);
 
       _path[1] = Vector3.Lerp(_path[0], _path[3], 0.25f);
       _path[2] = Vector3.Lerp(_path[0], _path[3], 0.75f);
@@ -327,7 +329,7 @@ public class Item : MonoBehaviour
 
     GetComponent<Collider>().enabled = true;
     _rb.AddTorque(Random.rotationUniform * (Vector3.forward * Random.Range(150, 200)));
-    _rb.AddForce(Vector3.up * 250);
+    _rb.AddForce(Vector3.up * 450);
 
     yield return new WaitUntil(() => vlpos.y > -0.5f);
     onShown?.Invoke(this);
@@ -437,29 +439,28 @@ public class Item : MonoBehaviour
     else
       _rb.velocity = Vector3.zero;
   }
-  public void Throw(Vector3 item_vbeg, Vector2 item_vgrid)
+  public void Throw(Vector3 item_vbeg, Vector3 item_vdst)
   {
     vwpos = item_vbeg;
-    vgrid = item_vgrid;
     Vector3[] vcps = new Vector3[4];
     vcps[0] = item_vbeg;
-    vcps[3] = Item.ToPos(vgrid);
+    vcps[3] = item_vdst;//Item.ToPos(vgrid);
     vcps[1] = Vector3.Lerp(vcps[0], vcps[3], 0.45f) + new Vector3(0, 5, 0);
     vcps[2] = Vector3.Lerp(vcps[0], vcps[3], 0.55f) + new Vector3(0, 5, 0);
-    Spawn(item_vgrid, vcps, -40.0f, 2);
+    Spawn(item_vbeg, vcps, -40.0f, 2);
   }
-  public void ThrowToAnimal(Vector3 animal_vpos, System.Action<Item> endAction)
+  public void ThrowToShip(Vector3 ship_vpos, System.Action<Item> endAction)
   {
     _ready = false;
 
     Vector3[] vcps = new Vector3[4];
     vcps[0] = vwpos;
-    vcps[3] = animal_vpos;
+    vcps[3] = ship_vpos;
     vcps[1] = Vector3.Lerp(vcps[0], vcps[3], 0.45f) + new Vector3(0, 4, 0);
     vcps[2] = Vector3.Lerp(vcps[0], vcps[3], 0.55f) + new Vector3(0, 4, 0);
-    StartCoroutine(coMovePathToAnim(vcps, endAction));
+    StartCoroutine(coMovePath(vcps, endAction));
   }
-  IEnumerator coMovePathToAnim(Vector3[] vcps, System.Action<Item> action)
+  IEnumerator coMovePath(Vector3[] vcps, System.Action<Item> action)
   {
     float t = 0.0f;
     while(t <= 1)
@@ -470,7 +471,6 @@ public class Item : MonoBehaviour
       vwpos = Vector3Ex.bezier(vcps, tc);
       yield return null;
     }
-
     action?.Invoke(this);
   }
 

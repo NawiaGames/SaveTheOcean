@@ -144,9 +144,9 @@ public class Ship : MonoBehaviour
   }
   //public Item GetReq(Item item) => _garbagesView.Find((garbage) => Item.EqType(item, garbage));
   public Item.ID GetReq(Item.ID id) => _garbages.FirstOrDefault((garbage_id) => Item.ID.Eq(id, garbage_id));
-  public bool IsReq(Item item) => (!feedingMode)? GetReq(item.id).kind != Item.Kind.None : item.id.kind == Item.Kind.Food;
-  public bool IsReq(Item.ID id) => (!feedingMode)? GetReq(id).kind != Item.Kind.None : id.kind == Item.Kind.Food;
-  public void Put(Item item)
+  public bool    IsReq(Item item) => (!feedingMode)? GetReq(item.id).kind != Item.Kind.None : item.id.kind == Item.Kind.Food;
+  public bool    IsReq(Item.ID id) => (!feedingMode)? GetReq(id).kind != Item.Kind.None : id.kind == Item.Kind.Food;
+  public void    Put(Item item)
   {
     //if(isReady)
     {
@@ -170,16 +170,16 @@ public class Ship : MonoBehaviour
 
         if(_garbages.Count > 0)
         {
-          if(isReady)
-          {
-            AnimThrow();
-            StartCoroutine(_animator.InvokeForAnimStateEnd("itemPush", ()=>
-            {
-              isReady = true;
-              model.SetActive(false);
-            }));
-          }
-          isReady = false;
+          // if(isReady)
+          // {
+          //   AnimThrow();
+          //   StartCoroutine(_animator.InvokeForAnimStateEnd("itemPush", ()=>
+          //   {
+          //     isReady = true;
+          //     //model.SetActive(false);
+          //   }));
+          // }
+          //isReady = false;
         }
         else
         {

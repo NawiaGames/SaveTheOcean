@@ -105,7 +105,7 @@ Transform:
   m_GameObject: {fileID: 520355852108221262}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4, y: 0, z: 0}
+  m_LocalPosition: {x: -5, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -539,6 +539,7 @@ MonoBehaviour:
   _waterColor: {r: 0, g: 0.5647059, b: 1, a: 1}
   _inputRad: 0.7
   _inputAnimRad: 1
+  _inputShipRad: 2.5
   _inputStorageRad: 2
   _inputAnimRadMatching: 1
   _chanceToDowngradeItem:
@@ -880,7 +881,7 @@ Transform:
   m_GameObject: {fileID: 5675079246189627655}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4, y: 0, z: 0}
+  m_LocalPosition: {x: 5, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1044,7 +1045,7 @@ Transform:
   m_GameObject: {fileID: 8003545475305658827}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -6}
+  m_LocalPosition: {x: 0, y: 0, z: -7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1128,7 +1129,7 @@ Transform:
   m_GameObject: {fileID: 8922531104429893038}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 7}
+  m_LocalPosition: {x: 0, y: 0, z: 8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
