@@ -26,7 +26,7 @@ public class UIEarth : MonoBehaviour
     Earth.onLevelSelected += UpdateLevelInfo;
     Earth.onLevelStart += OnEarthHide;
 
-    _earth = FindObjectOfType<Earth>(true);
+    _earth = FindFirstObjectByType<Earth>(FindObjectsInactive.Include);//true);
     _earthPanel = GetComponent<UIPanel>();
 
     _cleanDst = GameState.Progress.Locations.GetCompletionRate();
@@ -53,7 +53,7 @@ public class UIEarth : MonoBehaviour
   void Hide()
   {
     _earthPanel.DeactivatePanel();
-  }  
+  }
 
   bool IsLocationSelectable(int location)
   {
@@ -86,16 +86,16 @@ public class UIEarth : MonoBehaviour
   {
     if(mode == Level.Mode.Standard || mode == Level.Mode.Polluted)
       return loc_idx < Location.SpecialLocBeg;
-    if(mode == Level.Mode.Feeding)  
+    if(mode == Level.Mode.Feeding)
       return loc_idx == Location.FeedLocation;
     if(mode == Level.Mode.Clearing)
       return loc_idx == Location.ClearLocation;
-    
-    return false;    
+
+    return false;
   }
   public void OnBtnPlay()
   {
-    (int cost, Level.Mode mode)[] modes = 
+    (int cost, Level.Mode mode)[] modes =
     {
       new (GameData.Econo.staminaPlayCost, Level.Mode.Standard),
       new (GameData.Econo.staminaPlayFeedCost, Level.Mode.Feeding),

@@ -39,12 +39,16 @@ public static class Vector3Ex
     float rev_t = 1f - tc;
     float rev_t2 = rev_t * rev_t;
     float rev_t3 = rev_t2 * rev_t;
-    return rev_t3 * vctrl_pts[0] + 3f * tc * rev_t2 * vctrl_pts[1] + 3f * t2 * rev_t * vctrl_pts[2] + t3 * vctrl_pts[3];    
+    return rev_t3 * vctrl_pts[0] + 3f * tc * rev_t2 * vctrl_pts[1] + 3f * t2 * rev_t * vctrl_pts[2] + t3 * vctrl_pts[3];
   }
   public static Vector3 swap_yz(this Vector3 vec)
   {
     return new Vector3(vec.x, vec.z, vec.y);
-  } 
+  }
+  public static Vector3 swap_xz(this Vector3 vec, float mx = 1.0f, float mz = 1.0f)
+  {
+    return new Vector3(vec.z * mz, vec.y, vec.x * mx);
+  }
   public static Vector2 get_xz(this Vector3 vec)
   {
     return new Vector2(vec.x, vec.z);
@@ -107,7 +111,7 @@ public static class TrasformEx
   public static void set_local_pos_z(this Transform tr, float z)
   {
     tr.localPosition = new Vector3(tr.localPosition.x, tr.localPosition.y, z);
-  }  
+  }
 }
 public static class CMath
 {
@@ -122,7 +126,7 @@ public static class CMath
   public static int RoundToInt(int value, int multipleOf)
   {
     return Mathf.RoundToInt(value / multipleOf) * multipleOf;
-  }  
+  }
 }
 
 public static class StringEx
@@ -161,12 +165,12 @@ public static class ListEx
   }
   public static int get_random_idx<T>(this List<T> list)
   {
-    return Random.Range(0,list.Count); 
+    return Random.Range(0,list.Count);
   }
   public static T first<T>(this List<T> list)
   {
     return list[0];
-  }  
+  }
   public static T last<T>(this List<T> list, int idx_from_end = 0)
   {
     return list[list.Count - 1 + idx_from_end];
@@ -195,7 +199,7 @@ public static class ArrayEx
   public static int get_random_idx<T>(this T[] array)
   {
     return Random.Range(0, array.Length);
-  }  
+  }
   public static T first<T>(this T[] array)
   {
     return array[0];
@@ -313,7 +317,7 @@ public static class AnimatorExt
     yield return null;
 
     action?.Invoke();
-  }  
+  }
   public static IEnumerator InvokeForAnimState<T>(this Animator animator, string anim, System.Action<T> action, T invoke_args)
   {
     yield return null;
@@ -356,5 +360,5 @@ public static class AnimatorExt
     yield return null;
 
     action?.Invoke(invoke_args);
-  }  
+  }
 }

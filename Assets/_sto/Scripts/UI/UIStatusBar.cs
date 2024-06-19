@@ -143,7 +143,7 @@ public class UIStatusBar : MonoBehaviour
       Item.Kind.Stamina => _stamina.GetComponent<RectTransform>().position,
       Item.Kind.Coin => _coins.GetComponent<RectTransform>().position,
       Item.Kind.Gem => _gems.GetComponent<RectTransform>().position,
-      _ => Vector2.zero
+      _ => Vector3.zero
     };
 
 

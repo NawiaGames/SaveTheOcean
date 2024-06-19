@@ -20,6 +20,7 @@ public class Level : MonoBehaviour
   [SerializeField] Transform      _tilesContainer;
   [SerializeField] Transform      _animalsContainer;
   [SerializeField] Transform[]    _animalContainers;
+  [SerializeField] Transform      _friendsContainer;
   [SerializeField] Transform      _specContainer;
   [SerializeField] Renderer       _waterRenderer;
   [SerializeField] RewardChest2   _rewardChest2Prefab;
@@ -161,6 +162,7 @@ public class Level : MonoBehaviour
   int         _requestCnt = 0;
   int         _initialItemsCnt = 0;
   List<RewardChest2> _rewardChests = new();
+  List<AnimalFriend> _friends = new();
 
   //float       _pollutionRate = 1.0f;
   float       _pollutionDest = 1.0f;
@@ -216,6 +218,7 @@ public class Level : MonoBehaviour
       else
         RestoreAnimals();
     }
+    InitFriends();
 
     onStart?.Invoke(this);
 
@@ -442,6 +445,15 @@ public class Level : MonoBehaviour
     }
     else
       InitAnimals();
+  }
+  void InitFriends()
+  {
+    for(int q = 0; q < 3; ++q)
+    {
+      var friend = GameData.Prefabs.CreateAnimalFriend(GameState.Progress.locationIdx, _friendsContainer);
+      _friends.Add(friend);
+      friend.StartMove(_ship.transform.position, 4 + q * 1.5f);
+    }
   }
   void  AddItem(Item item)
   {

@@ -105,10 +105,12 @@ public class GameData : ScriptableObject
   //[SerializeField] GridTile _gridTile;
   [SerializeField] Location _locationPrefab;
   //[SerializeField] Earth    _earthPrefab;
-  //[Header("Levels")]
+  [Header("Levels")]
   [SerializeField] List<Level> _listLevels;
   [SerializeField] Level       _levelFeeding;
   [SerializeField] Level       _levelClearing;
+  [Header("--animals--")]
+  [SerializeField] AnimalFriend[] _animalFriendPrefabs;
   [Header("--Econo--")]
   [SerializeField] int        _staminaMax = 99;
   [SerializeField] int        _staminaPlayCost = 5;
@@ -219,6 +221,8 @@ public class GameData : ScriptableObject
     public static int ItemTypesCnt => get()._items.Length;
 
     public static Location CreateLocation(Transform parent) => Instantiate(get()._locationPrefab, parent);
+
+    public static AnimalFriend CreateAnimalFriend(int idx, Transform parent) => Instantiate(get()._animalFriendPrefabs[Mathf.Clamp(idx, 0, get()._animalFriendPrefabs.Length-1)], parent);
   }
   public static class Levels
   {

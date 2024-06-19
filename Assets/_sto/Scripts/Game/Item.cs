@@ -386,6 +386,7 @@ public class Item : MonoBehaviour
       _vBackPos = vlpos;
     }
   }
+  Vector2 _vmovxz = Vector2.zero;
   public void MoveTo(Vector3 dst) => _rb.MovePosition(dst);
   public void MoveToGrid()
   {
@@ -421,6 +422,7 @@ public class Item : MonoBehaviour
     //   yield return null;
     // }
     // vlpos = vdst;
+    _rb.velocity = new Vector3(_vmovxz.x, 0, _vmovxz.y) * 5;
     _rb.AddForce(Vector3.down * 5);
     yield return null;
     _coMoveHandle = null;
@@ -434,7 +436,10 @@ public class Item : MonoBehaviour
   public void MoveSelectedTo(Vector3 vdest)
   {
     if(Vector2.Distance(transform.position.get_xz(), vdest.get_xz()) > 0.1f)
+    {
+      _vmovxz = vdest.get_xz() - _rb.position.get_xz();
       _rb.MovePosition(Vector3.Lerp(transform.position, vdest, Time.deltaTime * 10));
+    }
     else
       _rb.velocity = Vector3.zero;
   }
