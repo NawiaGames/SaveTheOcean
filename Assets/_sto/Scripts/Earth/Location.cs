@@ -20,7 +20,7 @@ public class Location : MonoBehaviour
   public const int SpecialLocBeg = 1000;
   public const int FeedLocation = 1000;
   public const int ClearLocation = 1001;
-  
+
 
   Quaternion _localDstRoto = Quaternion.identity;
   private int _idx = -1;
@@ -29,31 +29,41 @@ public class Location : MonoBehaviour
   public int  idx => _idx;
   public int  levelIdx => _level;
 
-  public bool IsSelectable() 
+  public bool IsSelectable()
   {
     state = GameState.Progress.Locations.GetLocationState(idx);
     return state >= Level.State.Unlocked && state != Level.State.Finished;
   }
-
   public void Init(int idx, Transform levelTransf, float vert_roto_range, Level.State level_state)
-  { 
+  {
     _idx = idx;
     _level = idx;
     state = level_state;
 
-    vert_roto_range -= 5;
+    //vert_roto_range -= 5;
 
     transform.localPosition = levelTransf.localPosition;
     transform.localRotation = Quaternion.LookRotation(-levelTransf.localPosition) * Quaternion.AngleAxis(-90, Vector3.right);
-    var posxz = Vector3.ProjectOnPlane(transform.localPosition, Vector3.up);
-    //posxz.y = 0;
-    _localDstRoto = Quaternion.AngleAxis(Vector3.SignedAngle(posxz, -Vector3.forward, Vector3.up), Vector3.up);
-    var posyz = Vector3.ProjectOnPlane(transform.localPosition, Vector3.right);
-    //posyz.x = 0;
-    _localDstRoto = Quaternion.AngleAxis(Mathf.Clamp(Vector3.SignedAngle(posyz, -Vector3.forward, Vector3.right), -vert_roto_range, vert_roto_range), Vector3.right) * _localDstRoto;
+
+    var vnp = transform.localPosition.normalized;
+    var posxz = Vector3.ProjectOnPlane(vnp, Vector3.up);
+    var ang_y = Vector3.SignedAngle(posxz.normalized, -Vector3.forward, Vector3.up);
+    //var ang_y = Mathf.Atan2(vnp.z, vnp.x) * Mathf.Rad2Deg + 90;
+
+    var posyz = Vector3.ProjectOnPlane(vnp, -Vector3.right);
+    var ang_x = Vector3.SignedAngle(posyz.normalized, -Vector3.forward, Vector3.right);
+    if(ang_x > 90)
+      ang_x = 180 - ang_x;
+    else if(ang_x < -90)
+      ang_x = -180 - ang_x;
+    ang_x = Mathf.Clamp(ang_x, -vert_roto_range, vert_roto_range);
+    //var ang_xx = Mathf.Asin(vnp.y) * Mathf.Rad2Deg;
+
+    _localDstRoto = Quaternion.AngleAxis(ang_x, Vector3.right) * Quaternion.AngleAxis(ang_y, Vector3.up);
+
     Select(false);
   }
-  public Level.State state 
+  public Level.State state
   {
     get => _state;
     set
