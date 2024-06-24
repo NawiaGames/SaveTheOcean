@@ -424,6 +424,7 @@ public class Item : MonoBehaviour
     // vlpos = vdst;
     _rb.velocity = new Vector3(_vmovxz.x, 0, _vmovxz.y) * 5;
     _rb.AddForce(Vector3.down * 5);
+    _rb.AddTorque(_vmovxz.y * 10, 0, -_vmovxz.x * 10);
     yield return null;
     _coMoveHandle = null;
     onDropped?.Invoke(this);
