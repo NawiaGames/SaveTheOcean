@@ -19,6 +19,7 @@ public class Ship : MonoBehaviour
 
 
   public static System.Action<Animal> onFeed, onLevelUp;
+  public static System.Action<Ship> onItemPut;
 
   public enum Type
   {
@@ -153,6 +154,7 @@ public class Ship : MonoBehaviour
       Item.ID id = garbages.FirstOrDefault((garbage) => Item.ID.Eq(garbage, item.id));
       if(id.kind != Item.Kind.None)
       {
+        onItemPut?.Invoke(this);
         _garbageInfo.Remove(id);
         _garbagesCleared.Add(id);
         _garbages.Remove(id);

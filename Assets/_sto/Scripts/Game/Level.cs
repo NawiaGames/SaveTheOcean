@@ -129,6 +129,7 @@ public class Level : MonoBehaviour
   public List<Animal> animals => _animals;
   public List<Item.ID> requestsList => _ship._garbages;
   public List<RewardChest2> rewardChests => _rewardChests;
+  public List<AnimalFriend> animalFriends => _friends;
 
   public bool isRegular => locationIdx < Location.SpecialLocBeg && !isPolluted;
   public bool isPolluted => GameState.Progress.Locations.GetLocationState(locationIdx) == Level.State.Polluted;
@@ -452,7 +453,7 @@ public class Level : MonoBehaviour
     {
       var friend = GameData.Prefabs.CreateAnimalFriend(GameState.Progress.locationIdx, _friendsContainer);
       _friends.Add(friend);
-      friend.StartMove(_ship.transform.position, 4 + q * 1.5f);
+      friend.StartMove(_ship.transform.position, 4 + q * 1.0f);
     }
   }
   void  AddItem(Item item)
@@ -742,6 +743,7 @@ public class Level : MonoBehaviour
   {
     Item.onPut?.Invoke(item);
     shipHit.Put(item);
+    _friends.ForEach((f) => f.Happy());
     onItemCleared?.Invoke(item);
     _items.Remove(item);
     if(item.IsInMachine)

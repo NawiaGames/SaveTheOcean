@@ -26,8 +26,8 @@ public class Game : MonoBehaviour
 
     Earth.onLevelStart += ShowLevel;
 
-    _earth = FindObjectOfType<Earth>(true);
-    _uiFade = FindObjectOfType<UIFade>(true);
+    _earth = FindFirstObjectByType<Earth>(FindObjectsInactive.Include);
+    _uiFade = FindFirstObjectByType<UIFade>(FindObjectsInactive.Include);
   }
   void OnDestroy()
   {
@@ -43,7 +43,7 @@ public class Game : MonoBehaviour
   {
     yield return new WaitForSeconds(0.0125f);
     _earth.Setup();
-    FindObjectOfType<UIStatusBar>(true).Show();
+    FindFirstObjectByType<UIStatusBar>(FindObjectsInactive.Include).Show();
   }
 
   void OnInputTapped(TouchInputData tid)

@@ -571,7 +571,7 @@ MonoBehaviour:
   _waterColor: {r: 0, g: 0.5647059, b: 1, a: 1}
   _inputRad: 0.7
   _inputAnimRad: 1
-  _inputShipRad: 2.5
+  _inputShipRad: 2
   _inputStorageRad: 2
   _inputAnimRadMatching: 1
   _chanceToDowngradeItem:

@@ -157,11 +157,11 @@ MonoBehaviour:
   _rb: {fileID: 6061897704520350776}
   _fx: {fileID: 4509933857829436113}
   _tickIco: {fileID: 6008361047508620854}
-  _ampl: 0.1
-  _amplSpeed: 5
   _buoyancy: 1
   _damp_over: 4
   _damp_under: 4
+  _sinkAmp: 0.25
+  _sinkTime: 10
 --- !u!114 &7798136041665752175
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207,7 +207,7 @@ Rigidbody:
   serializedVersion: 4
   m_Mass: 1
   m_Drag: 0.5
-  m_AngularDrag: 0.5
+  m_AngularDrag: 1
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}

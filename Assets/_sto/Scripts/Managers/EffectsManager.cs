@@ -59,12 +59,14 @@ public class EffectsManager : MonoBehaviour
       Item.onHide += OnItemHide;
       Item.onMerged += OnItemMerged;
       Item.onNoMerged += OnItemNoMerged;
-      Item.onPut += OnItemPut;
+      //Item.onPut += OnItemPut;
       Item.onNoPut += OnItemNoPut;
       Item.onDropped += OnItemDropped;
 
       Animal.onFeed += OnAnimalFeed;
       Animal.onLevelUp += OnAnimalLevelUp;
+      AnimalFriend.onHappy += OnAnimalFriendHappy;
+      Ship.onItemPut += OnItemPut;
 
       SplitMachine.onSplitted += OnSplitMachineSplitted;
       SplitMachine.onDropped += OnSplitMachineDrop;
@@ -94,12 +96,14 @@ public class EffectsManager : MonoBehaviour
       Item.onHide -= OnItemHide;
       Item.onMerged -= OnItemMerged;
       Item.onNoMerged -= OnItemNoMerged;
-      Item.onPut -= OnItemPut;
+      //Item.onPut -= OnItemPut;
       Item.onNoPut -= OnItemNoPut;
       Item.onDropped -= OnItemDropped;
 
       Animal.onFeed -= OnAnimalFeed;
       Animal.onLevelUp -= OnAnimalLevelUp;
+      AnimalFriend.onHappy -= OnAnimalFriendHappy;
+      Ship.onItemPut -= OnItemPut;
 
       SplitMachine.onSplitted -= OnSplitMachineSplitted;
       SplitMachine.onDropped -= OnSplitMachineDrop;
@@ -166,9 +170,14 @@ public class EffectsManager : MonoBehaviour
     {
 
     }
-    void OnItemPut(Item sender)
+    // void OnItemPut(Item sender)
+    // {
+    //   PlayFXAtPosition(fxHit, new Vector3(sender.vwpos.x, 0, sender.vwpos.z), 0, false);
+    // }
+    void OnItemPut(MonoBehaviour sender)
     {
-      PlayFXAtPosition(fxHit, new Vector3(sender.vwpos.x, 0, sender.vwpos.z), 0, false);
+      var vpos = sender.transform.position + new Vector3(0,1,0);
+      PlayFXAtPosition(fxHit, vpos, 2, false);
     }
     void OnItemNoPut(Item sender)
     {
@@ -257,6 +266,10 @@ public class EffectsManager : MonoBehaviour
     void OnAnimalLevelUp(Animal sender)
     {
       infoLblMan.ShowTextPopup(sender.transform.position + new Vector3(0, 2, 0), _strAnimalLevelUp);
+    }
+    void OnAnimalFriendHappy(MonoBehaviour sender)
+    {
+      infoLblMan.ShowTextPopup(sender.transform.position + new Vector3(0, 1.0f, 0), UIDefaults.GetGemsString(1));
     }
     void OnMagnetBeg(Vector3 vpos)
     {
