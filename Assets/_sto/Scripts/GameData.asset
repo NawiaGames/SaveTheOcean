@@ -104,11 +104,11 @@ MonoBehaviour:
   _levelFeeding: {fileID: 2229698086017596401, guid: 0f8f314baaff79f4aa4d3cf15bcda573, type: 3}
   _levelClearing: {fileID: 2229698086017596401, guid: 8974ce46b8281204fac9988f26433c68, type: 3}
   _animalFriendPrefabs:
-  - {fileID: 6439009908104756216, guid: 038b1659c253f0e4d810a9dd110d325a, type: 3}
-  - {fileID: 4418020644476758667, guid: 32e0a1c33c3d2c746b1ea2bd92b1f7ae, type: 3}
-  - {fileID: -6173999120972926461, guid: 8c264e0e29a351f4b8193722f751c7ff, type: 3}
-  - {fileID: 3506313438263357392, guid: 642efe9a0bb1a3c46ac6f6646f986510, type: 3}
-  - {fileID: -1743410068448808500, guid: c3cab90ccabd8db47a5edd2272f2a1e0, type: 3}
+  - {fileID: 4054930158917373867, guid: c7de53f7a39f7b6448059a0014a9f47d, type: 3}
+  - {fileID: 4641651556432299996, guid: 0c44f4192b07fc24a83b56d3f1ba346f, type: 3}
+  - {fileID: 5859987329713181273, guid: 86dc55d09c9ff414d82b67cf672d37d4, type: 3}
+  - {fileID: 5859987329713181273, guid: 8fb9279fbbad3d54395bc2d9bc9884c7, type: 3}
+  - {fileID: 5859987329713181273, guid: f98fb21b585176d40a43875621a167b3, type: 3}
   _staminaMax: 50
   _staminaPlayCost: 5
   _staminaFeedCost: 10

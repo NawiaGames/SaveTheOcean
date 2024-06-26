@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class AnimalFriend : MonoBehaviour
 {
-  [SerializeField] Color _color;
-  [SerializeField] float _speed = 5;
+  [SerializeField] Color      _color;
+  [SerializeField] float      _speed = 5;
+  [SerializeField] Transform  _modelContainer;
 
   public static System.Action<AnimalFriend> onHappy;
 
@@ -32,6 +33,7 @@ public class AnimalFriend : MonoBehaviour
       if(renderer2)
         _dims = renderer2.bounds.extents;
     }
+    _modelContainer.localScale *= Random.Range(0.95f, 1.05f);
   }
 
   public void StartMove(Vector3 vcenter, float radius)
@@ -39,15 +41,16 @@ public class AnimalFriend : MonoBehaviour
     _vcenter = vcenter;
     _radius = radius;
     _ang = Random.Range(0.0f, 360.0f);
-    _speed *= Random.Range(0.75f, 1.25f);
+    _speed *= Random.Range(0.85f, 1.15f);
   }
 
   public void Happy() => onHappy?.Invoke(this);
 
   void Update()
   {
+    var dim_ys = _dims.y * _modelContainer.localScale.y;
     var off = Quaternion.AngleAxis(_ang, Vector3.up) * (Vector3.forward * _radius);
-    off.y = -2 * _dims.y + Mathf.Sin(_ang * 0.5f * Mathf.Deg2Rad) * 0.75f * _dims.y;
+    off.y = -dim_ys + Mathf.Sin(_ang * 0.5f * Mathf.Deg2Rad) * 0.5f * dim_ys;
     transform.position = _vcenter + off;
     transform.forward = transform.position - _prevPos;
     _prevPos = transform.position;
