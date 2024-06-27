@@ -643,6 +643,7 @@ public class Level : MonoBehaviour
               CacheLoc();
             }
             chest.Hide();
+            _rewardChests.Remove(chest);
             return;
           }
         }
@@ -892,9 +893,12 @@ public class Level : MonoBehaviour
           }
         }
       }
-      yield return new WaitForSeconds(0.4f);
-      _rewardChests.ForEach((chest) => chest.Hide());
-      yield return new WaitForSeconds(0.25f);
+      if(_rewardChests.Count > 0)
+      {
+        yield return new WaitForSeconds(0.4f);
+        _rewardChests.ForEach((chest) => chest.Hide());
+        yield return new WaitForSeconds(0.25f);
+      }
 
       GameState.Progress.Locations.SetLocationFinished();
       if(!isCleanupMode)

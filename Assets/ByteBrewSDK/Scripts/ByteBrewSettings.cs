@@ -18,5 +18,12 @@ public class ByteBrewSettings : ScriptableObject
     public string androidGameID;
     [HideInInspector]
     public string androidSDKKey;
+
+    [HideInInspector]
+    public bool webEnabled;
+    [HideInInspector]
+    public string webGameID;
+    [HideInInspector]
+    public string webSDKKey;
 }
 

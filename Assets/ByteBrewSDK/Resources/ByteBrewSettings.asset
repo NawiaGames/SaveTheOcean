@@ -18,3 +18,6 @@ MonoBehaviour:
   androidEnabled: 1
   androidGameID: WANVfz7Bb
   androidSDKKey: rRMmpitcmOxwSZ5hTY5PncAJd8bgCXnOaPMy0I2z3mWSbjXPezyP5I7k/0d0QsEU
+  webEnabled: 0
+  webGameID: 
+  webSDKKey: 

@@ -8,11 +8,16 @@ namespace ByteBrewSDK
 {
     public class ByteBrew : MonoBehaviour
     {
+        public static readonly string SDK_VERSION = "0.1.5";
+
         private static ByteBrew _instance;
 
         public static ByteBrew Instance { get { return _instance; } }
 
+        ///<summary> Do not use this variable to tell if the SDK is initialized, use IsByteBrewInitialized()</summary>
         public static bool IsInitilized = false;
+
+        private static bool libraryFinishedInitialization = false;
 
         public static bool FirstTimeOpening = false;
 
@@ -42,7 +47,7 @@ namespace ByteBrewSDK
 
             Debug.Log("ByteBrew is not going to initialize in a non mobile environment. SDK events will not be sent.");
 
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             if (IsInitilized)
                 return;
@@ -60,6 +65,25 @@ namespace ByteBrewSDK
 
         }
 
+        /// <summary>
+        /// Returns whether the ByteBrew Library is fully initialized
+        /// </summary>
+        /// <returns>Boolean, true if the library for ByteBrew is initialized.</returns>
+        public static bool IsByteBrewInitialized()
+        {
+#if UNITY_WEBGL
+            return IsInitilized && ByteBrewWebHandler.IsByteBrewInitialized();
+#else
+            return libraryFinishedInitialization;
+#endif
+        }
+
+        public void ByteBrewSDKInitialized()
+        {
+            libraryFinishedInitialization = true;
+        }
+
+#if !UNITY_WEBGL
         public static void StartPushNotifications()
         {
 #if UNITY_EDITOR
@@ -73,6 +97,7 @@ namespace ByteBrewSDK
 #endif
 
         }
+#endif
 
 		/// <summary>
         /// Add a custom Data Attribute to user
@@ -84,7 +109,7 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, not setting custom data... But you are calling it so it will work on a mobile environment.");
             return;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             if (IsInitilized)
                 ByteBrew_Helper.AddCustomDataPair(key, value);
@@ -102,7 +127,7 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, not setting custom data... But you are calling it so it will work on a mobile environment.");
             return;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             if (IsInitilized)
                 ByteBrew_Helper.AddCustomDataPair(key, value);
@@ -120,7 +145,7 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, not setting custom data... But you are calling it so it will work on a mobile environment.");
             return;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             if (IsInitilized)
                 ByteBrew_Helper.AddCustomDataPair(key, value);
@@ -138,7 +163,7 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, not setting custom data... But you are calling it so it will work on a mobile environment.");
             return;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             if (IsInitilized)
                 ByteBrew_Helper.AddCustomDataPair(key, value);
@@ -155,12 +180,30 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, not sending events");
             return;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             if (IsInitilized)
                 ByteBrew_Helper.AddNewCustomEvent(eventName);
 
 #endif
+        }
+
+        /// <summary>
+        /// Add a custom event to be tracked in ByteBrew
+        /// </summary>
+        /// <param name="eventName">Name of the event (ex. WeaponUnloced)</param>
+        /// <param name="parameters">parameters that corresponds to the event (ex. Weapon: SledgeHammer, etc..)</param>
+        public static void NewCustomEvent(string eventName, Dictionary<string, string> parameters)
+        {
+#if UNITY_EDITOR
+            Debug.Log("ByteBrew is in Editor Mode, not sending events");
+            return;
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
+
+            if(IsInitilized)
+                ByteBrew_Helper.AddNewCustomEvent(eventName, parameters);
+#endif
+
         }
 
         /// <summary>
@@ -173,12 +216,12 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, not sending events");
             return;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             if(IsInitilized)
                 ByteBrew_Helper.AddNewCustomEvent(eventName, value);
 #endif
-            
+
         }
 
         /// <summary>
@@ -192,12 +235,12 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, not sending events");
             return;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             if (IsInitilized)
                 ByteBrew_Helper.AddProgressionEvent(progressionStatus, environment, stage);
 #endif
-            
+
         }
 
         /// <summary>
@@ -212,11 +255,11 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, not sending events");
             return;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             if (IsInitilized)
                 ByteBrew_Helper.AddProgressionEvent(progressionStatus, environment, stage, value);
-#endif 
+#endif
         }
 
         /// <summary>
@@ -231,12 +274,12 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, not sending events");
             return;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             if (IsInitilized)
                 ByteBrew_Helper.AddProgressionEvent(progressionStatus, environment, stage, value);
-#endif 
-            
+#endif
+
         }
 
         /// <summary>
@@ -249,12 +292,12 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, not sending events");
             return;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             if(IsInitilized)
                 ByteBrew_Helper.AddNewCustomEvent(eventName, value);
-#endif 
-            
+#endif
+
         }
 
         /// <summary>
@@ -267,12 +310,12 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, not sending events");
             return;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             if(IsInitilized)
                 ByteBrew_Helper.NewTrackedAdEvent(adType.ToString(), adLocation);
-#endif 
-            
+#endif
+
         }
 
         /// <summary>
@@ -286,12 +329,12 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, not sending events");
             return;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             if(IsInitilized)
                 ByteBrew_Helper.NewTrackedAdEvent(adType.ToString(), adLocation, AdID);
-#endif 
-            
+#endif
+
         }
 
         /// <summary>
@@ -306,12 +349,53 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, not sending events");
             return;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             if(IsInitilized)
                 ByteBrew_Helper.NewTrackedAdEvent(adType.ToString(), adLocation, AdID, adProvider);
-#endif 
-            
+#endif
+
+        }
+
+        /// <summary>
+        /// Track when a Ad is shown to the user
+        /// </summary>
+        /// <param name="adType">Placement type of the Ad. (ex. Interstitial, Reward)</param>
+        /// <param name="adProvider">The provider of the Ad. (ex. AdMob, IronSource)</param>
+        /// <param name="adUnitName">The Ad Unit Name or ID that was used to show the impression</param>
+        /// <param name="revenue">Revenue earned from the impression shown</param>
+        public static void TrackAdEvent(ByteBrewAdTypes adType, string adProvider, string adUnitName, double revenue)
+        {
+#if UNITY_EDITOR
+            Debug.Log("ByteBrew is in Editor Mode, not sending events");
+            return;
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
+
+            if(IsInitilized)
+                ByteBrew_Helper.NewTrackedAdEvent(adType.ToString(), adProvider, adUnitName, revenue);
+#endif
+
+        }
+
+        /// <summary>
+        /// Track when a Ad is shown to the user
+        /// </summary>
+        /// <param name="adType">Placement type of the Ad. (ex. Interstitial, Reward)</param>
+        /// <param name="adProvider">The provider of the Ad. (ex. AdMob, IronSource)</param>
+        /// <param name="adUnitName">The Ad Unit Name or ID that was used to show the impression</param>
+        /// <param name="adLocation">The location of the shown ad. (ex. shopOpen, levelFail, game open...)</param>
+        /// <param name="revenue">Revenue earned from the impression shown</param>
+        public static void TrackAdEvent(ByteBrewAdTypes adType, string adProvider, string adUnitName, string adLocation, double revenue)
+        {
+#if UNITY_EDITOR
+            Debug.Log("ByteBrew is in Editor Mode, not sending events");
+            return;
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
+
+            if(IsInitilized)
+                ByteBrew_Helper.NewTrackedAdEvent(adType.ToString(), adProvider, adUnitName, adLocation, revenue);
+#endif
+
         }
 
         /// <summary>
@@ -325,12 +409,12 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, not sending events");
             return;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             if(IsInitilized)
                 ByteBrew_Helper.NewTrackedAdEvent(placementType, adLocation);
-#endif 
-            
+#endif
+
         }
 
         /// <summary>
@@ -345,12 +429,12 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, not sending events");
             return;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             if(IsInitilized)
                 ByteBrew_Helper.NewTrackedAdEvent(placementType, adLocation, AdID);
-#endif 
-            
+#endif
+
         }
 
         /// <summary>
@@ -366,12 +450,12 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, not sending events");
             return;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             if(IsInitilized)
                 ByteBrew_Helper.NewTrackedAdEvent(placementType, adLocation, AdID, adProvider);
-#endif 
-            
+#endif
+
         }
 
         /// <summary>
@@ -387,12 +471,12 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, not sending events");
             return;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             if(IsInitilized)
                 ByteBrew_Helper.AddTrackedInAppPurchaseEvent(store, currency, amount, itemID, category);
-#endif 
-            
+#endif
+
         }
 
         /// <summary>
@@ -409,12 +493,12 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, not sending events");
             return;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             if (IsInitilized)
                 ByteBrew_Helper.AddTrackediOSInAppPurchaseEvent(store, currency, amount, itemID, category, receipt);
-#endif 
-            
+#endif
+
         }
 
         /// <summary>
@@ -432,12 +516,12 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, not sending events");
             return;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             if (IsInitilized)
                 ByteBrew_Helper.AddTrackedGoogleInAppPurchaseEvent(store, currency, amount, itemID, category, receipt, signature);
-#endif 
-            
+#endif
+
         }
 
         /// <summary>
@@ -456,13 +540,13 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, not validating purchase, giving empty results.");
 			purchaseResult.Invoke(new ByteBrewPurchaseData());
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             if (IsInitilized) {
                 ByteBrew_Helper.ValidateTrackediOSInAppPurchaseEvent(store, currency, amount, itemID, category, receipt);
             }
-#endif 
-        
+#endif
+
         }
 
         /// <summary>
@@ -482,12 +566,12 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, not validating purchase, giving empty results.");
             purchaseResult.Invoke(new ByteBrewPurchaseData());
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             if (IsInitilized)
                 ByteBrew_Helper.ValidateTrackedGoogleInAppPurchaseEvent(store, currency, amount, itemID, category, receipt, signature);
-#endif 
-            
+#endif
+
         }
 
         /// <summary>
@@ -501,11 +585,11 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, not tacking.");
             return;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             ByteBrew_Helper.RestartTracking();
-#endif 
-            
+#endif
+
         }
 
         /// <summary>
@@ -519,11 +603,11 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, not tacking.");
             return;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             ByteBrew_Helper.StopTracking();
-#endif 
-            
+#endif
+
         }
 
 #if UNITY_IPHONE
@@ -549,12 +633,12 @@ namespace ByteBrewSDK
             remoteConfigUpdated += configUpdateCallback;
             remoteConfigUpdated.Invoke();
             return;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             ByteBrew_Helper.LoadRemoteConfigs();
             remoteConfigUpdated += configUpdateCallback;
-#endif 
-            
+#endif
+
         }
 
         public void RemoteConfigsUpdatedCallback(string status)
@@ -573,43 +657,49 @@ namespace ByteBrewSDK
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, returning default value.");
             return defaultValue;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             return ByteBrew_Helper.RetrieveRemoteConfigValue(key, defaultValue);
-#endif 
-            
+#else
+            return defaultValue;
+#endif
+
         }
 
         /// <summary>
         /// Check ByteBrew to see if the configs are already locally set, so you dont need to kep calling Load
         /// </summary>
-        /// <return>Boolean, true if the configs are set, false otherwise.</return>
+        /// <returns>Boolean, true if the configs are set, false otherwise.</returns>
         public static bool HasRemoteConfigsBeenSet()
         {
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, returning default true.");
             return true;
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             return ByteBrew_Helper.AreRemoteConfigsSet();
-#endif 
-            
+#else
+            return true;
+#endif
+
         }
 
         /// <summary>
-        /// Check ByteBrew to see if the configs are already locally set, so you dont need to kep calling Load
+        /// Get the user ID given by ByteBrew, use for reference in push notifications or debugging
         /// </summary>
-        /// <return>Boolean, true if the configs are set, false otherwise.</return>
+        /// <returns>String, users userID.</returns>
         public static string GetUserID()
         {
 #if UNITY_EDITOR
             Debug.Log("ByteBrew is in Editor Mode, returning empty string.");
             return "";
-#elif (UNITY_ANDROID) || (UNITY_IOS)
+#elif (UNITY_ANDROID) || (UNITY_IOS) || (UNITY_WEBGL)
 
             return ByteBrew_Helper.GetCurrentUserID();
-#endif 
-            
+#else
+            return "";
+#endif
+
         }
 
     }

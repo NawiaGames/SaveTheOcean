@@ -50,7 +50,14 @@
         "Obj/": true,
         "ProjectSettings/": true,
         "temp/": true,
-        "Temp/": true
+        "Temp/": true,
+
+        "**/ExternalDependencyManager*/": true,
+        "**/GooglePlayPlugins*/": true,
+        "**/ByteBrewSDK*/": true,
+        "**/.utmp*": true,
+        "UserSettings/": true,
+        "Logs*/": true,
     },
     "dotnet.defaultSolution": "SaveTheOcean.sln"
 }

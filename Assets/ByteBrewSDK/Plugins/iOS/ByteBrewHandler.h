@@ -12,5 +12,6 @@
 +(void) SendBackMessage:(char *) status;
 +(void) RemoteConfigsHaveBeenUpdated;
 +(void) SignalValidatedPurchaseResults:(const char *) validationResult;
++(void) SignalSDKIsInitialized;
 +(void) LowLevelPushStart;
 @end
