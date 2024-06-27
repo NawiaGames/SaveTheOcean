@@ -866,6 +866,36 @@ public class Level : MonoBehaviour
     onFinished?.Invoke(this);
     if(!isFeedingMode)
     {
+      foreach(var chest in _rewardChests)
+      {
+        if(!chest.isOpen)
+          chest.OpenLid();
+      }
+      yield return new WaitForSeconds(0.25f);
+
+      foreach(var chest in _rewardChests)
+      {
+        if(!chest.rewardClaimed)
+        {
+          int[] counts = {chest.rewardStamina, chest.rewardCoins, chest.rewardGems};
+          Item.ID[] ids = {Item.ID.FromKind(Item.Kind.Stamina, 0, 0), Item.ID.FromKind(Item.Kind.Coin, 0, 0), Item.ID.FromKind(Item.Kind.Gem, 0, 0)};
+          for(int q = 0; q < 3; ++q)
+          {
+            var cid = ids[q];
+            var item = GameData.Prefabs.CreateItem(cid, _itemsContainer);
+            item.vwpos = chest.transform.position;
+            int amount = GameState.Econo.AddRes(cid, counts[q]);
+            _uiStatusBar.MoveCollectedUI(item, Mathf.Min(amount, 10));
+            onItemCollected?.Invoke(item);
+            item.Hide();
+            CacheLoc();
+          }
+        }
+      }
+      yield return new WaitForSeconds(0.4f);
+      _rewardChests.ForEach((chest) => chest.Hide());
+      yield return new WaitForSeconds(0.25f);
+
       GameState.Progress.Locations.SetLocationFinished();
       if(!isCleanupMode)
         GameState.Progress.Locations.UnlockNextLocation();
