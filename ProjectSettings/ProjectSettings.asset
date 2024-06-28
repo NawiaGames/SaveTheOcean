@@ -864,7 +864,7 @@ PlayerSettings:
   webGLMemoryGeometricGrowthCap: 96
   webGLPowerPreference: 2
   scriptingDefineSymbols:
-    Android: GOOGLE_PLAY_SERVICES___OFF;USE_FACEBOOK___OFF;USE_BYTEBREW___OFF
+    Android: GOOGLE_PLAY_SERVICES___OFF;USE_FACEBOOK___OFF;USE_BYTEBREW___OFF;USE_IRONSOURCE_SDK___OFF
     Standalone: GOOGLE_PLAY_SERVICES
     iPhone: LK_HAS_LION_ANALYTICS;gameanalytics_max_enabled
   additionalCompilerArguments: {}

@@ -16,7 +16,7 @@ MonoBehaviour:
   dataPath: Data
   version: 0
   progress:
-    _location: 2
+    _location: 5
     _locations:
     - _idx: 0
       _state: 3
@@ -27,6 +27,7 @@ MonoBehaviour:
         items: []
         items2: []
         requests: []
+        chests: []
     - _idx: 1
       _state: 3
       _visits: 1
@@ -36,62 +37,489 @@ MonoBehaviour:
         items: []
         items2: []
         requests: []
+        chests: []
     - _idx: 2
+      _state: 3
+      _visits: 4
+      _passes: 1
+      _date: -8584820412041729328
+      _cache:
+        items: []
+        items2: []
+        requests: []
+        chests: []
+    - _idx: 3
+      _state: 3
+      _visits: 2
+      _passes: 1
+      _date: -8584820410522564041
+      _cache:
+        items: []
+        items2: []
+        requests: []
+        chests: []
+    - _idx: 4
+      _state: 3
+      _visits: 1
+      _passes: 1
+      _date: -8584820410425472258
+      _cache:
+        items: []
+        items2: []
+        requests: []
+        chests: []
+    - _idx: 5
       _state: 1
-      _visits: 3
+      _visits: 6
       _passes: 0
       _date: 0
       _cache:
         items:
         - id:
             _type: 0
-            _lvl: 1
+            _lvl: 0
             _kind: 1
-          vgrid: {x: -0.5, y: 1.5}
+          vpos: {x: 0.27478945, y: -0.45049, z: -0.6520713}
+          bag: 0
         - id:
             _type: 0
-            _lvl: 1
+            _lvl: 0
             _kind: 1
-          vgrid: {x: -1.5, y: 0.5}
+          vpos: {x: -1.1433353, y: -0.15976737, z: -6.29199}
+          bag: 0
         - id:
             _type: 0
-            _lvl: 2
+            _lvl: 0
             _kind: 1
-          vgrid: {x: -1.5, y: -1.5}
+          vpos: {x: -3.6338012, y: -0.20311737, z: -3.7186308}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 1.3670499, y: 0.057563394, z: -3.6395655}
+          bag: 0
         - id:
             _type: 0
-            _lvl: 1
+            _lvl: 0
             _kind: 1
-          vgrid: {x: -1.5, y: 1.5}
+          vpos: {x: 2.9855952, y: -0.5460563, z: -3.464001}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 1.3967693, y: -0.46782327, z: -2.196847}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0.03315589, y: -0.098424435, z: -3.5642216}
+          bag: 0
         - id:
             _type: 0
-            _lvl: 1
+            _lvl: 0
             _kind: 1
-          vgrid: {x: -0.5, y: -1.5}
+          vpos: {x: 1.0536405, y: -0.19450824, z: -6.135313}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: -2.1832101, y: -0.47575393, z: -5.614841}
+          bag: 0
         - id:
             _type: 0
-            _lvl: 2
+            _lvl: 0
             _kind: 1
-          vgrid: {x: 0.5, y: -0.5}
+          vpos: {x: 2.2171285, y: -0.4389901, z: -5.1108117}
+          bag: 0
         - id:
             _type: 0
-            _lvl: 2
+            _lvl: 0
             _kind: 1
-          vgrid: {x: 1.5, y: -0.5}
+          vpos: {x: -0.73641825, y: -0.2917597, z: -2.0558887}
+          bag: 0
         - id:
             _type: 0
-            _lvl: 2
+            _lvl: 0
             _kind: 1
-          vgrid: {x: 1.5, y: 1.5}
-        items2: []
+          vpos: {x: 3.1236496, y: -0.32402134, z: -1.7774255}
+          bag: 0
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: -3.6039534, y: -0.45492205, z: -1.7838972}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0.7384405, y: -0.36665723, z: -4.8320565}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: -1.2926329, y: -0.06866018, z: -3.31393}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: -0.30052403, y: -0.018749343, z: -5.380849}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: -2.1792033, y: -0.08341123, z: -4.333741}
+          bag: 0
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 2.8498483, y: -0.07847697, z: -6.2502575}
+          bag: 0
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 3.0406387, y: -0.12951215, z: -0.267827}
+          bag: 0
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: -2.5455172, y: -0.42661896, z: -2.7570686}
+          bag: 0
+        items2:
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 1
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
+        - id:
+            _type: 0
+            _lvl: 0
+            _kind: 1
+          vpos: {x: 0, y: 0, z: 0}
+          bag: 0
         requests:
         - ids:
           - _type: 0
+            _lvl: 5
+            _kind: 1
+          - _type: 1
             _lvl: 3
             _kind: 1
-          - _type: 0
-            _lvl: 4
+          - _type: 1
+            _lvl: 5
             _kind: 1
+        chests: []
     _locationsSpec: []
     _locationsPassedTime: 0
     _itemAppears:
@@ -113,18 +541,18 @@ MonoBehaviour:
     - _type: 0
       _lvl: 3
       _kind: 1
+    - _type: 0
+      _lvl: 4
+      _kind: 1
   economy:
-    stamina: 50
-    coins: 77
-    gems: 36
-    rewardPoints: 94
-    rewardLevel: 5
-    lastStamina: -8584857456934699285
+    stamina: 1
+    coins: 1
+    gems: 0
+    rewardPoints: 1
+    rewardLevel: 6
+    lastStamina: -8584820404752050255
   chest:
     shown: 1
-    listStamina: []
-    listCoins: []
-    listGems: []
   storage:
     shown: 0
     listItems: []
@@ -136,9 +564,9 @@ MonoBehaviour:
     level: 0
   events:
     tutStorageBoxDone: 0
-    popupNoStamina: 7
+    popupNoStamina: 10
   gameInfo:
-    appQuitTime: -8584857455217925988
+    appQuitTime: -8584820396563442197
   animals:
     animals:
     - type: 1

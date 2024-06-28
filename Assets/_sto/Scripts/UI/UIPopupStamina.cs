@@ -18,11 +18,11 @@ public class UIPopupStamina : MonoBehaviour
   bool _showAd = false;
   void Awake()
   {
-    //UnityAdsRewarded.onCompleted += OnRewardedComplete;
+    Ads.Rewarded.onRewarded += OnRewardedComplete;
   }
   void OnDestroy()
   {
-    //UnityAdsRewarded.onCompleted -= OnRewardedComplete;
+    Ads.Rewarded.onRewarded -= OnRewardedComplete;
   }
   public void Show()
   {
@@ -32,11 +32,11 @@ public class UIPopupStamina : MonoBehaviour
       _lblFreeReward.text = "+" + UIDefaults.GetStaminaString(GameData.Econo.staminaAdReward);
       _freeStaminaPanel.ActivatePanel();
     }
-    // else if(UnityAdsRewarded.IsReady())
-    // {
-    //   _lblAdReward.text = "+" + UIDefaults.GetStaminaString(GameData.Econo.staminaAdReward);
-    //   _adStaminaPanel.ActivatePanel();
-    // }
+    else if(Ads.Rewarded.IsAvailable())
+    {
+       _lblAdReward.text = "+" + UIDefaults.GetStaminaString(GameData.Econo.staminaAdReward);
+       _adStaminaPanel.ActivatePanel();
+    }
     else
     {
       _lblGemsReward.text = "+" + UIDefaults.GetStaminaString(GameData.Econo.staminaAdReward);
@@ -65,7 +65,7 @@ public class UIPopupStamina : MonoBehaviour
   }
   public void OnBtnAdClick()
   {
-    //UnityAdsRewarded.Show();
+    Ads.Rewarded.Show();
     Hide();
   }
   public void OnBtnGemsClick()

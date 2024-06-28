@@ -872,7 +872,7 @@ public class Level : MonoBehaviour
         if(!chest.isOpen)
           chest.OpenLid();
       }
-      yield return new WaitForSeconds(0.25f);
+      yield return new WaitForSeconds(0.125f);
 
       foreach(var chest in _rewardChests)
       {
