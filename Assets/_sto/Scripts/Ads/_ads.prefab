@@ -51,6 +51,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _adsProvider: {fileID: 2108791566637870739}
+  _size: 0
+  _edge: 1
 --- !u!1001 &1351214192016104233
 PrefabInstance:
   m_ObjectHideFlags: 0

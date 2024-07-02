@@ -9,11 +9,12 @@ public class Ads : MonoBehaviour
 
   [SerializeField] AdsProvider _adsProvider;
 
+  [SerializeField] Banner.Size _size;
+  [SerializeField] Banner.Edge _edge;
+
   void Awake()
   {
     _this = this;
-    var providers = GetComponentsInChildren<AdsProvider>();
-    Debug.Log("");
   }
 
   public static class Rewarded
@@ -72,38 +73,42 @@ public class Ads : MonoBehaviour
   }
   public static class Banner
   {
-    public enum Type
+    public enum Size
     {
       Normal,
       Large,
-    };
+    }
+    public enum Edge
+    {
+      Top,
+      Bottom,
+    }
 
     public  static Action onLoaded, onShow, onHide, onDestroy;
 
-  //   public  static bool   isOnTopEdge => _this._bannerPos == IronSourceBannerPosition.TOP;
-  //   public  static bool   isOnBtmEdge => _this._bannerPos == IronSourceBannerPosition.BOTTOM;
+    public  static Size   size => _this._size;
+    public  static Edge   edge => _this._edge;
+    public  static bool   IsOnTopEdge => edge == Edge.Top;
+    public  static bool   IsOnBtmEdge => edge == Edge.Bottom;
     public  static bool   isLoaded {get; private set;} = false;
-  //   //dp to pixel => dp * dpi / 160
-  //   public  static int    GetSize(Type type) => Mathf.RoundToInt(type switch {Type.Normal => 50, Type.Large => 90, _ => 90} * (Screen.dpi/160.0f));
-  //   public  static int    GetSize() => GetSize(_this?._bannerType ?? Type.Large);
 
-  //   static IronSourceBannerSize GetSizeType(Type type)  => _mapType.GetValueOrDefault(type, IronSourceBannerSize.LARGE);
+    //dp to pixel => dp * dpi / 160
+    public  static int    GetSizePx(Size s) => Mathf.RoundToInt(s switch {Size.Normal => 50, Size.Large => 90, _ => 90} * (Screen.dpi/160.0f));
 
-  //   public static void Loaded(IronSourceAdInfo adInfo)
-  //   {
-  //     isLoaded = true;
-  //     onLoaded?.Invoke();
-  //     Show();
-  //   }
+    public static void    Loaded(bool successed)
+    {
+      isLoaded = successed;
+      if(successed)
+      {
+        onLoaded?.Invoke();
+        Show();
+      }
+    }
+
     public static void Load(string placement = null, bool force = false)
     {
       if(!isLoaded || force)
-      {
-        // _mapType
-        //string str = (string.IsNullOrEmpty(placement) || string.IsNullOrWhiteSpace(placement))? "DefaultBanner" : placement;
-        //IronSource.Agent.loadBanner(GetSizeType(_this._bannerType), _this._bannerPos, str);
         _this._adsProvider.BannerLoad(placement, force);
-      }
       else
         Show();
     }
@@ -111,12 +116,10 @@ public class Ads : MonoBehaviour
     {
       onShow?.Invoke();
       _this._adsProvider.BannerShow();
-      //IronSource.Agent.displayBanner();
     }
     public static void Hide(bool destroy)
     {
       onHide?.Invoke();
-      //IronSource.Agent.hideBanner();
       _this._adsProvider.BannerHide();
       if(destroy)
         Destroy();
@@ -125,7 +128,6 @@ public class Ads : MonoBehaviour
     {
       onDestroy?.Invoke();
       _this._adsProvider.BannerDestroy();
-      //IronSource.Agent.destroyBanner();
     }
   }
 
@@ -143,6 +145,7 @@ public class AdsProvider : MonoBehaviour
   public virtual void RewardedShow(string placement){}
 
   public virtual void BannerLoad(string placement, bool force){}
+  public virtual bool BannerIsLoaded(string placement) => true;
   public virtual void BannerShow(){}
   public virtual void BannerHide(){}
   public virtual void BannerDestroy(){}

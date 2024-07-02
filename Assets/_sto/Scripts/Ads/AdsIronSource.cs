@@ -10,9 +10,6 @@ public class AdsIronSource : AdsProvider
   [Tooltip("should be auto filled on gamestart with key from IronSourceMediationSettings asset")]
   [SerializeField] string                       _appKey;
   [SerializeField] IronSourceMediationSettings  _ISMedAsset;
-  [Header("banner opts")]
-  [SerializeField] IronSourceBannerPosition     _bannerPos;
-  [SerializeField] Ads.Banner.Type              _bannerType;
 
   void Awake()
   {
@@ -99,7 +96,7 @@ public class AdsIronSource : AdsProvider
     IronSource.Agent.shouldTrackNetworkState(true);
     IronSource.Agent.loadInterstitial();
     IronSource.Agent.loadRewardedVideo();
-    //IronSource.Agent.loadBanner(IronSourceBannerSize.LARGE, _bannerPos, "DefaultBanner");
+    IronSource.Agent.loadBanner(Ads.Banner.size == Ads.Banner.Size.Large? Large : Normal, Ads.Banner.Edge == Ads.Banner.Top? Top : Bottom, "DefaultBanner");
   }
 
   public override bool IntersIsAvailable(string placement = null) => IronSource.Agent.isInterstitialReady();
@@ -117,6 +114,24 @@ public class AdsIronSource : AdsProvider
       IronSource.Agent.showRewardedVideo(placement);
     else
       IronSource.Agent.showInterstitial();
+  }
+  public override bool BannerIsAvailable(string placemebt = null) => IronSource.Agent.isBannerAvailable();
+  public override void BannerShow(string placement, bool force)
+  {
+    if(force)
+    {
+      if(!string.IsNullOrEmpty(placement))
+        IronSource.Agent.loadBanner(Ads.Banner.size == Ads.Banner.Size.Large? Large : Normal, Ads.Banner.Edge == Ads.Banner.Top? Top : Bottom, placement);
+      else
+        IronSource.Agent.loadBanner(Ads.Banner.size == Ads.Banner.Size.Large? Large : Normal, Ads.Banner.Edge == Ads.Banner.Top? Top : Bottom, "DefaultBanner");
+    }
+    IronSource.Agent.displayBanner()
+  }
+  public override void BannerHide(bool destroy = false)
+  {
+    IronSource.Agent.hideBanner()
+    if(destroy)
+      IronSource.Agent.destroyBanner();
   }
 
   void RewardedVideoOnAdOpenedEvent(IronSourceAdInfo adInfo)
@@ -189,11 +204,12 @@ public class AdsIronSource : AdsProvider
   void BannerOnAdLoadedEvent(IronSourceAdInfo adInfo)
   {
     Debug.Log("BannerOnAdLoadedEvent With AdInfo " + adInfo.ToString());
-    Ads.Banner.onLoaded?.Invoke();
+    Ads.Banner.onLoaded?.Invoke(true);
   }
   void BannerOnAdLoadFailedEvent(IronSourceError ironSourceError)
   {
     Debug.Log("BannerOnAdLoadFailedEvent With Error " + ironSourceError.ToString());
+    Ads.Banner.onLoaded?.Invoke(false);
   }
   void BannerOnAdClickedEvent(IronSourceAdInfo adInfo)
   {

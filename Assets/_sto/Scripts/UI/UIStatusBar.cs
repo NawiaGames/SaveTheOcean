@@ -146,8 +146,8 @@ public class UIStatusBar : MonoBehaviour
       _ => Vector3.zero
     };
 
-
-    move.vdstUI = uiCam.WorldToViewportPoint(vdstPos);
+    var v = GetComponent<UIFitToSafeFrame>().GetSafeAreaAnchors(uiCam);
+    move.vdstUI = (Vector2)uiCam.WorldToViewportPoint(vdstPos) + v.anchorMin;
     move.objects = new List<GameObject>();
     move.vscatters = new();
     move.delays = new List<float>();
@@ -155,7 +155,7 @@ public class UIStatusBar : MonoBehaviour
     for(int q = 0; q < amount; ++q)
     {
       var lbl = Instantiate(_moveLbl, _movesContainer);
-      lbl.GetComponent<RectTransform>().anchorMin = UIManager.GetViewportPosition(item.vwpos);// + new Vector3(Random.Range(-0.125f, 0.125f), 0, Random.Range(-0.125f, 0.125f)));
+      lbl.GetComponent<RectTransform>().anchorMin = UIManager.GetViewportPosition(item.vwpos);
       lbl.GetComponent<RectTransform>().anchorMax = lbl.GetComponent<RectTransform>().anchorMin;
       lbl.text = UIDefaults.GetResSymbol(item.id);
       lbl.alpha = 0;
@@ -176,7 +176,7 @@ public class UIStatusBar : MonoBehaviour
         {
           move.objects[o].GetComponent<TMPLbl>().alpha = 1;
           var rc = move.objects[o].GetComponent<RectTransform>();
-          rc.anchorMin = Vector3.Lerp(rc.anchorMin, move.vscatters[o], Time.deltaTime * _moveSpeed * 0.5f);
+          rc.anchorMin = Vector3.Lerp(rc.anchorMin, move.vscatters[o], Time.deltaTime * _moveSpeed * 0.75f);
           rc.anchorMax = rc.anchorMin;
           if(Vector2.Distance(rc.anchorMin, move.vscatters[o]) < 0.01f)
             move.delays[o] += Time.deltaTime;
@@ -186,9 +186,9 @@ public class UIStatusBar : MonoBehaviour
         {
           move.objects[o].GetComponent<TMPLbl>().alpha = 1;
           var rc = move.objects[o].GetComponent<RectTransform>();
-          rc.anchorMin = Vector3.Lerp(rc.anchorMin, move.vdstUI, Time.deltaTime * _moveSpeed);
+          rc.anchorMin = Vector3.Lerp(rc.anchorMin, move.vdstUI, Time.deltaTime * _moveSpeed * 1.25f);
           rc.anchorMax = rc.anchorMin;
-          if(Vector3.Distance(rc.anchorMin, move.vdstUI) < 0.01f)
+          if(Vector3.Distance(rc.anchorMin, move.vdstUI) < 0.005f)
           {
             Destroy(move.objects[o].gameObject);
             move.objects.RemoveAt(o);

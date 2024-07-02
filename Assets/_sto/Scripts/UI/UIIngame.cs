@@ -43,10 +43,13 @@ public class UIIngame : MonoBehaviour
   public void Show(Level level)
   {
     GetComponent<UIPanel>()?.ActivatePanel();
+    Ads.Banner.Load();
+    Ads.Banner.Show();
   }
   void Hide()
   {
     GetComponent<UIPanel>()?.DeactivatePanel();
+    Ads.Banner.Hide(true);
   }
 
   void OnLevelCreated(Level lvl)
@@ -63,7 +66,7 @@ public class UIIngame : MonoBehaviour
     _progress.value = 1;
     _pollution = 1;
     _pollutionDest = 1;
-    
+
     UpdateScore();
     Show(lvl);
   }
@@ -73,7 +76,7 @@ public class UIIngame : MonoBehaviour
   }
   // void OnLevelHide(Level lvl)
   // {
-    
+
   // }
   void OnLevelFinished(Level lvl)
   {
@@ -101,13 +104,13 @@ public class UIIngame : MonoBehaviour
   // }
   public void OnBtnRestart()
   {
-    FindObjectOfType<Game>()?.RestartLevel();
+    FindFirstObjectByType<Game>()?.RestartLevel();
   }
   public void OnBtnQuit()
   {
     _lvl?.Quit();
     Hide();
-    FindObjectOfType<Game>().ShowEarth(false);
+    FindFirstObjectByType<Game>().ShowEarth(false);
   }
 
   void Update()
@@ -119,7 +122,8 @@ public class UIIngame : MonoBehaviour
     // }
   }
 
-  public void ShowMergeInfoWindow(){
-    FindObjectOfType<UIItemsInfo>().Show();
+  public void ShowMergeInfoWindow()
+  {
+    FindFirstObjectByType<UIItemsInfo>().Show();
   }
 }
